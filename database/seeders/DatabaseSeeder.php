@@ -25,7 +25,14 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            // Order matters here: DemoUserSeeder must run before DemoScholarshipSeeder
+            // (needs the admin), which must run before DemoApplicationSeeder (needs
+            // scholarships + requirements).
             SuperadminSeeder::class,
+            DemoUserSeeder::class,
+            DemoScholarshipSeeder::class,
+            DemoAnnouncementSeeder::class,
+            DemoApplicationSeeder::class,
         ]);
     }
 }
