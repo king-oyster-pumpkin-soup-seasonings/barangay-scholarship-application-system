@@ -11,6 +11,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property int $id
@@ -25,7 +28,20 @@ use Illuminate\Support\Str;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable([
+    'name',
+    'email',
+    'password',
+    'role',
+    'phone',
+    'birthdate',
+    'sex',
+    'address',
+    'verification_status',
+    'verification_remarks',
+    'verified_by',
+    'verified_at',
+])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -42,6 +58,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'birthdate' => 'date',
+            'verified_at' => 'datetime',
         ];
     }
 
@@ -53,7 +71,43 @@ class User extends Authenticatable
         return Str::of($this->name)
             ->explode(' ')
             ->take(2)
-            ->map(fn ($word) => Str::substr($word, 0, 1))
+            ->map(fn($word) => Str::substr($word, 0, 1))
             ->implode('');
+    }
+
+    /** @return HasOne<ResidenceVerification, $this> */ // residenceVerification()
+    public function residenceVerification(): HasOne
+    {
+        return $this->hasOne(ResidenceVerification::class);
+    }
+
+    /** @return HasMany<Application, $this> */ // applications()
+    public function applications(): HasMany
+    {
+        return $this->hasMany(Application::class);
+    }
+
+    /** @return HasMany<Scholarship, $this> */ // scholarships()
+    public function scholarships(): HasMany
+    {
+        return $this->hasMany(Scholarship::class, 'created_by');
+    }
+
+    /** @return HasMany<ApplicationLog, $this> */ // applicationLogs()
+    public function applicationLogs(): HasMany
+    {
+        return $this->hasMany(ApplicationLog::class, 'changed_by');
+    }
+
+    /** @return HasMany<Announcement, $this> */ // announcements()
+    public function announcements(): HasMany
+    {
+        return $this->hasMany(Announcement::class, 'created_by');
+    }
+
+    /** @return BelongsTo<User, $this> */ // verifier()
+    public function verifier(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'verified_by');
     }
 }
