@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Announcement extends Model
 {
@@ -13,7 +14,10 @@ class Announcement extends Model
     ];
 
     // The admin who posted this announcement
-    public function creator()
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }

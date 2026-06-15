@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ScholarshipRequirement extends Model
 {
@@ -25,13 +27,15 @@ class ScholarshipRequirement extends Model
     }
 
     // The scholarship this requirement belongs to
-    public function scholarship()
+    /** @return BelongsTo<Scholarship, $this> */ // scholarship()
+    public function scholarship(): BelongsTo
     {
         return $this->belongsTo(Scholarship::class);
     }
 
     // All user answers submitted for this requirement
-    public function answers()
+    /** @return HasMany<ApplicationAnswer, $this> */ // answers()
+    public function answers(): HasMany
     {
         return $this->hasMany(ApplicationAnswer::class, 'requirement_id');
     }

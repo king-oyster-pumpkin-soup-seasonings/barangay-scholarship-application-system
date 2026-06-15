@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ResidenceVerification extends Model
 {
@@ -25,13 +26,15 @@ class ResidenceVerification extends Model
     }
 
     // The resident this belongs to
-    public function user()
+    /** @return BelongsTo<User, $this> */ // user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
     // The admin who reviewed it
-    public function reviewer()
+    /** @return BelongsTo<User, $this> */ // reviewer()
+    public function reviewer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewed_by');
     }

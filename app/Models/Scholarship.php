@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Scholarship extends Model
 {
@@ -25,19 +27,22 @@ class Scholarship extends Model
     }
 
     // The admin who created this scholarship
-    public function creator()
+    /** @return BelongsTo<User, $this> */ // creator()
+    public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
     // This scholarship's form fields/requirements
-    public function requirements()
+    /** @return HasMany<ScholarshipRequirement, $this> */ // requirements()
+    public function requirements(): HasMany
     {
         return $this->hasMany(ScholarshipRequirement::class);
     }
 
     // All applications submitted for this scholarship
-    public function applications()
+    /** @return HasMany<Application, $this> */ // applications()
+    public function applications(): HasMany
     {
         return $this->hasMany(Application::class);
     }

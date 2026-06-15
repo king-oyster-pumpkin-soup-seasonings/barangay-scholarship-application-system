@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ApplicationLog extends Model
 {
@@ -18,13 +19,15 @@ class ApplicationLog extends Model
     ];
 
     // The application this log entry belongs to
-    public function application()
+    /** @return BelongsTo<Application, $this> */ // application()
+    public function application(): BelongsTo
     {
         return $this->belongsTo(Application::class);
     }
 
     // The admin who made this status change
-    public function changedBy()
+    /** @return BelongsTo<User, $this> */ // changedBy()
+    public function changedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'changed_by');
     }

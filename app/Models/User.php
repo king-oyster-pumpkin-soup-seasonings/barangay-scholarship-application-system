@@ -11,6 +11,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property int $id
@@ -72,38 +75,38 @@ class User extends Authenticatable
             ->implode('');
     }
 
-    // One user has one residence verification record
-    public function residenceVerification()
+    /** @return HasOne<ResidenceVerification, $this> */ // residenceVerification()
+    public function residenceVerification(): HasOne
     {
         return $this->hasOne(ResidenceVerification::class);
     }
 
-    // One user can submit many applications
-    public function applications()
+    /** @return HasMany<Application, $this> */ // applications()
+    public function applications(): HasMany
     {
         return $this->hasMany(Application::class);
     }
 
-    // One admin can create many scholarships
-    public function scholarships()
+    /** @return HasMany<Scholarship, $this> */ // scholarships()
+    public function scholarships(): HasMany
     {
         return $this->hasMany(Scholarship::class, 'created_by');
     }
 
-    // One admin can change the status of many applications (logs)
-    public function applicationLogs()
+    /** @return HasMany<ApplicationLog, $this> */ // applicationLogs()
+    public function applicationLogs(): HasMany
     {
         return $this->hasMany(ApplicationLog::class, 'changed_by');
     }
 
-    // One admin can post many announcements
-    public function announcements()
+    /** @return HasMany<Announcement, $this> */ // announcements()
+    public function announcements(): HasMany
     {
         return $this->hasMany(Announcement::class, 'created_by');
     }
 
-    // The admin/superadmin who verified THIS user
-    public function verifier()
+    /** @return BelongsTo<User, $this> */ // verifier()
+    public function verifier(): BelongsTo
     {
         return $this->belongsTo(User::class, 'verified_by');
     }
