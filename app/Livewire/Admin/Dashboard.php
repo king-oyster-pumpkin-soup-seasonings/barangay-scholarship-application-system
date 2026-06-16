@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Admin;
 
+use App\Models\Announcement;
 use App\Models\Application;
 use App\Models\ResidenceVerification;
-use App\Models\Announcement;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 

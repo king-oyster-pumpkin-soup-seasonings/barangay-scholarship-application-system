@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Admin\AdminApplications;
 use App\Livewire\Admin\Announcements;
 use App\Livewire\Admin\Applications;
 use App\Livewire\Admin\Dashboard;
@@ -18,6 +19,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/verifications', Verifications::class)->name('admin.verifications');
     Route::get('/applications', Applications::class)->name('admin.applications');
     Route::get('/announcements', Announcements::class)->name('admin.announcements');
+    Route::get('/admin-applications', AdminApplications::class)->name('superadmin.admins');
 });
 
 require __DIR__.'/settings.php';
