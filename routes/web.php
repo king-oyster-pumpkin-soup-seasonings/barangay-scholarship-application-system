@@ -1,9 +1,10 @@
 <?php
-use Illuminate\Support\Facades\Route;
+
+use App\Livewire\Admin\Announcements;
+use App\Livewire\Admin\Applications;
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\Verifications;
-use App\Livewire\Admin\Applications;
-use App\Livewire\Admin\Announcements;
+use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
 
@@ -19,4 +20,4 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/announcements', Announcements::class)->name('admin.announcements');
 });
 
-require __DIR__ . '/settings.php';
+require __DIR__.'/settings.php';

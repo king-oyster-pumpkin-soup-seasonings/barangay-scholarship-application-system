@@ -2,41 +2,105 @@
 
 namespace App\Livewire\Admin;
 
-use Livewire\Component;
 use App\Models\ResidenceVerification;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
 
 class Verifications extends Component
 {
-    // This function runs automatically when the Admin clicks the "Approve" button
-    public function approve($id)
-    {
-        // 1. Find the verification record in the database
-        $verification = ResidenceVerification::find($id);
+    public bool $showRejectionModal = false;
 
-        // 2. Change the status to 'verified'
-        $verification->update(['status' => 'verified', 'reviewed_at' => now()]);
+    public string $rejectionReason = '';
 
-        // 3. Also update the user's main profile status!
-        $verification->user->update(['verification_status' => 'verified']);
-    }
+    public ?int $selectedVerificationId = null;
 
-    // This function runs when the Admin clicks the "Reject" button
-    public function reject($id)
+    /**
+     * Approve a residence verification request
+     */
+    public function approve(int $id): void
     {
         $verification = ResidenceVerification::find($id);
-        $verification->update(['status' => 'rejected', 'reviewed_at' => now()]);
 
-        $verification->user->update(['verification_status' => 'rejected']);
+        if ($verification) {
+            $verification->update([
+                'status' => 'verified',
+                'reviewed_by' => auth()->id(),
+                'reviewed_at' => now(),
+            ]);
+
+            $verification->user->update([
+                'verification_status' => 'verified',
+                'verified_by' => auth()->id(),
+                'verified_at' => now(),
+            ]);
+
+            session()->flash('success', 'Residence verification approved successfully.');
+        }
     }
 
-    public function render()
+    /**
+     * Open the rejection modal for a specific verification
+     */
+    public function openRejectionModal(int $id): void
+    {
+        $this->selectedVerificationId = $id;
+        $this->rejectionReason = '';
+        $this->showRejectionModal = true;
+    }
+
+    /**
+     * Close the rejection modal
+     */
+    public function closeRejectionModal(): void
+    {
+        $this->showRejectionModal = false;
+        $this->rejectionReason = '';
+        $this->selectedVerificationId = null;
+    }
+
+    /**
+     * Reject the selected residence verification request with a reason
+     */
+    public function reject(): void
+    {
+        $this->validate([
+            'rejectionReason' => 'required|string|min:5|max:500',
+        ], [
+            'rejectionReason.required' => 'Please provide a reason for rejection.',
+            'rejectionReason.min' => 'The rejection reason must be at least 5 characters.',
+        ]);
+
+        $verification = ResidenceVerification::find($this->selectedVerificationId);
+
+        if ($verification) {
+            $verification->update([
+                'status' => 'rejected',
+                'rejection_reason' => $this->rejectionReason,
+                'reviewed_by' => auth()->id(),
+                'reviewed_at' => now(),
+            ]);
+
+            $verification->user->update([
+                'verification_status' => 'rejected',
+                'verification_remarks' => $this->rejectionReason,
+            ]);
+
+            session()->flash('info', 'Residence verification request has been rejected.');
+        }
+
+        $this->closeRejectionModal();
+    }
+
+    public function render(): View
     {
         // Fetch all verifications where the status is 'pending', and include the user's details
-        $pendingVerifications = ResidenceVerification::with('user')->where('status', 'pending')->get();
+        $pendingVerifications = ResidenceVerification::with('user')
+            ->where('status', 'pending')
+            ->get();
 
         // Pass the data to the HTML view
         return view('livewire.admin.verifications', [
-            'pendingVerifications' => $pendingVerifications
+            'pendingVerifications' => $pendingVerifications,
         ]);
     }
 }

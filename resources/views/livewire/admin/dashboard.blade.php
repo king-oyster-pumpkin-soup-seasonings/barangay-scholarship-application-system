@@ -12,11 +12,11 @@
         </div>
         <div class="bg-white rounded-lg shadow-md p-6">
             <p class="text-sm text-[#AA9A98] uppercase font-semibold">Pending Applications</p>
-            <p class="text-4xl font-bold text-[#1D74E3] mt-2">0</p>
+            <p class="text-4xl font-bold text-[#1D74E3] mt-2">{{ $pendingApplications }}</p>
         </div>
         <div class="bg-white rounded-lg shadow-md p-6">
             <p class="text-sm text-[#AA9A98] uppercase font-semibold">Total Scholars</p>
-            <p class="text-4xl font-bold text-[#1D74E3] mt-2">0</p>
+            <p class="text-4xl font-bold text-[#1D74E3] mt-2">{{ $totalScholars }}</p>
         </div>
     </div>
 
