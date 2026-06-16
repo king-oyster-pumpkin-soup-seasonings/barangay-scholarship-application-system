@@ -1,11 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Livewire\Pages\Verification;
 
 Route::view('/', 'welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
+
+    // Route::get('/verification', Verification::class)->name('verification');
 });
 
 // Resident-only routes (must be logged in, role=user, AND residency verified)
@@ -22,6 +25,10 @@ Route::middleware(['auth', 'role:admin,superadmin', 'approved.admin'])->prefix('
 // Superadmin-only routes
 Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->group(function () {
     Route::get('/admins', /* ... */);
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/verification', Verification::class)->name('verification');
 });
 
 require __DIR__ . '/settings.php';
