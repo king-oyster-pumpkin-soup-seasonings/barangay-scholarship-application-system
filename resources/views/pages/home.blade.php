@@ -1,6 +1,6 @@
-@extends('layouts.public', ['title' => 'Home'])
 
-@section('content')
+
+
 <div class="bg-slate-50 text-slate-800 antialiased font-sans selection:bg-blue-200 selection:text-blue-900">
 
     {{-- HERO SECTION --}}
@@ -423,4 +423,4 @@
     </section>
 
 </div>
-@endsection
+

@@ -1,4 +1,4 @@
-@extends('layouts.public', ['title' => $scholarship['title']])
+
 
 @section('content')
     <div style="background-color: #F5F0E8;" class="min-h-screen pb-24">
@@ -393,4 +393,4 @@
         </section>
 
     </div>
-@endsection
+

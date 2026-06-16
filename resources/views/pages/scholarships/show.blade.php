@@ -1,10 +1,10 @@
-@extends('layouts.public', ['title' => $scholarship['title']])
+
 
 @section('content')
     <div style="background-color: #F5F0E8;" class="min-h-screen pb-24">
 
         {{-- HERO --}}
-        <section class="relative overflow-hidden py-14 px-6 text-white" style="background-color: #1D74E3;">
+        <section class="relative overflow-hidden py-14 px-6 text-white" style="background-color: #11335F;">
 
             {{-- Background grid pattern --}}
             <div class="absolute inset-0 opacity-10"
@@ -393,4 +393,4 @@
         </section>
 
     </div>
-@endsection
+
