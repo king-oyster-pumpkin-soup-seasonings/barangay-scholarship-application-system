@@ -6,7 +6,7 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         <!-- Pending Verifications -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6 flex justify-between items-start">
             <div>
@@ -45,17 +45,30 @@
                 </svg>
             </div>
         </div>
+
+        <!-- Active Announcements -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6 flex justify-between items-start">
+            <div>
+                <p class="text-xs text-[#AA9A98] uppercase font-bold tracking-wider">Active Announcements</p>
+                <p class="text-4xl font-extrabold text-[#1D74E3] mt-2">{{ $activeAnnouncements }}</p>
+            </div>
+            <div class="p-2.5 bg-[#1D74E3]/10 rounded-lg text-[#1D74E3] shadow-sm">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
+                </svg>
+            </div>
+        </div>
     </div>
 
     <!-- Quick Links -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Residence Verifications Card -->
-        <a href="{{ route('admin.verifications') }}" class="bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:-translate-y-1 hover:shadow-md hover:border-[#1D74E3]/30 transition duration-200 ease-in-out group flex justify-between items-center">
-            <div class="pr-4">
+        <a href="{{ route('admin.verifications') }}" class="bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:-translate-y-1 hover:shadow-md hover:border-[#1D74E3]/30 transition duration-200 ease-in-out group flex flex-col justify-between">
+            <div class="mb-4">
                 <h2 class="text-lg font-bold text-[#33333B] group-hover:text-[#1D74E3] transition duration-150">Residence Verifications</h2>
                 <p class="text-sm text-[#AA9A98] mt-1.5 font-medium leading-relaxed">Review and process pending residence verification requests.</p>
             </div>
-            <div class="flex-shrink-0">
+            <div class="text-right">
                 <span class="inline-flex items-center text-xs font-bold bg-[#1D74E3]/10 text-[#1D74E3] group-hover:bg-[#1D74E3] group-hover:text-white px-3.5 py-2 rounded-lg transition duration-150">
                     Review Now &rarr;
                 </span>
@@ -63,14 +76,27 @@
         </a>
 
         <!-- Scholarship Applications Card -->
-        <a href="{{ route('admin.applications') }}" class="bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:-translate-y-1 hover:shadow-md hover:border-[#1D74E3]/30 transition duration-200 ease-in-out group flex justify-between items-center">
-            <div class="pr-4">
+        <a href="{{ route('admin.applications') }}" class="bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:-translate-y-1 hover:shadow-md hover:border-[#1D74E3]/30 transition duration-200 ease-in-out group flex flex-col justify-between">
+            <div class="mb-4">
                 <h2 class="text-lg font-bold text-[#33333B] group-hover:text-[#1D74E3] transition duration-150">Scholarship Applications</h2>
                 <p class="text-sm text-[#AA9A98] mt-1.5 font-medium leading-relaxed">Review and process pending scholarship applications.</p>
             </div>
-            <div class="flex-shrink-0">
+            <div class="text-right">
                 <span class="inline-flex items-center text-xs font-bold bg-[#1D74E3]/10 text-[#1D74E3] group-hover:bg-[#1D74E3] group-hover:text-white px-3.5 py-2 rounded-lg transition duration-150">
                     Review Now &rarr;
+                </span>
+            </div>
+        </a>
+
+        <!-- Manage Announcements Card -->
+        <a href="{{ route('admin.announcements') }}" class="bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:-translate-y-1 hover:shadow-md hover:border-[#1D74E3]/30 transition duration-200 ease-in-out group flex flex-col justify-between">
+            <div class="mb-4">
+                <h2 class="text-lg font-bold text-[#33333B] group-hover:text-[#1D74E3] transition duration-150">Manage Announcements</h2>
+                <p class="text-sm text-[#AA9A98] mt-1.5 font-medium leading-relaxed">Create, edit, and publish important updates or notices for applicants.</p>
+            </div>
+            <div class="text-right">
+                <span class="inline-flex items-center text-xs font-bold bg-[#1D74E3]/10 text-[#1D74E3] group-hover:bg-[#1D74E3] group-hover:text-white px-3.5 py-2 rounded-lg transition duration-150">
+                    Manage Now &rarr;
                 </span>
             </div>
         </a>
