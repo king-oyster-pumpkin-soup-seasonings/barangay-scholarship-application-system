@@ -1,6 +1,9 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
+use App\Livewire\Admin\Dashboard;
+use App\Livewire\Admin\Verifications;
+use App\Livewire\Admin\Applications;
+use App\Livewire\Admin\Announcements;
 
 Route::view('/', 'welcome')->name('home');
 
@@ -8,20 +11,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 });
 
-// Resident-only routes (must be logged in, role=user, AND residency verified)
-Route::middleware(['auth', 'role:user', 'verified.resident'])->group(function () {
-    Route::get('/scholarships', /* ... */);
-    Route::get('/scholarships/{scholarship}', /* ... */);
-});
-
-// Admin panel routes (must be logged in, role=admin or superadmin, AND admin approved)
-Route::middleware(['auth', 'role:admin,superadmin', 'approved.admin'])->prefix('admin')->group(function () {
-    Route::get('/dashboard', /* ... */);
-});
-
-// Superadmin-only routes
-Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->group(function () {
-    Route::get('/admins', /* ... */);
+// Admin panel routes
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', Dashboard::class)->name('admin.dashboard');
+    Route::get('/verifications', Verifications::class)->name('admin.verifications');
+    Route::get('/applications', Applications::class)->name('admin.applications');
+    Route::get('/announcements', Announcements::class)->name('admin.announcements');
 });
 
 require __DIR__ . '/settings.php';
