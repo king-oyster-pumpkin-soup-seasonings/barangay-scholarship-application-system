@@ -1,11 +1,12 @@
 <div class="min-h-screen bg-[#E5E8EF] p-8">
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-[#33333B]">Admin Dashboard</h1>
-        <p class="text-[#AA9A98] mt-1">Welcome to the admin panel.</p>
+    <!-- Enhanced Page Header -->
+    <div class="mb-10">
+        <h1 class="text-3xl font-extrabold text-[#33333B] tracking-tight">Admin Dashboard</h1>
+        <p class="text-[#AA9A98] text-sm mt-1.5 font-medium">Welcome to the admin panel. Manage systems and review pending applications.</p>
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
         <!-- Pending Verifications -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6 flex justify-between items-start">
             <div>
@@ -48,13 +49,30 @@
 
     <!-- Quick Links -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <a href="{{ route('admin.verifications') }}" class="bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:-translate-y-1 hover:shadow-md hover:border-blue-100 transition duration-200 ease-in-out group">
-            <h2 class="text-lg font-bold text-[#33333B] group-hover:text-[#1D74E3] transition duration-150">Residence Verifications</h2>
-            <p class="text-sm text-[#AA9A98] mt-1.5">Review and process pending residence verification requests.</p>
+        <!-- Residence Verifications Card -->
+        <a href="{{ route('admin.verifications') }}" class="bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:-translate-y-1 hover:shadow-md hover:border-[#1D74E3]/30 transition duration-200 ease-in-out group flex justify-between items-center">
+            <div class="pr-4">
+                <h2 class="text-lg font-bold text-[#33333B] group-hover:text-[#1D74E3] transition duration-150">Residence Verifications</h2>
+                <p class="text-sm text-[#AA9A98] mt-1.5 font-medium leading-relaxed">Review and process pending residence verification requests.</p>
+            </div>
+            <div class="flex-shrink-0">
+                <span class="inline-flex items-center text-xs font-bold bg-[#1D74E3]/10 text-[#1D74E3] group-hover:bg-[#1D74E3] group-hover:text-white px-3.5 py-2 rounded-lg transition duration-150">
+                    Review Now &rarr;
+                </span>
+            </div>
         </a>
-        <a href="{{ route('admin.applications') }}" class="bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:-translate-y-1 hover:shadow-md hover:border-blue-100 transition duration-200 ease-in-out group">
-            <h2 class="text-lg font-bold text-[#33333B] group-hover:text-[#1D74E3] transition duration-150">Scholarship Applications</h2>
-            <p class="text-sm text-[#AA9A98] mt-1.5">Review and process pending scholarship applications.</p>
+
+        <!-- Scholarship Applications Card -->
+        <a href="{{ route('admin.applications') }}" class="bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:-translate-y-1 hover:shadow-md hover:border-[#1D74E3]/30 transition duration-200 ease-in-out group flex justify-between items-center">
+            <div class="pr-4">
+                <h2 class="text-lg font-bold text-[#33333B] group-hover:text-[#1D74E3] transition duration-150">Scholarship Applications</h2>
+                <p class="text-sm text-[#AA9A98] mt-1.5 font-medium leading-relaxed">Review and process pending scholarship applications.</p>
+            </div>
+            <div class="flex-shrink-0">
+                <span class="inline-flex items-center text-xs font-bold bg-[#1D74E3]/10 text-[#1D74E3] group-hover:bg-[#1D74E3] group-hover:text-white px-3.5 py-2 rounded-lg transition duration-150">
+                    Review Now &rarr;
+                </span>
+            </div>
         </a>
     </div>
 </div>

@@ -1,11 +1,13 @@
 <div class="min-h-screen bg-[#E5E8EF] p-8">
-    <!-- Header -->
-    <div class="mb-8">
-        <div class="text-sm text-[#AA9A98] mb-1">
-            <a href="{{ route('admin.dashboard') }}" class="hover:underline">Dashboard</a> &rarr; Applications
+    <!-- Enhanced Page Header & Interactive Breadcrumbs -->
+    <div class="mb-10">
+        <div class="text-sm font-medium mb-2 flex items-center space-x-1.5">
+            <a href="{{ route('admin.dashboard') }}" class="text-[#1D74E3] hover:underline font-semibold transition duration-150">Dashboard</a>
+            <span class="text-[#AA9A98]">&rarr;</span>
+            <span class="text-[#AA9A98]">Applications</span>
         </div>
-        <h1 class="text-3xl font-bold text-[#33333B]">Scholarship Applications</h1>
-        <p class="text-[#AA9A98] mt-1">Review and process student scholarship applications.</p>
+        <h1 class="text-3xl font-extrabold text-[#33333B] tracking-tight">Scholarship Applications</h1>
+        <p class="text-[#AA9A98] text-sm mt-1.5 font-medium">Review and process student scholarship applications.</p>
     </div>
 
     <!-- Alert Messages -->
