@@ -17,6 +17,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'role:user', 'verified.resident'])->group(function () {
     Route::get('/scholarships', /* ... */);
     Route::get('/scholarships/{scholarship}', /* ... */);
+    Route::get('/scholarships/{scholarship}/apply', Create::class)->name('applications.create');
 });
 
 // Admin panel routes (must be logged in, role=admin or superadmin, AND admin approved)
