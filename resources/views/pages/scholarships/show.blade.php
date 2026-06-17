@@ -29,14 +29,14 @@
 
                         {{-- Badges --}}
                         <div class="flex items-center gap-3 mb-5">
-                            @if ($scholarship['status'] === 'available')
+                            @if ($scholarship->status === 'available')
                                 <span
                                     class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full"
                                     style="background-color: rgba(74,222,128,0.2); color: #bbf7d0; border: 1px solid rgba(74,222,128,0.3);">
                                     <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
                                     Open Application
                                 </span>
-                            @elseif($scholarship['status'] === 'full')
+                            @elseif($scholarship->status === 'full')
                                 <span
                                     class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full"
                                     style="background-color: rgba(248,113,113,0.2); color: #fecaca; border: 1px solid rgba(248,113,113,0.3);">
@@ -52,17 +52,17 @@
 
                             <span class="text-xs font-mono px-2.5 py-1 rounded-lg"
                                 style="background-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.15);">
-                                ID: #{{ str_pad($scholarship['id'], 3, '0', STR_PAD_LEFT) }}
+                                ID: #{{ str_pad($scholarship->id, 3, '0', STR_PAD_LEFT) }}
                             </span>
                         </div>
 
                         <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4"
                             style="font-family: 'Playfair Display', serif;">
-                            {{ $scholarship['title'] }}
+                            {{ $scholarship->title }}
                         </h1>
 
                         <p class="text-base max-w-2xl" style="color: rgba(255,255,255,0.8);">
-                            {{ $scholarship['description'] }}
+                            {{ $scholarship->description }}
                         </p>
 
                     </div>
@@ -92,7 +92,7 @@
                             Program Overview
                         </h2>
                         <p class="text-sm leading-relaxed" style="color: #1B1A1C;">
-                            {{ $scholarship['description'] }}
+                            {{ $scholarship->description }}
                         </p>
                         <p class="text-sm leading-relaxed mt-3" style="color: #AA9A98;">
                             This scholarship aims to support qualified barangay residents in pursuing their
@@ -290,7 +290,7 @@
                                     Financial Grant
                                 </span>
                                 <span class="block text-3xl font-extrabold" style="color: #1D74E3;">
-                                    ₱{{ number_format($scholarship['allowance'], 2) }}
+                                    ₱{{ number_format($scholarship->allowance, 2) }}
                                 </span>
                                 <span class="block text-xs mt-1" style="color: #AA9A98;">per semester</span>
                             </div>
@@ -307,7 +307,7 @@
                                     <span class="text-sm" style="color: #AA9A98;">Slots Available</span>
                                 </div>
                                 <span class="font-semibold text-sm" style="color: #33333B;">
-                                    {{ $scholarship['slots'] }} remaining
+                                    {{ $scholarship->slots }} remaining
                                 </span>
                             </div>
 
@@ -323,13 +323,13 @@
                                     <span class="text-sm" style="color: #AA9A98;">Deadline</span>
                                 </div>
                                 <span class="font-semibold text-sm text-red-500">
-                                    {{ $scholarship['deadline'] }}
+                                    {{ $scholarship->deadline->format('F j, Y') }}
                                 </span>
                             </div>
 
                             {{-- Action Button --}}
                             <div class="mt-5">
-                                @if ($scholarship['status'] === 'available')
+                                @if ($scholarship->status === 'available')
                                     <a href="{{ route('register') }}"
                                         class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
                                         style="background-color: #1D74E3;">

@@ -6,7 +6,8 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    public string $filter = 'available';
+    public string $filter = 'all';
+    public string $search = '';
 
     public function render()
     {
@@ -40,13 +41,22 @@ class Index extends Component
             ],
         ];
 
-        $scholarships = array_filter(
-            $allScholarships,
-            fn($s) => $s['status'] === $this->filter
-        );
+        // Apply status filter
+        $scholarships = $this->filter === 'all'
+            ? $allScholarships
+            : array_filter($allScholarships, fn($s) => $s['status'] === $this->filter);
+
+        // Apply search filter
+        if($this->search !== '') {
+            $search = strtolower($this->search);
+            $scholarships = array_filter($scholarships, fn($s) =>
+                str_contains(strtolower($s['title']), $search) ||
+                str_contains(strtolower($s['description']), $search)
+            );
+        }
 
         return view('pages.scholarships.index', [
-            'scholarships' => $scholarships,
+            'scholarships' => array_values($scholarships),
         ])->layout('layouts.public', ['title' => 'Scholarships']);
     }
 }

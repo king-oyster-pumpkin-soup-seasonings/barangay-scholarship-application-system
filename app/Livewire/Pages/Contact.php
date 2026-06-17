@@ -3,6 +3,7 @@
 namespace App\Livewire\Pages;
 
 use Livewire\Component;
+use App\Models\Feedback;
 
 class Contact extends Component
 {
@@ -14,6 +15,20 @@ class Contact extends Component
 
     public function submit()
     {
+        $this->validate([
+            'name'    => 'required|min:2',
+            'email'   => 'required|email',
+            'subject' => 'required|min:3',
+            'message' => 'required|min:10',
+        ]);
+
+        Feedback::create([
+            'name'    => $this->name,
+            'email'   => $this->email,
+            'subject' => $this->subject,
+            'message' => $this->message,
+        ]);
+
         $this->submitted = true;
     }
 
