@@ -138,13 +138,17 @@ class Create extends Component
      * Validate only the fields that belong to the current step.
      * This prevents Livewire from complaining about future steps' empty values.
      */
-    protected function validateCurrentStep(): void
+protected function validateCurrentStep(): void
     {
         $requirements = $this->getCurrentRequirements();
         $rules = [];
+        $customAttributes = [];
 
         foreach ($requirements as $req) {
             $id = $req['id'];
+
+            // Clean up labels for validation messages (e.g., "Current GPA" -> "current gpa")
+            $cleanLabel = strtolower($req['label']);
 
             if ($req['field_type'] === 'file') {
                 // File fields: only required if is_required is true
@@ -153,6 +157,7 @@ class Create extends Component
                 } else {
                     $rules["files.{$id}"] = ['nullable', 'file', 'max:10240'];
                 }
+                $customAttributes["files.{$id}"] = $cleanLabel;
             } else {
                 // Text/number/select/textarea/checkbox fields
                 if ($req['is_required']) {
@@ -160,10 +165,12 @@ class Create extends Component
                 } else {
                     $rules["answers.{$id}"] = ['nullable'];
                 }
+                $customAttributes["answers.{$id}"] = $cleanLabel;
             }
         }
 
-        $this->validate($rules);
+        // Pass rules, an empty messages array, and our custom field labels
+        $this->validate($rules, [], $customAttributes);
     }
 
     /**

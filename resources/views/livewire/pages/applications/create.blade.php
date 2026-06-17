@@ -4,7 +4,7 @@
         {{-- Page Header --}}
         <div class="mb-8">
             <a href="{{ route('dashboard') }}" wire:navigate
-               class="inline-flex items-center gap-1.5 text-sm text-[#AA9A98] hover:text-[#1B1A1C] transition-colors mb-4">
+            class="inline-flex items-center gap-1.5 text-sm text-[#AA9A98] hover:text-[#1B1A1C] transition-colors mb-4">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                 </svg>
@@ -137,14 +137,14 @@
                                 <div>
                                     <label
                                         for="file-{{ $req['id'] }}"
-                                        class="flex flex-col items-center justify-center gap-2 w-full rounded-lg border-2 border-dashed border-[#D1D5DB] hover:border-[#1D74E3] transition-colors px-4 py-8 cursor-pointer bg-[#F9FAFB] hover:bg-blue-50"
+                                        class="flex flex-col items-center justify-center gap-2 w-full rounded-xl border-2 border-dashed border-gray-200 hover:border-[#1D74E3] transition-colors px-4 py-8 cursor-pointer bg-gray-50/50 hover:bg-blue-50/30 group"
                                     >
-                                        <svg class="w-7 h-7 text-[#AA9A98]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-7 h-7 text-[#AA9A98] group-hover:text-[#1D74E3] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                                         </svg>
                                         <div class="text-center">
-                                            <span class="text-sm font-medium text-[#1D74E3]">Click to upload</span>
-                                            <span class="text-sm text-[#AA9A98]"> or drag and drop</span>
+                                            <span class="text-sm font-semibold text-[#1D74E3]">Click to upload</span>
+                                            <span class="text-sm text-gray-500 font-medium"> or drag and drop</span>
                                         </div>
                                         <p class="text-xs text-[#AA9A98]">PDF, JPG, PNG up to 10MB</p>
                                         <input
@@ -155,22 +155,28 @@
                                         />
                                     </label>
 
-                                    {{-- Show file name once uploaded --}}
+                                    {{-- Selected File Indicator Badge matching Verification page --}}
                                     @if (!empty($files[$req['id']]))
-                                        <p class="mt-2 text-xs text-green-600 font-medium flex items-center gap-1">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <div class="mt-2 flex items-center gap-1.5 text-xs text-green-600 font-semibold bg-green-50/60 border border-green-100 rounded-lg py-1.5 px-2.5 w-fit">
+                                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                                             </svg>
-                                            {{ $files[$req['id']]->getClientOriginalName() }}
-                                        </p>
+                                            <span class="truncate max-w-[280px]">
+                                                {{ $files[$req['id']]->getClientOriginalName() }}
+                                            </span>
+                                        </div>
                                     @endif
 
                                     {{-- Loading indicator while Livewire uploads the file --}}
-                                    <div wire:loading wire:target="files.{{ $req['id'] }}" class="mt-2 text-xs text-[#AA9A98]">
-                                        Uploading...
+                                    <div wire:loading wire:target="files.{{ $req['id'] }}" class="mt-2 text-xs text-[#1D74E3] font-semibold flex items-center gap-1">
+                                        <svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                                        </svg>
+                                        Uploading file...
                                     </div>
                                 </div>
-                                @break
+                            @break
 
                             @default
                                 {{-- Fallback for unknown field types --}}

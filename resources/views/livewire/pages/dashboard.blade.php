@@ -134,7 +134,7 @@
                                 {{ $app->scholarship->title }}
                             </p>
                             <p class="text-xs mt-0.5" style="color: #AA9A98;">
-                                Submitted {{ $app->submitted_at?->format('M d, Y') ?? '—' }}
+                                <span>Submitted {{ $app->created_at->timezone('Asia/Manila')->format('M d, Y') }}</span>
                             </p>
                             @if ($app->remarks)
                                 <p class="text-xs mt-1.5 italic" style="color: #ef4444;">

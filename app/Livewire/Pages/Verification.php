@@ -52,6 +52,8 @@ class Verification extends Component
 
         // 4. Reload the existing verification so the UI updates
         $this->existingVerification = ResidenceVerification::where('user_id', Auth::id())->first();
+
+        return redirect()->route('dashboard');
     }
 
     public function render()
