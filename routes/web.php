@@ -13,8 +13,8 @@ Route::get('/', Home::class)->name('home');
 Route::get('/about', About::class)->name('about');
 Route::get('/faqs', Faqs::class)->name('faqs');
 Route::get('/contact', Contact::class)->name('contact');
+Route::get('/scholarships/{scholarship}', Show::class)->name('scholarships.show');
 Route::get('/scholarships', Index::class)->name('scholarships.index');
-Route::get('/scholarships/{id}', Show::class)->name('scholarships.show');
 
 // Authenticated pages
 Route::middleware(['auth', 'verified'])->group(function () {

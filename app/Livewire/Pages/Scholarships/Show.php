@@ -7,21 +7,39 @@ use App\Models\Scholarship;
 
 class Show extends Component
 {
-    public int $id;
+    // 1. Store the ID (integer), NOT the model. Integers persist across Livewire updates.
+    public $scholarshipId;
 
-    public function mount(int $id)
+    // 2. Store the model as a private/protected variable so it's not sent to the browser
+    protected $scholarship;
+
+    // 3. Accept the model from the route (Route Model Binding)
+    public function mount(Scholarship $scholarship)
     {
-        $this->id = $id;
+        $this->scholarship = $scholarship;
+        $this->scholarshipId = $scholarship->id;
+    }
+
+    // 4. CRITICAL: Re-fetch the model on every request if it's missing
+    // This ensures the data is fresh and available even if Livewire "lost" the object
+    public function hydrate()
+    {
+        if ($this->scholarshipId && !$this->scholarship) {
+            $this->scholarship = Scholarship::with('requirements')->findOrFail($this->scholarshipId);
+        }
     }
 
     public function render()
     {
-        $scholarship = Scholarship::with('requirements')->findOrFail($this->id);
-        $requirements = $scholarship->requirements()->orderBy('order')->get();
+        // Fallback safety: if hydrate didn't run or failed, try to fetch here
+        if (!$this->scholarship && $this->scholarshipId) {
+            $this->scholarship = Scholarship::with('requirements')->findOrFail($this->scholarshipId);
+        }
 
+        // Pass the model to the view
         return view('pages.scholarships.show', [
-            'scholarship' => $scholarship,
-            'requirements' => $requirements,
-        ])->layout('layouts.public', ['title' => $scholarship->title]);
+            'scholarship' => $this->scholarship,
+            'requirements' => $this->scholarship->requirements()->orderBy('order')->get(),
+        ])->layout('layouts.public', ['title' => $this->scholarship->title]);
     }
 }
