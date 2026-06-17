@@ -1,7 +1,8 @@
 <div class="min-h-screen" style="background-color: #F5F0E8;">
 
     {{-- PAGE HEADER --}}
-    <section class="px-6 py-12" style="background-color: #1D74E3;">
+    <section class="px-6 py-12" style="background-color: #1C398E;">
+        <div class="absolute inset-0 pointer-events-none opacity-10 bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
         <div class="max-w-6xl mx-auto">
             <p class="text-xs font-semibold tracking-widest uppercase mb-2"
                style="color: rgba(255,255,255,0.6);">

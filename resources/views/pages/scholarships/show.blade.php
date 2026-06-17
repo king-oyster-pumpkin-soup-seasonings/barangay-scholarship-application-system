@@ -1,7 +1,7 @@
 <div style="background-color: #F5F0E8;" class="min-h-screen pb-24">
 
     {{-- HERO --}}
-    <section class="relative overflow-hidden py-14 px-6 text-white" style="background-color: #1D74E3;">
+    <section class="relative overflow-hidden py-14 px-6 text-white" style="background-color: #1C398E;">
         <div class="absolute inset-0 opacity-10"
              style="background-image: linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px); background-size: 4rem 4rem;">
         </div>
