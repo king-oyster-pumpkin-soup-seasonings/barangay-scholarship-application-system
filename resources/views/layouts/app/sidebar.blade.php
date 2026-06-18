@@ -65,23 +65,44 @@
     <body class="min-h-screen bg-white dark:bg-zinc-800">
         <flux:sidebar sticky collapsible="mobile" class="custom-sidebar border-e border-zinc-200 dark:border-zinc-700">
             <flux:sidebar.header>
-                <x-app-logo :sidebar="true" href="{{ route('admin.dashboard') }}" wire:navigate />
+                {{-- Dynamically route the logo destination based on user privileges --}}
+                @if (auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin')
+                    <x-app-logo :sidebar="true" href="{{ route('admin.dashboard') }}" wire:navigate />
+                @else
+                    <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />
+                @endif
                 <flux:sidebar.collapse class="lg:hidden" />
             </flux:sidebar.header>
 
             <flux:sidebar.nav>
                 <flux:sidebar.group :heading="__('Platform')" class="grid">
-                    <flux:sidebar.item icon="home" :href="route('admin.dashboard')" :current="request()->routeIs('admin.dashboard')" wire:navigate>
-                        {{ __('Admin Dashboard') }}
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="academic-cap" :href="route('admin.applications')" :current="request()->routeIs('admin.applications')" wire:navigate>
-                        {{ __('Scholarship Applications') }}
-                    </flux:sidebar.item>
-                    @if(auth()->user()->role === 'superadmin')
-                        <flux:sidebar.item icon="users" :href="route('superadmin.admins')" :current="request()->routeIs('superadmin.admins')" wire:navigate>
-                            {{ __('Admin Applications') }}
+
+                    {{-- ── 🔒 ADMIN & SUPERADMIN SIDEBAR ITEMS ────────────────── --}}
+                    @if (auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin')
+
+                        <flux:sidebar.item icon="home" :href="route('admin.dashboard')" :current="request()->routeIs('admin.dashboard')" wire:navigate>
+                            {{ __('Admin Dashboard') }}
                         </flux:sidebar.item>
+
+                        <flux:sidebar.item icon="academic-cap" :href="route('admin.applications')" :current="request()->routeIs('admin.applications')" wire:navigate>
+                            {{ __('Scholarship Applications') }}
+                        </flux:sidebar.item>
+
+                        @if(auth()->user()->role === 'superadmin')
+                            <flux:sidebar.item icon="users" :href="route('superadmin.admins')" :current="request()->routeIs('superadmin.admins')" wire:navigate>
+                                {{ __('Admin Applications') }}
+                            </flux:sidebar.item>
+                        @endif
+
+                    {{-- ── 👤 RESIDENT / STANDARD USER SIDEBAR ITEMS ──────────── --}}
+                    @else
+
+                        <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
+                            {{ __('My Dashboard') }}
+                        </flux:sidebar.item>
+
                     @endif
+
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 
@@ -100,7 +121,6 @@
             <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
         </flux:sidebar>
 
-        <!-- Mobile User Menu -->
         <flux:header class="lg:hidden">
             <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
 

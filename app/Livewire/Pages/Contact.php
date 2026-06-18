@@ -33,8 +33,10 @@ class Contact extends Component
     }
 
     public function render()
-    {
-        return view('pages.contact')
-            ->layout('layouts.public', ['title' => 'Contact']);
-    }
+{
+    $layout = auth()->check() ? 'layouts.app' : 'layouts.public';
+
+    return view('pages.contact')
+        ->layout($layout, ['title' => 'Contact']);
+}
 }
