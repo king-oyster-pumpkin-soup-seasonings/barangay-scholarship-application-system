@@ -1,5 +1,5 @@
 <x-layouts::auth.card :title="__('Register')">
-    <div class="flex flex-col gap-6" x-data="{ firstName: '', middleName: '', lastName: '', role: 'user' }">
+    <div class="flex flex-col gap-6" x-data="{ firstName: '', middleName: '', lastName: '' }">
         <!-- User Plus Icon (Logo) -->
         <div class="h-12 w-12 rounded-xl bg-[#1D74E3]/10 flex items-center justify-center border border-[#1D74E3]/25 shadow-sm">
             <flux:icon name="user-plus" class="h-6 w-6 text-[#1D74E3]" />
@@ -96,43 +96,7 @@
                 <flux:error name="phone" />
             </flux:field>
 
-            <!-- Account Type (Role Selection) -->
-            <flux:field>
-                <flux:label class="text-xs font-semibold text-[#0F172B] uppercase tracking-wider mb-2 block">
-                    {{ __('Account Type') }} <span class="text-[#F54A00]">*</span>
-                </flux:label>
-                <input type="hidden" name="role" x-bind:value="role" />
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <!-- Resident Button -->
-                    <button 
-                        type="button" 
-                        x-on:click="role = 'user'"
-                        x-bind:class="role === 'user' ? 'border-[#1D74E3] bg-[#1D74E3]/5 ring-1 ring-[#1D74E3]' : 'border-zinc-200 bg-white hover:bg-zinc-50'"
-                        class="flex items-center gap-3 p-4 rounded-xl border text-left cursor-pointer transition-all duration-200 outline-none"
-                    >
-                        <flux:icon name="home" x-bind:class="role === 'user' ? 'text-[#1D74E3]' : 'text-zinc-400'" class="h-6 w-6 shrink-0" />
-                        <div>
-                            <div x-bind:class="role === 'user' ? 'text-[#1D74E3]' : 'text-zinc-800'" class="font-bold text-sm">Resident</div>
-                            <div class="text-xs text-zinc-500">Scholar applicant</div>
-                        </div>
-                    </button>
 
-                    <!-- Official Button -->
-                    <button 
-                        type="button" 
-                        x-on:click="role = 'admin'"
-                        x-bind:class="role === 'admin' ? 'border-[#1D74E3] bg-[#1D74E3]/5 ring-1 ring-[#1D74E3]' : 'border-zinc-200 bg-white hover:bg-zinc-50'"
-                        class="flex items-center gap-3 p-4 rounded-xl border text-left cursor-pointer transition-all duration-200 outline-none"
-                    >
-                        <flux:icon name="building-office" x-bind:class="role === 'admin' ? 'text-[#1D74E3]' : 'text-zinc-400'" class="h-6 w-6 shrink-0" />
-                        <div>
-                            <div x-bind:class="role === 'admin' ? 'text-[#1D74E3]' : 'text-zinc-800'" class="font-bold text-sm">Admin</div>
-                            <div class="text-xs text-zinc-500">Barangay staff</div>
-                        </div>
-                    </button>
-                </div>
-                <flux:error name="role" />
-            </flux:field>
 
             <!-- Password -->
             <flux:field>

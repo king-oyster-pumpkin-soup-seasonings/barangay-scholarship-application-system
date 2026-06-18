@@ -7,6 +7,7 @@ use Livewire\Component;
 class Index extends Component
 {
     public string $filter = 'all';
+
     public string $search = '';
 
     public function render()
@@ -44,13 +45,12 @@ class Index extends Component
         // Apply status filter
         $scholarships = $this->filter === 'all'
             ? $allScholarships
-            : array_filter($allScholarships, fn($s) => $s['status'] === $this->filter);
+            : array_filter($allScholarships, fn ($s) => $s['status'] === $this->filter);
 
         // Apply search filter
-        if($this->search !== '') {
+        if ($this->search !== '') {
             $search = strtolower($this->search);
-            $scholarships = array_filter($scholarships, fn($s) =>
-                str_contains(strtolower($s['title']), $search) ||
+            $scholarships = array_filter($scholarships, fn ($s) => str_contains(strtolower($s['title']), $search) ||
                 str_contains(strtolower($s['description']), $search)
             );
         }
