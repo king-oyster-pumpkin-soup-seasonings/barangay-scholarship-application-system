@@ -15,22 +15,8 @@ class Index extends Component
     {
         $query = Scholarship::query();
 
-<<<<<<< HEAD
-        // Apply status filter
-        $scholarships = $this->filter === 'all'
-            ? $allScholarships
-            : array_filter($allScholarships, fn ($s) => $s['status'] === $this->filter);
-
-        // Apply search filter
-        if ($this->search !== '') {
-            $search = strtolower($this->search);
-            $scholarships = array_filter($scholarships, fn ($s) => str_contains(strtolower($s['title']), $search) ||
-                str_contains(strtolower($s['description']), $search)
-            );
-=======
         if ($this->filter !== 'all') {
             $query->where('status', $this->filter);
->>>>>>> 5a7852a8247af5fd814bbd8ce20f091035636e78
         }
 
         if ($this->search !== '') {
@@ -52,7 +38,9 @@ class Index extends Component
         ])->values()->all();
 
         return view('pages.scholarships.index', [
-            'scholarships' => $scholarships,
-        ])->layout('layouts.public', ['title' => 'Scholarships']);
+            'scholarships' => array_values($scholarships),
+        ])->layout(auth()->check() ? 'layouts.app' : 'layouts.public', ['title' => 'Scholarships']);
+        //     'scholarships' => $scholarships,
+        // ])->layout('layouts.public', ['title' => 'Scholarships']);
     }
 }
