@@ -24,7 +24,8 @@
             @csrf
 
             <!-- Hidden Combined Full Name Field for Backend compatibility -->
-            <input type="hidden" name="name" :value="[firstName, middleName, lastName].filter(Boolean).join(' ') || 'User'" />
+            <input type="hidden" name="name"
+                :value="[firstName, middleName, lastName].filter(Boolean).join(' ') || 'User'" />
 
             <!-- First & Last Name Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -164,9 +165,6 @@
                 @enderror
             </div>
 
-<<<<<<< HEAD
-
-=======
             <!-- Account Type (Role Selection) -->
             <div class="flex flex-col gap-1.5">
                 <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider mb-2 block">
@@ -210,7 +208,6 @@
                     <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
                 @enderror
             </div>
->>>>>>> 5a7852a8247af5fd814bbd8ce20f091035636e78
 
             <!-- Password & Confirm Password Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -268,6 +265,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
                 </svg>
+                
                 {{ __('Create my account') }}
             </button>
         </form>
