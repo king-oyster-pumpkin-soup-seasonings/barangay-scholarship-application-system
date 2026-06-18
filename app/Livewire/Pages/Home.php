@@ -11,7 +11,7 @@ class Home extends Component
     public function render()
     {
         $announcements = Announcement::latest()->take(2)->get();
-        $scholarships = Scholarship::all();
+        $scholarships = Scholarship::where('status', 'available')->get();
 
         return view('pages.home', [
             'announcements' => $announcements,

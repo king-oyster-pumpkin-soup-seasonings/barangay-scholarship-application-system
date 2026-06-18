@@ -15,7 +15,7 @@ class DemoScholarshipSeeder extends Seeder
 
         // ── AVAILABLE ────────────────────────────────────────────────────────
 
-        $scholarship1 = Scholarship::firstOrCreate(
+        $scholarship1 = Scholarship::updateOrCreate(
             ['title' => 'Barangay Academic Excellence Grant'],
             [
                 'description' => 'For graduating students with high academic standing (GPA 90 and above).',
@@ -28,7 +28,7 @@ class DemoScholarshipSeeder extends Seeder
         );
         $this->createRequirements($scholarship1);
 
-        $scholarship2 = Scholarship::firstOrCreate(
+        $scholarship2 = Scholarship::updateOrCreate(
             ['title' => 'Barangay Sports Scholarship'],
             [
                 'description' => 'For student-athletes representing the barangay in regional competitions.',
@@ -41,7 +41,7 @@ class DemoScholarshipSeeder extends Seeder
         );
         $this->createRequirements($scholarship2);
 
-        $scholarship3 = Scholarship::firstOrCreate(
+        $scholarship3 = Scholarship::updateOrCreate(
             ['title' => 'Out-of-School Youth Support Grant'],
             [
                 'description' => 'For out-of-school youth pursuing alternative learning programs.',
@@ -54,7 +54,7 @@ class DemoScholarshipSeeder extends Seeder
         );
         $this->createRequirements($scholarship3);
 
-        $scholarship4 = Scholarship::firstOrCreate(
+        $scholarship4 = Scholarship::updateOrCreate(
             ['title' => 'STEM Achievers Scholarship'],
             [
                 'description' => 'Supports students excelling in Science, Technology, Engineering, and Mathematics tracks.',
@@ -67,7 +67,7 @@ class DemoScholarshipSeeder extends Seeder
         );
         $this->createRequirements($scholarship4);
 
-        $scholarship5 = Scholarship::firstOrCreate(
+        $scholarship5 = Scholarship::updateOrCreate(
             ['title' => 'Solo Parent Dependents Scholarship'],
             [
                 'description' => 'For children of registered solo parents in the barangay who need financial support to continue schooling.',
@@ -82,7 +82,7 @@ class DemoScholarshipSeeder extends Seeder
 
         // ── FULL ─────────────────────────────────────────────────────────────
 
-        $scholarship6 = Scholarship::firstOrCreate(
+        $scholarship6 = Scholarship::updateOrCreate(
             ['title' => 'SK Leadership & Civic Excellence Award'],
             [
                 'description' => 'Recognises outstanding Sangguniang Kabataan youth leaders who demonstrate exemplary civic service.',
@@ -95,7 +95,7 @@ class DemoScholarshipSeeder extends Seeder
         );
         $this->createRequirements($scholarship6);
 
-        $scholarship7 = Scholarship::firstOrCreate(
+        $scholarship7 = Scholarship::updateOrCreate(
             ['title' => 'Arts & Culture Scholarship'],
             [
                 'description' => 'For talented youth in the visual arts, performing arts, and cultural heritage programs.',
@@ -110,7 +110,7 @@ class DemoScholarshipSeeder extends Seeder
 
         // ── UNAVAILABLE ───────────────────────────────────────────────────────
 
-        $scholarship8 = Scholarship::firstOrCreate(
+        $scholarship8 = Scholarship::updateOrCreate(
             ['title' => 'Persons with Disability Educational Assistance'],
             [
                 'description' => 'Financial assistance for PWD residents pursuing vocational or college-level education.',
@@ -123,12 +123,12 @@ class DemoScholarshipSeeder extends Seeder
         );
         $this->createRequirements($scholarship8);
 
-        $scholarship9 = Scholarship::firstOrCreate(
+        $scholarship9 = Scholarship::updateOrCreate(
             ['title' => 'Senior High Technical-Vocational Grant'],
             [
                 'description' => 'Supports SHS students enrolled in TVL tracks with toolkits and training allowance.',
                 'allowance' => 22000.00,
-                'slots' => 20,
+                'slots' => 0,
                 'deadline' => '2026-01-15',
                 'status' => 'unavailable',
                 'created_by' => $admin->id,
@@ -149,7 +149,7 @@ class DemoScholarshipSeeder extends Seeder
         ];
 
         foreach ($requirements as $requirement) {
-            ScholarshipRequirement::firstOrCreate(
+            ScholarshipRequirement::updateOrCreate(
                 ['scholarship_id' => $scholarship->id, 'label' => $requirement['label']],
                 array_merge($requirement, ['scholarship_id' => $scholarship->id])
             );
