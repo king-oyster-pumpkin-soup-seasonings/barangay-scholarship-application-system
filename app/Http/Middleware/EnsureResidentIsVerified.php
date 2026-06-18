@@ -13,7 +13,7 @@ class EnsureResidentIsVerified
         $user = $request->user();
 
         if ($user && $user->role === 'user' && $user->verification_status !== 'verified') {
-            return redirect()->route('verification.pending')
+            return redirect()->route('verification')
                 ->with('message', 'Your residency verification is still being reviewed.');
         }
 

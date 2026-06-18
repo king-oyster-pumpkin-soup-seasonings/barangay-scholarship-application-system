@@ -50,30 +50,9 @@ class Applications extends Component
         $application = Application::findOrFail($id);
 
         if ($application->status === 'pending') {
-            $application->update([
-                'status' => 'approved',
-                'remarks' => 'Application approved.',
-                'reviewed_by' => auth()->id(),
-                'reviewed_at' => now(),
-            ]);
 
-            // Track status change in application logs
-            ApplicationLog::create([
-                'application_id' => $application->id,
-                'old_status' => 'pending',
-                'new_status' => 'approved',
-                'changed_by' => auth()->id(),
-                'notes' => 'Application approved by administrator.',
-            ]);
-
-            // Decrement available slots in the scholarship
-            $scholarship = $application->scholarship;
-            if ($scholarship->slots > 0) {
-                $scholarship->decrement('slots');
-                if ($scholarship->slots <= 0) {
-                    $scholarship->update(['status' => 'full']);
-                }
-            }
+            app(\App\Actions\Application\ApproveApplication::class)
+                ->handle($application, auth()->user(), 'Application approved.');
 
             session()->flash('success', 'Application approved successfully.');
         }
@@ -119,21 +98,9 @@ class Applications extends Component
         $application = Application::findOrFail($this->selectedApplicationId);
 
         if ($application->status === 'pending') {
-            $application->update([
-                'status' => 'rejected',
-                'remarks' => $this->rejectionRemarks,
-                'reviewed_by' => auth()->id(),
-                'reviewed_at' => now(),
-            ]);
 
-            // Track status change in application logs
-            ApplicationLog::create([
-                'application_id' => $application->id,
-                'old_status' => 'pending',
-                'new_status' => 'rejected',
-                'changed_by' => auth()->id(),
-                'notes' => $this->rejectionRemarks,
-            ]);
+            app(\App\Actions\Application\RejectApplication::class)
+                ->handle($application, auth()->user(), $this->rejectionRemarks);
 
             session()->flash('info', 'Application has been rejected.');
         }

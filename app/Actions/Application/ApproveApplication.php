@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Actions\Application;
+
+use App\Models\Application;
+use App\Models\ApplicationLog;
+use App\Models\User;
+use App\Notifications\ApplicationStatusUpdatedNotification;
+
+class ApproveApplication
+{
+    public function handle(
+        Application $application,
+        User $admin,
+        ?string $notes = null,
+    ): Application {
+        $oldStatus = $application->status;
+
+        $application->update([
+            'status' => 'approved',
+            'reviewed_by' => $admin->id,
+            'reviewed_at' => now(),
+            'remarks' => $notes,
+        ]);
+
+        ApplicationLog::create([
+            'application_id' => $application->id,
+            'old_status' => $oldStatus,
+            'new_status' => 'approved',
+            'changed_by' => $admin->id,
+            'notes' => $notes,
+        ]);
+
+        $application->user->notify(
+            new ApplicationStatusUpdatedNotification('approved')
+        );
+
+        return $application->fresh();
+    }
+}
