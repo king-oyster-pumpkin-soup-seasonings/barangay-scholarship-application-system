@@ -20,7 +20,6 @@ test('new users can register', function () {
         'birthdate' => '2000-01-01',
         'sex' => 'male',
         'address' => '123 Barangay St., Quezon City',
-        'role' => 'user',
         'password' => 'password',
         'password_confirmation' => 'password',
     ]);
