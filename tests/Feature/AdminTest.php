@@ -3,6 +3,7 @@
 use App\Livewire\Admin\Announcements;
 use App\Livewire\Admin\Applications;
 use App\Livewire\Admin\Dashboard;
+use App\Livewire\Admin\Scholarships;
 use App\Livewire\Admin\Verifications;
 use App\Livewire\Superadmin\AdminManagement;
 use App\Models\Announcement;
@@ -366,4 +367,66 @@ test('superadmin can create a new admin directly', function () {
     expect($newAdmin->verification_status)->toBe('verified');
     expect($newAdmin->verified_by)->toBe($superadmin->id);
     expect($newAdmin->verified_at)->not->toBeNull();
+});
+
+test('admin can manage scholarships', function () {
+    $admin = User::create([
+        'name' => 'Admin User',
+        'email' => 'admin@example.com',
+        'password' => bcrypt('password123'),
+        'role' => 'admin',
+    ]);
+
+    $this->actingAs($admin);
+
+    // Create
+    Livewire::test(Scholarships::class)
+        ->call('openCreateModal')
+        ->set('title', 'New Tertiary Education Subsidy')
+        ->set('description', 'This is a test description for scholarship program.')
+        ->set('allowance', '15000')
+        ->set('slotsCount', '10')
+        ->set('deadline', '2026-12-31')
+        ->set('status', 'available')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $scholarship = Scholarship::where('title', 'New Tertiary Education Subsidy')->first();
+    expect($scholarship)->not->toBeNull();
+    expect($scholarship->description)->toBe('This is a test description for scholarship program.');
+    expect($scholarship->allowance)->toEqual(15000);
+    expect($scholarship->slots)->toBe(10);
+    expect($scholarship->status)->toBe('available');
+
+    // Default requirements created automatically
+    expect($scholarship->requirements()->count())->toBe(6);
+    expect($scholarship->requirements()->where('label', 'Current GPA')->exists())->toBeTrue();
+
+    // Update
+    Livewire::test(Scholarships::class)
+        ->call('openEditModal', $scholarship->id)
+        ->set('title', 'Updated Tertiary Education Subsidy')
+        ->set('slotsCount', '5')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect($scholarship->refresh()->title)->toBe('Updated Tertiary Education Subsidy');
+    expect($scholarship->slots)->toBe(5);
+
+    // Update slots to 0 should set status to full
+    Livewire::test(Scholarships::class)
+        ->call('openEditModal', $scholarship->id)
+        ->set('slotsCount', '0')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect($scholarship->refresh()->slots)->toBe(0);
+    expect($scholarship->status)->toBe('full');
+
+    // Delete
+    Livewire::test(Scholarships::class)
+        ->call('delete', $scholarship->id)
+        ->assertHasNoErrors();
+
+    expect(Scholarship::count())->toBe(0);
 });

@@ -3,6 +3,7 @@
 use App\Livewire\Admin\Announcements;
 use App\Livewire\Admin\Applications;
 use App\Livewire\Admin\Dashboard as AdminDashboard;
+use App\Livewire\Admin\Scholarships;
 use App\Livewire\Admin\Verifications;
 use App\Livewire\Pages\About;
 use App\Livewire\Pages\Applications\Create;
@@ -39,6 +40,7 @@ Route::middleware(['auth', 'role:admin,superadmin', 'approved.admin'])->prefix('
     Route::get('/dashboard', AdminDashboard::class)->name('admin.dashboard');
     Route::get('/verifications', Verifications::class)->name('admin.verifications');
     Route::get('/applications', Applications::class)->name('admin.applications');
+    Route::get('/scholarships', Scholarships::class)->name('admin.scholarships');
     Route::get('/announcements', Announcements::class)->name('admin.announcements');
 });
 
