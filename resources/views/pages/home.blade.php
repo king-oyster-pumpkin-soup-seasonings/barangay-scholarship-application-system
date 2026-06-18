@@ -356,36 +356,121 @@
         </div>
     </section>
 
-    {{-- STATS BANNER (Desktop refined grid with dividers) --}}
-    <section class="py-20 lg:py-28 px-6 bg-gradient-to-r from-[#0f2747] to-[#13396b] text-white">
-        <div
-            class="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-0 text-center divide-y lg:divide-y-0 lg:divide-x divide-white/10">
-            <div class="pt-6 lg:pt-0">
-                <p style="font-family: 'Playfair Display', serif;"
-                    class="text-5xl lg:text-6xl font-black text-amber-400 mb-2">108</p>
-                <p class="text-base lg:text-lg font-bold text-white mb-1">Active Scholars</p>
-                <p class="text-sm text-slate-400 font-light tracking-wide">SY 2024-2025</p>
-            </div>
-            <div class="pt-6 lg:pt-0">
-                <p style="font-family: 'Playfair Display', serif;"
-                    class="text-5xl lg:text-6xl font-black text-amber-400 mb-2">₱2.8M</p>
-                <p class="text-base lg:text-lg font-bold text-white mb-1">Disbursed to Date</p>
-                <p class="text-sm text-slate-400 font-light tracking-wide">since 2018</p>
-            </div>
-            <div class="pt-6 lg:pt-0">
-                <p style="font-family: 'Playfair Display', serif;"
-                    class="text-5xl lg:text-6xl font-black text-amber-400 mb-2">94%</p>
-                <p class="text-base lg:text-lg font-bold text-white mb-1">Graduation Rate</p>
-                <p class="text-sm text-slate-400 font-light tracking-wide">among scholars</p>
-            </div>
-            <div class="pt-6 lg:pt-0">
-                <p style="font-family: 'Playfair Display', serif;"
-                    class="text-5xl lg:text-6xl font-black text-amber-400 mb-2">12+</p>
-                <p class="text-base lg:text-lg font-bold text-white mb-1">Partner Institutions</p>
-                <p class="text-sm text-slate-400 font-light tracking-wide">in the city</p>
-            </div>
+{{-- STATS BANNER (Interactive with Count-up Animation) --}}
+<section class="py-20 lg:py-28 px-6 bg-gradient-to-r from-[#0f2747] to-[#13396b] text-white" id="stats-banner">
+    <div class="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-0 text-center divide-y lg:divide-y-0 lg:divide-x divide-white/10">
+
+        {{-- Stat 1 --}}
+        <div class="pt-6 lg:pt-0 stat-item opacity-0 translate-y-8 transition-all duration-1000 ease-out">
+            <p style="font-family: 'Playfair Display', serif;"
+               class="text-5xl lg:text-6xl font-black text-amber-400 mb-2 count-up"
+               data-target="108"
+               data-is-number="true">0</p>
+            <p class="text-base lg:text-lg font-bold text-white mb-1">Active Scholars</p>
+            <p class="text-sm text-slate-400 font-light tracking-wide">SY 2024-2025</p>
         </div>
-    </section>
+
+        {{-- Stat 2 --}}
+        <div class="pt-6 lg:pt-0 stat-item opacity-0 translate-y-8 transition-all duration-1000 ease-out delay-200">
+            <p style="font-family: 'Playfair Display', serif;"
+               class="text-5xl lg:text-6xl font-black text-amber-400 mb-2 count-up"
+               data-target="2.8"
+               data-prefix="₱"
+               data-is-decimal="true">0</p>
+            <p class="text-base lg:text-lg font-bold text-white mb-1">Disbursed to Date</p>
+            <p class="text-sm text-slate-400 font-light tracking-wide">since 2018</p>
+        </div>
+
+        {{-- Stat 3 --}}
+        <div class="pt-6 lg:pt-0 stat-item opacity-0 translate-y-8 transition-all duration-1000 ease-out delay-400">
+            <p style="font-family: 'Playfair Display', serif;"
+               class="text-5xl lg:text-6xl font-black text-amber-400 mb-2 count-up"
+               data-target="94"
+               data-suffix="%"
+               data-is-number="true">0</p>
+            <p class="text-base lg:text-lg font-bold text-white mb-1">Graduation Rate</p>
+            <p class="text-sm text-slate-400 font-light tracking-wide">among scholars</p>
+        </div>
+
+        {{-- Stat 4 --}}
+        <div class="pt-6 lg:pt-0 stat-item opacity-0 translate-y-8 transition-all duration-1000 ease-out delay-600">
+            <p style="font-family: 'Playfair Display', serif;"
+               class="text-5xl lg:text-6xl font-black text-amber-400 mb-2 count-up"
+               data-target="12"
+               data-suffix="+"
+               data-is-number="true">0</p>
+            <p class="text-base lg:text-lg font-bold text-white mb-1">Partner Institutions</p>
+            <p class="text-sm text-slate-400 font-light tracking-wide">in the city</p>
+        </div>
+
+    </div>
+</section>
+
+{{-- Interactive Script --}}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const statsSection = document.getElementById('stats-banner');
+    const statItems = document.querySelectorAll('.stat-item');
+    const countElements = document.querySelectorAll('.count-up');
+
+    let hasAnimated = false;
+
+    const animateValue = (el, start, end, duration, prefix = '', suffix = '', isDecimal = false) => {
+        const startTime = performance.now();
+
+        const updateCount = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            // Easing function (easeOutExpo)
+            const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+
+            const currentVal = start + (end - start) * ease;
+
+            if (isDecimal) {
+                el.textContent = `${prefix}${currentVal.toFixed(1)}${suffix}`;
+            } else {
+                el.textContent = `${prefix}${Math.floor(currentVal)}${suffix}`;
+            }
+
+            if (progress < 1) {
+                requestAnimationFrame(updateCount);
+            }
+        };
+
+        requestAnimationFrame(updateCount);
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !hasAnimated) {
+                hasAnimated = true;
+
+                // Fade in and slide up the items
+                statItems.forEach((item, index) => {
+                    item.classList.remove('opacity-0', 'translate-y-8');
+                    // The delay is already set in HTML via classes (delay-200, etc.)
+                });
+
+                // Start counting numbers after a slight delay for the fade-in
+                setTimeout(() => {
+                    countElements.forEach(el => {
+                        const target = parseFloat(el.dataset.target);
+                        const prefix = el.dataset.prefix || '';
+                        const suffix = el.dataset.suffix || '';
+                        const isDecimal = el.dataset.isDecimal === 'true';
+                        const duration = 2000; // 2 seconds
+
+                        animateValue(el, 0, target, duration, prefix, suffix, isDecimal);
+                    });
+                }, 300);
+            }
+        });
+    }, { threshold: 0.3 }); // Trigger when 30% of the section is visible
+
+    observer.observe(statsSection);
+});
+</script>
 
     {{-- SUCCESS STORIES (Testimonial Block) --}}
     <section class="py-24 lg:py-32 px-6 bg-white">
