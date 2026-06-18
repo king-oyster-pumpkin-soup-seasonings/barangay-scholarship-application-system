@@ -1,10 +1,10 @@
 <?php
 
-use App\Livewire\Admin\AdminApplications;
 use App\Livewire\Admin\Announcements;
 use App\Livewire\Admin\Applications;
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\Verifications;
+use App\Livewire\Superadmin\AdminManagement;
 use App\Models\Announcement;
 use App\Models\Application;
 use App\Models\ResidenceVerification;
@@ -67,7 +67,7 @@ test('admin dashboard renders and calculates statistics correctly', function () 
 
     Livewire::test(Dashboard::class)
         ->assertOk()
-        ->assertSee('Admin Dashboard')
+        ->assertSee('Welcome back')
         ->assertViewHas('pendingVerifications', 1)
         ->assertViewHas('pendingApplications', 1)
         ->assertViewHas('totalScholars', 1);
@@ -188,6 +188,50 @@ test('admin can approve scholarship application', function () {
     expect($scholarship->refresh()->slots)->toBe(4);
 });
 
+test('scholarship status transitions to full when slots reach zero upon application approval', function () {
+    $admin = User::create([
+        'name' => 'Admin User',
+        'email' => 'admin@example.com',
+        'password' => bcrypt('password123'),
+        'role' => 'admin',
+    ]);
+
+    $user = User::create([
+        'name' => 'Resident User',
+        'email' => 'resident@example.com',
+        'password' => bcrypt('password123'),
+        'role' => 'user',
+        'verification_status' => 'verified',
+    ]);
+
+    $scholarship = Scholarship::create([
+        'title' => 'Test Scholarship',
+        'description' => 'Test Description',
+        'allowance' => 5000.00,
+        'slots' => 1,
+        'deadline' => now()->addDays(30),
+        'status' => 'available',
+        'created_by' => $admin->id,
+    ]);
+
+    $application = Application::create([
+        'user_id' => $user->id,
+        'scholarship_id' => $scholarship->id,
+        'status' => 'pending',
+        'submitted_at' => now(),
+    ]);
+
+    $this->actingAs($admin);
+
+    Livewire::test(Applications::class)
+        ->call('approve', $application->id)
+        ->assertHasNoErrors();
+
+    expect($application->refresh()->status)->toBe('approved');
+    expect($scholarship->refresh()->slots)->toBe(0);
+    expect($scholarship->refresh()->status)->toBe('full');
+});
+
 test('admin can reject scholarship application with remarks', function () {
     $admin = User::create([
         'name' => 'Admin User',
@@ -271,7 +315,7 @@ test('admin can manage announcements', function () {
     expect(Announcement::count())->toBe(0);
 });
 
-test('superadmin can approve admin application', function () {
+test('superadmin can create a new admin directly', function () {
     $superadmin = User::create([
         'name' => 'Superadmin User',
         'email' => 'superadmin@example.com',
@@ -279,51 +323,22 @@ test('superadmin can approve admin application', function () {
         'role' => 'superadmin',
     ]);
 
-    $pendingAdmin = User::create([
-        'name' => 'Pending Admin',
-        'email' => 'pending_admin@example.com',
-        'password' => bcrypt('password123'),
-        'role' => 'admin',
-        'verification_status' => 'pending',
-    ]);
-
     $this->actingAs($superadmin);
 
-    Livewire::test(AdminApplications::class)
-        ->call('approve', $pendingAdmin->id)
+    Livewire::test(AdminManagement::class)
+        ->call('openCreateModal')
+        ->set('name', 'New Admin')
+        ->set('email', 'newadmin@example.com')
+        ->set('password', 'password123')
+        ->set('password_confirmation', 'password123')
+        ->call('createAdmin')
         ->assertHasNoErrors();
 
-    expect($pendingAdmin->refresh()->verification_status)->toBe('verified');
-    expect($pendingAdmin->verified_by)->toBe($superadmin->id);
-    expect($pendingAdmin->verified_at)->not->toBeNull();
-});
+    $newAdmin = User::where('email', 'newadmin@example.com')->first();
 
-test('superadmin can reject admin application with remarks', function () {
-    $superadmin = User::create([
-        'name' => 'Superadmin User',
-        'email' => 'superadmin@example.com',
-        'password' => bcrypt('password123'),
-        'role' => 'superadmin',
-    ]);
-
-    $pendingAdmin = User::create([
-        'name' => 'Pending Admin',
-        'email' => 'pending_admin@example.com',
-        'password' => bcrypt('password123'),
-        'role' => 'admin',
-        'verification_status' => 'pending',
-    ]);
-
-    $this->actingAs($superadmin);
-
-    Livewire::test(AdminApplications::class)
-        ->call('openRejectionModal', $pendingAdmin->id)
-        ->set('rejectionRemarks', 'Credentials do not match records')
-        ->call('reject')
-        ->assertHasNoErrors();
-
-    expect($pendingAdmin->refresh()->verification_status)->toBe('rejected');
-    expect($pendingAdmin->verification_remarks)->toBe('Credentials do not match records');
-    expect($pendingAdmin->verified_by)->toBe($superadmin->id);
-    expect($pendingAdmin->verified_at)->not->toBeNull();
+    expect($newAdmin)->not->toBeNull();
+    expect($newAdmin->role)->toBe('admin');
+    expect($newAdmin->verification_status)->toBe('verified');
+    expect($newAdmin->verified_by)->toBe($superadmin->id);
+    expect($newAdmin->verified_at)->not->toBeNull();
 });

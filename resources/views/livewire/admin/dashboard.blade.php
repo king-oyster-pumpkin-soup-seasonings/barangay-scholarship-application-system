@@ -1,8 +1,8 @@
 <div class="min-h-screen bg-[#E5E8EF] p-8">
     <!-- Enhanced Page Header -->
     <div class="mb-10">
-        <h1 class="text-3xl font-extrabold text-[#33333B] tracking-tight">Admin Dashboard</h1>
-        <p class="text-[#AA9A98] text-sm mt-1.5 font-medium">Welcome to the admin panel. Manage systems and review pending applications.</p>
+        <h1 class="text-3xl font-extrabold text-[#33333B] tracking-tight">Welcome back, {{ auth()->user()->name }}! ({{ ucfirst(auth()->user()->role) }})</h1>
+        <p class="text-[#AA9A98] text-sm mt-1.5 font-medium">Here's an overview of the system status and recent applications.</p>
     </div>
 
     <!-- Stats Cards -->
@@ -46,15 +46,15 @@
             </div>
         </div>
 
-        <!-- Active Announcements -->
+        <!-- Total Residents -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6 flex justify-between items-start">
             <div>
-                <p class="text-xs text-[#AA9A98] uppercase font-bold tracking-wider">Active Announcements</p>
-                <p class="text-4xl font-extrabold text-[#1D74E3] mt-2">{{ $activeAnnouncements }}</p>
+                <p class="text-xs text-[#AA9A98] uppercase font-bold tracking-wider">Total Residents</p>
+                <p class="text-4xl font-extrabold text-[#1D74E3] mt-2">{{ $totalResidents }}</p>
             </div>
             <div class="p-2.5 bg-[#1D74E3]/10 rounded-lg text-[#1D74E3] shadow-sm">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                 </svg>
             </div>
         </div>
@@ -100,5 +100,51 @@
                 </span>
             </div>
         </a>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="mt-10">
+        <h2 class="text-xl font-bold text-[#33333B] mb-4">Latest Scholarship Applications</h2>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-100 text-[#33333B]">
+                        <th class="p-4 font-semibold text-sm">Applicant</th>
+                        <th class="p-4 font-semibold text-sm">Scholarship</th>
+                        <th class="p-4 font-semibold text-sm">Date Applied</th>
+                        <th class="p-4 font-semibold text-sm">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($recentApplications as $application)
+                        <tr class="border-b border-gray-100 hover:bg-gray-50/50 transition duration-150">
+                            <td class="p-4">
+                                <span class="font-semibold text-[#1B1A1C] text-sm block">{{ $application->user->name }}</span>
+                            </td>
+                            <td class="p-4 text-sm text-gray-600">
+                                {{ $application->scholarship->title }}
+                            </td>
+                            <td class="p-4 text-xs text-[#AA9A98]">
+                                {{ $application->submitted_at->format('M d, Y h:i A') }}
+                            </td>
+                            <td class="p-4">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold 
+                                    @if($application->status === 'approved') bg-green-50 text-green-700 
+                                    @elseif($application->status === 'rejected') bg-red-50 text-red-700 
+                                    @else bg-yellow-50 text-yellow-700 @endif">
+                                    {{ ucfirst($application->status) }}
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="p-8 text-center text-gray-500 text-sm">
+                                No recent applications found.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

@@ -27,14 +27,14 @@ class SubmitApplicationAnswers
         foreach ($answers as $answer) {
 
             // 3. Validate structure
-            if (!isset($answer['requirement_id'], $answer['value'])) {
+            if (! isset($answer['requirement_id'], $answer['value'])) {
                 throw new \Exception('Invalid answer format.');
             }
 
             // 4. Ensure requirement exists
             $requirement = ScholarshipRequirement::find($answer['requirement_id']);
 
-            if (!$requirement) {
+            if (! $requirement) {
                 throw new \Exception('Requirement not found.');
             }
 

@@ -2,16 +2,16 @@
 
 namespace App\Livewire\Pages;
 
-use Livewire\Component;
-use App\Models\Scholarship;
 use App\Models\Announcement;
+use App\Models\Scholarship;
+use Livewire\Component;
 
 class Home extends Component
 {
     public function render()
     {
         $announcements = Announcement::latest()->take(2)->get();
-        $scholarships = Scholarship::all();
+        $scholarships = Scholarship::where('status', 'available')->get();
 
         return view('pages.home', [
             'announcements' => $announcements,
