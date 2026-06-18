@@ -6,12 +6,18 @@ use App\Livewire\Admin\Applications;
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\Verifications;
 use Illuminate\Support\Facades\Route;
+<<<<<<< HEAD
 use App\Livewire\Pages\Home;
 use App\Livewire\Pages\About;
 use App\Livewire\Pages\Faqs;
 use App\Livewire\Pages\Contact;
 use App\Livewire\Pages\Scholarships\Index;
 use App\Livewire\Pages\Scholarships\Show;
+=======
+use App\Livewire\Pages\Verification;
+use App\Livewire\Pages\Dashboard;
+use App\Livewire\Pages\Applications\Create;
+>>>>>>> origin/feat/scholarship-app
 
 // Public pages
 Route::get('/', Home::class)->name('home');
@@ -23,9 +29,12 @@ Route::get('/scholarships', Index::class)->name('scholarships.index');
 
 // Authenticated pages
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', Dashboard::class)->name('dashboard');
+
+    // Route::get('/verification', Verification::class)->name('verification');
 });
 
+<<<<<<< HEAD
 // Admin panel routes
 Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/dashboard', Dashboard::class)->name('admin.dashboard');
@@ -36,6 +45,29 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 });
 
 // Practice routes (demo UI only)
+=======
+// Resident-only routes (must be logged in, role=user, AND residency verified)
+Route::middleware(['auth', 'role:user', 'verified.resident'])->group(function () {
+    Route::get('/scholarships', /* ... */);
+    Route::get('/scholarships/{scholarship}', /* ... */);
+    Route::get('/scholarships/{scholarship}/apply', Create::class)->name('applications.create');
+});
+
+// Admin panel routes (must be logged in, role=admin or superadmin, AND admin approved)
+Route::middleware(['auth', 'role:admin,superadmin', 'approved.admin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', /* ... */);
+});
+
+// Superadmin-only routes
+Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->group(function () {
+    Route::get('/admins', /* ... */);
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/verification', Verification::class)->name('verification');
+});
+
+>>>>>>> origin/feat/scholarship-app
 require __DIR__ . '/settings.php';
 
 Route::get('/practice/home', function () {
