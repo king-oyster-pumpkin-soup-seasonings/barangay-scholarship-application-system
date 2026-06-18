@@ -2,15 +2,21 @@
     <div class="flex flex-col gap-6" x-data="{ firstName: '', middleName: '', lastName: '' }">
         <!-- User Plus Icon (Logo) -->
 <<<<<<< HEAD
+<<<<<<< HEAD
         <div
             class="h-12 w-12 rounded-xl bg-[#1D74E3]/10 flex items-center justify-center border border-[#1D74E3]/25 shadow-sm">
             <flux:icon name="user-plus" class="h-6 w-6 text-[#1D74E3]" />
 =======
+=======
+>>>>>>> d0ad4c9d553fd6d23882e88791d5137b87cccb31
         <div class="h-12 w-12 rounded-xl bg-[#1D74E3]/10 flex items-center justify-center border border-[#1D74E3]/25 shadow-sm">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-[#1D74E3]">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
             </svg>
+<<<<<<< HEAD
 >>>>>>> main
+=======
+>>>>>>> d0ad4c9d553fd6d23882e88791d5137b87cccb31
         </div>
 
         <!-- Header -->
@@ -39,6 +45,7 @@
                     <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider">
                         {{ __('Last Name') }} <span class="text-[#F54A00]">*</span>
 <<<<<<< HEAD
+<<<<<<< HEAD
                     </flux:label>
                     <flux:input x-model="lastName" required placeholder="dela Cruz" {{-- Letters, spaces, hyphens, and apostrophes only (handles compound surnames) --}}
                         pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s'\-]{1,50}"
@@ -48,6 +55,8 @@
                         class="bg-white border-zinc-300 text-zinc-900 focus:border-[#1D74E3]" />
                 </flux:field>
 =======
+=======
+>>>>>>> d0ad4c9d553fd6d23882e88791d5137b87cccb31
                     </label>
                     <input
                         type="text"
@@ -60,11 +69,15 @@
                         <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
                     @enderror
                 </div>
+<<<<<<< HEAD
 >>>>>>> main
+=======
+>>>>>>> d0ad4c9d553fd6d23882e88791d5137b87cccb31
 
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider">
                         {{ __('First Name') }} <span class="text-[#F54A00]">*</span>
+<<<<<<< HEAD
 <<<<<<< HEAD
                     </flux:label>
                     <flux:input x-model="firstName" required placeholder="Juan" {{-- Letters, spaces, hyphens, and apostrophes only --}}
@@ -75,6 +88,8 @@
                         class="bg-white border-zinc-300 text-zinc-900 focus:border-[#1D74E3]" />
                 </flux:field>
 =======
+=======
+>>>>>>> d0ad4c9d553fd6d23882e88791d5137b87cccb31
                     </label>
                     <input
                         type="text"
@@ -84,13 +99,17 @@
                         class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition"
                     />
                 </div>
+<<<<<<< HEAD
 >>>>>>> main
+=======
+>>>>>>> d0ad4c9d553fd6d23882e88791d5137b87cccb31
             </div>
 
             <!-- Middle Name -->
             <div class="flex flex-col gap-1.5">
                 <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider">
                     {{ __('Middle Name') }}
+<<<<<<< HEAD
 <<<<<<< HEAD
                 </flux:label>
                 <flux:input x-model="middleName" placeholder="Santos (optional)" {{-- Same rules as name fields, but optional --}}
@@ -212,6 +231,8 @@
                 class="w-full flex flex-row items-center justify-center gap-2 bg-[#12325E] hover:bg-[#12325E]/90 text-white font-medium py-2.5 rounded-lg shadow-sm mt-3"
                 data-test="register-user-button">
 =======
+=======
+>>>>>>> d0ad4c9d553fd6d23882e88791d5137b87cccb31
                 </label>
                 <input
                     type="text"
@@ -414,7 +435,11 @@
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
                 </svg>
+<<<<<<< HEAD
 >>>>>>> main
+=======
+                
+>>>>>>> d0ad4c9d553fd6d23882e88791d5137b87cccb31
                 {{ __('Create my account') }}
             </button>
         </form>

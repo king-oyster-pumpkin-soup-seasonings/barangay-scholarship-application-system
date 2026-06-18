@@ -71,16 +71,30 @@
 
             <flux:sidebar.nav>
                 <flux:sidebar.group :heading="__('Platform')" class="grid">
-                    <flux:sidebar.item icon="home" :href="route('admin.dashboard')" :current="request()->routeIs('admin.dashboard')" wire:navigate>
-                        {{ __('Admin Dashboard') }}
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="academic-cap" :href="route('admin.applications')" :current="request()->routeIs('admin.applications')" wire:navigate>
-                        {{ __('Scholarship Applications') }}
-                    </flux:sidebar.item>
-                    @if(auth()->user()->role === 'superadmin')
-                        <flux:sidebar.item icon="users" :href="route('superadmin.admins')" :current="request()->routeIs('superadmin.admins')" wire:navigate>
-                            {{ __('Admin Applications') }}
+                    @if(auth()->user()->role === 'user')
+                        <flux:sidebar.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
+                            {{ __('Resident Dashboard') }}
                         </flux:sidebar.item>
+                    @endif
+
+                    @if(in_array(auth()->user()->role, ['admin', 'superadmin']))
+                        <flux:sidebar.item icon="home" :href="route('admin.dashboard')" :current="request()->routeIs('admin.dashboard')" wire:navigate>
+                            {{ __('Admin Dashboard') }}
+                        </flux:sidebar.item>
+                        <flux:sidebar.item icon="academic-cap" :href="route('admin.applications')" :current="request()->routeIs('admin.applications')" wire:navigate>
+                            {{ __('Scholarship Applications') }}
+                        </flux:sidebar.item>
+                        <flux:sidebar.item icon="document-check" :href="route('admin.verifications')" :current="request()->routeIs('admin.verifications')" wire:navigate>
+                            {{ __('Residence Verifications') }}
+                        </flux:sidebar.item>
+                        <flux:sidebar.item icon="megaphone" :href="route('admin.announcements')" :current="request()->routeIs('admin.announcements')" wire:navigate>
+                            {{ __('Manage Announcements') }}
+                        </flux:sidebar.item>
+                        @if(auth()->user()->role === 'superadmin')
+                            <flux:sidebar.item icon="users" :href="route('superadmin.admins')" :current="request()->routeIs('superadmin.admins')" wire:navigate>
+                                {{ __('Admin Management') }}
+                            </flux:sidebar.item>
+                        @endif
                     @endif
                 </flux:sidebar.group>
             </flux:sidebar.nav>

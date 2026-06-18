@@ -280,7 +280,8 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                @foreach ($scholarships as $scholarship)
+                {{-- Updated line below to limit the output to exactly 3 items --}}
+                @foreach ($scholarships->take(3) as $scholarship)
                     <div
                         class="bg-white rounded-3xl p-8 border border-slate-200 hover:border-blue-100 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group">
 
