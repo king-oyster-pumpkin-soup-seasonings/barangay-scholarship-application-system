@@ -32,7 +32,7 @@ class RejectApplication
         ]);
 
         $application->user->notify(
-            new ApplicationStatusUpdatedNotification('rejected')
+            new ApplicationStatusUpdatedNotification($application)
         );
 
         return $application->fresh();

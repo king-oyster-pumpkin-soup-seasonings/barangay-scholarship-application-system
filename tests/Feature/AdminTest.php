@@ -10,7 +10,9 @@ use App\Models\Application;
 use App\Models\ResidenceVerification;
 use App\Models\Scholarship;
 use App\Models\User;
+use App\Notifications\ApplicationStatusUpdatedNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -146,6 +148,8 @@ test('admin can reject residence verification with remarks', function () {
 });
 
 test('admin can approve scholarship application', function () {
+    Notification::fake();
+
     $admin = User::create([
         'name' => 'Admin User',
         'email' => 'admin@example.com',
@@ -186,6 +190,15 @@ test('admin can approve scholarship application', function () {
 
     expect($application->refresh()->status)->toBe('approved');
     expect($scholarship->refresh()->slots)->toBe(4);
+
+    Notification::assertSentTo(
+        $user,
+        ApplicationStatusUpdatedNotification::class,
+        function ($notification) use ($scholarship) {
+            return $notification->application->status === 'approved'
+                && $notification->application->scholarship_id === $scholarship->id;
+        }
+    );
 });
 
 test('scholarship status transitions to full when slots reach zero upon application approval', function () {
@@ -233,6 +246,8 @@ test('scholarship status transitions to full when slots reach zero upon applicat
 });
 
 test('admin can reject scholarship application with remarks', function () {
+    Notification::fake();
+
     $admin = User::create([
         'name' => 'Admin User',
         'email' => 'admin@example.com',
@@ -275,6 +290,16 @@ test('admin can reject scholarship application with remarks', function () {
 
     expect($application->refresh()->status)->toBe('rejected');
     expect($application->remarks)->toBe('GPA requirement not met');
+
+    Notification::assertSentTo(
+        $user,
+        ApplicationStatusUpdatedNotification::class,
+        function ($notification) use ($scholarship) {
+            return $notification->application->status === 'rejected'
+                && $notification->application->remarks === 'GPA requirement not met'
+                && $notification->application->scholarship_id === $scholarship->id;
+        }
+    );
 });
 
 test('admin can manage announcements', function () {
