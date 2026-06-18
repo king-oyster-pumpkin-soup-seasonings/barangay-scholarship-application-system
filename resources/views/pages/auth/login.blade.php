@@ -1,8 +1,9 @@
 <x-layouts::auth.split :title="__('Log in')">
-    <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-5 px-1 sm:px-0 w-full max-w-sm mx-auto">
+
         <!-- Title and Description -->
-        <div class="space-y-2 text-center lg:text-left">
-            <h1 class="text-3xl font-bold font-serif text-[#0F172B]">
+        <div class="space-y-1.5 text-center lg:text-left">
+            <h1 class="text-2xl sm:text-3xl font-bold font-serif text-[#0F172B] leading-tight">
                 {{ __('Welcome back') }}
             </h1>
             <p class="text-sm text-zinc-500">
@@ -13,7 +14,7 @@
         <!-- Session Status -->
         <x-auth-session-status class="text-center" :status="session('status')" />
 
-        <form method="POST" action="{{ route('login.store') }}" class="flex flex-col gap-6">
+        <form method="POST" action="{{ route('login.store') }}" class="flex flex-col gap-5">
             @csrf
 
             <!-- Email Address -->
@@ -29,7 +30,7 @@
                     autofocus
                     autocomplete="email"
                     placeholder="you@example.com"
-                    class="bg-white border-zinc-300 text-zinc-900 focus:border-[#1D74E3]"
+                    class="bg-white border-zinc-300 text-zinc-900 focus:border-[#1D74E3] text-base min-h-[44px]"
                 />
                 <flux:error name="email" />
             </flux:field>
@@ -47,13 +48,17 @@
                     required
                     autocomplete="current-password"
                     placeholder="Enter your password"
-                    class="bg-white border-zinc-300 text-zinc-900 focus:border-[#1D74E3]"
+                    class="bg-white border-zinc-300 text-zinc-900 focus:border-[#1D74E3] text-base min-h-[44px]"
                     viewable
                 />
                 <flux:error name="password" />
                 @if (Route::has('password.request'))
-                    <div class="flex justify-end mt-1.5">
-                        <flux:link class="text-xs text-[#1D74E3] hover:underline" :href="route('password.request')" wire:navigate>
+                    <div class="flex justify-end mt-2">
+                        <flux:link
+                            class="text-xs text-[#1D74E3] hover:underline py-1 -my-1"
+                            :href="route('password.request')"
+                            wire:navigate
+                        >
                             {{ __('Forgot password?') }}
                         </flux:link>
                     </div>
@@ -61,34 +66,46 @@
             </flux:field>
 
             <!-- Remember Me -->
-          <div class="flex items-center gap-3">
-    <input
-        type="checkbox"
-        name="remember"
-        id="remember"
-        class="h-5 w-5 rounded border border-[#E5E7EB] bg-white shadow-sm text-[#1D74E3] focus:ring-2 focus:ring-[#1D74E3] focus:border-[#1D74E3] cursor-pointer"
-        {{ old('remember') ? 'checked' : '' }}
-    >
-
-    <label
-        for="remember"
-        class="text-sm font-medium text-[#0F172B] cursor-pointer select-none"
-    >
-        Remember me
-    </label>
-</div>
-            <!-- Buttons -->
-            <div class="flex flex-col gap-3">
-                <flux:button variant="primary" type="submit" class="w-full flex flex-row items-center justify-center gap-2 bg-[#12325E] hover:bg-[#12325E]/90 text-white font-medium py-2.5 rounded-lg shadow-sm" data-test="login-button">
-                    {{ __('Sign In') }}
-                </flux:button>
+            <div class="flex items-center gap-3">
+                <input
+                    type="checkbox"
+                    name="remember"
+                    id="remember"
+                    class="h-5 w-5 rounded border border-[#E5E7EB] bg-white shadow-sm text-[#1D74E3]
+                           focus:ring-2 focus:ring-[#1D74E3] focus:border-[#1D74E3] cursor-pointer
+                           flex-shrink-0"
+                    {{ old('remember') ? 'checked' : '' }}
+                >
+                <label
+                    for="remember"
+                    class="text-sm font-medium text-[#0F172B] cursor-pointer select-none leading-snug"
+                >
+                    {{ __('Remember me') }}
+                </label>
             </div>
+
+            <!-- Submit Button -->
+            <flux:button
+                variant="primary"
+                type="submit"
+                class="w-full flex flex-row items-center justify-center gap-2
+                       bg-[#12325E] hover:bg-[#12325E]/90 active:bg-[#12325E]/80
+                       text-white font-medium py-3 min-h-[48px] rounded-lg shadow-sm
+                       transition-colors duration-150"
+                data-test="login-button"
+            >
+                {{ __('Sign In') }}
+            </flux:button>
         </form>
 
         <!-- Create Account Footer -->
-        <div class="text-center text-sm text-zinc-500">
-            <span>{{ __('Don\'t have an account?') }}</span>
-            <flux:link :href="route('register')" class="text-[#1D74E3] font-semibold hover:underline" wire:navigate>
+        <div class="text-center text-sm text-zinc-500 pb-safe">
+            <span>{{ __("Don't have an account?") }}</span>
+            <flux:link
+                :href="route('register')"
+                class="text-[#1D74E3] font-semibold hover:underline ml-1"
+                wire:navigate
+            >
                 {{ __('Create one here') }}
             </flux:link>
         </div>

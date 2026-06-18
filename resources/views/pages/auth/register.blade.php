@@ -24,7 +24,8 @@
             @csrf
 
             <!-- Hidden Combined Full Name Field for Backend compatibility -->
-            <input type="hidden" name="name" :value="[firstName, middleName, lastName].filter(Boolean).join(' ') || 'User'" />
+            <input type="hidden" name="name"
+                :value="[firstName, middleName, lastName].filter(Boolean).join(' ') || 'User'" />
 
             <!-- First & Last Name Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -100,7 +101,7 @@
                         value="{{ old('phone') }}"
                         type="tel"
                         required
-                        placeholder="0917-XXX-XXXX"
+                        placeholder="09171234567"
                         class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition"
                     />
                     @error('phone')
@@ -163,54 +164,6 @@
                     <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
                 @enderror
             </div>
-
-<<<<<<< HEAD
-
-=======
-            <!-- Account Type (Role Selection) -->
-            <div class="flex flex-col gap-1.5">
-                <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider mb-2 block">
-                    {{ __('Account Type') }} <span class="text-[#F54A00]">*</span>
-                </label>
-                <input type="hidden" name="role" x-bind:value="role" />
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <!-- Resident Button -->
-                    <button 
-                        type="button" 
-                        x-on:click="role = 'user'"
-                        x-bind:class="role === 'user' ? 'border-[#1D74E3] bg-[#1D74E3]/5 ring-1 ring-[#1D74E3]' : 'border-zinc-200 bg-white hover:bg-zinc-50'"
-                        class="flex items-center gap-3 p-4 rounded-xl border text-left cursor-pointer transition-all duration-200 outline-none"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" x-bind:class="role === 'user' ? 'text-[#1D74E3]' : 'text-zinc-400'" class="h-6 w-6 shrink-0 transition-colors duration-200">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                        </svg>
-                        <div>
-                            <div x-bind:class="role === 'user' ? 'text-[#1D74E3]' : 'text-zinc-800'" class="font-bold text-sm">Resident</div>
-                            <div class="text-xs text-[#AA9A98]">Scholar applicant</div>
-                        </div>
-                    </button>
-
-                    <!-- Official Button -->
-                    <button 
-                        type="button" 
-                        x-on:click="role = 'admin'"
-                        x-bind:class="role === 'admin' ? 'border-[#1D74E3] bg-[#1D74E3]/5 ring-1 ring-[#1D74E3]' : 'border-zinc-200 bg-white hover:bg-zinc-50'"
-                        class="flex items-center gap-3 p-4 rounded-xl border text-left cursor-pointer transition-all duration-200 outline-none"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" x-bind:class="role === 'admin' ? 'text-[#1D74E3]' : 'text-zinc-400'" class="h-6 w-6 shrink-0 transition-colors duration-200">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
-                        </svg>
-                        <div>
-                            <div x-bind:class="role === 'admin' ? 'text-[#1D74E3]' : 'text-zinc-800'" class="font-bold text-sm">Admin</div>
-                            <div class="text-xs text-[#AA9A98]">Barangay staff</div>
-                        </div>
-                    </button>
-                </div>
-                @error('role')
-                    <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
-                @enderror
-            </div>
->>>>>>> 5a7852a8247af5fd814bbd8ce20f091035636e78
 
             <!-- Password & Confirm Password Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
