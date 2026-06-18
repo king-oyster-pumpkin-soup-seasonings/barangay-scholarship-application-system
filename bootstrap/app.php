@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Middleware\EnsureAdminIsApproved;
+use App\Http\Middleware\EnsureResidentIsVerified;
+use App\Http\Middleware\EnsureUserHasRole;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -7,19 +10,19 @@ use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__ . '/../routes/web.php',
-        commands: __DIR__ . '/../routes/console.php',
+        web: __DIR__.'/../routes/web.php',
+        commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'role' => \App\Http\Middleware\EnsureUserHasRole::class,
-            'verified.resident' => \App\Http\Middleware\EnsureResidentIsVerified::class,
-            'approved.admin' => \App\Http\Middleware\EnsureAdminIsApproved::class,
+            'role' => EnsureUserHasRole::class,
+            'verified.resident' => EnsureResidentIsVerified::class,
+            'approved.admin' => EnsureAdminIsApproved::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
-            fn(Request $request) => $request->is('api/*'),
+            fn (Request $request) => $request->is('api/*'),
         );
     })->create();

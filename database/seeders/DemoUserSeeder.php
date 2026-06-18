@@ -70,7 +70,6 @@ class DemoUserSeeder extends Seeder
             ]
         );
 
-        // Pending resident (verification under review)
         // Verified resident
         $maria = User::firstOrCreate(
             ['email' => 'mariabatumbakal@yahoo.com'],
@@ -100,7 +99,6 @@ class DemoUserSeeder extends Seeder
                 'reviewed_at' => now(),
             ]
         );
-
 
         // Rejected resident
         $raul = User::firstOrCreate(

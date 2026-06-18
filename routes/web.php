@@ -1,5 +1,10 @@
 <?php
 
+use App\Livewire\Admin\AdminApplications;
+use App\Livewire\Admin\Announcements;
+use App\Livewire\Admin\Applications;
+use App\Livewire\Admin\Dashboard as AdminDashboard;
+use App\Livewire\Admin\Verifications;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Pages\Home;
 use App\Livewire\Pages\About;
@@ -7,6 +12,9 @@ use App\Livewire\Pages\Faqs;
 use App\Livewire\Pages\Contact;
 use App\Livewire\Pages\Scholarships\Index;
 use App\Livewire\Pages\Scholarships\Show;
+use App\Livewire\Pages\Verification;
+use App\Livewire\Pages\Dashboard;
+use App\Livewire\Pages\Applications\Create;
 
 // Public pages
 Route::get('/', Home::class)->name('home');
@@ -18,12 +26,34 @@ Route::get('/scholarships', Index::class)->name('scholarships.index');
 
 // Authenticated pages
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', Dashboard::class)->name('dashboard');
 });
 
+// Resident-only routes (must be logged in, role=user, AND residency verified)
+Route::middleware(['auth', 'role:user', 'verified.resident'])->group(function () {
+    Route::get('/scholarships/{scholarship}/apply', Create::class)->name('applications.create');
+});
+
+// Admin panel routes (must be logged in, role=admin or superadmin, AND admin approved)
+Route::middleware(['auth', 'role:admin,superadmin', 'approved.admin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', AdminDashboard::class)->name('admin.dashboard');
+    Route::get('/verifications', Verifications::class)->name('admin.verifications');
+    Route::get('/applications', Applications::class)->name('admin.applications');
+    Route::get('/announcements', Announcements::class)->name('admin.announcements');
+});
+
+// Superadmin-only routes
+Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->group(function () {
+    Route::get('/admins', AdminApplications::class)->name('superadmin.admins');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/verification', Verification::class)->name('verification');
+});
+
+// Practice routes (demo UI only)
 require __DIR__ . '/settings.php';
 
-// Practice routes
 Route::get('/practice/home', function () {
     $announcements = [
         [
@@ -37,113 +67,25 @@ Route::get('/practice/home', function () {
             'created_at' => '2026-06-12',
         ],
     ];
-
-    $scholarships = [
-        [
-            'id' => 1,
-            'title' => 'Barangay Academic Excellence Grant',
-            'allowance' => 5000.00,
-            'slots' => 10,
-            'deadline' => '2026-08-31',
-            'status' => 'available',
-        ],
-        [
-            'id' => 2,
-            'title' => 'Barangay Sports Scholarship',
-            'allowance' => 3000.00,
-            'slots' => 5,
-            'deadline' => '2026-07-15',
-            'status' => 'full',
-        ],
-        [
-            'id' => 3,
-            'title' => 'Out-of-School Youth Support Grant',
-            'allowance' => 2000.00,
-            'slots' => 8,
-            'deadline' => '2026-09-30',
-            'status' => 'unavailable',
-        ],
-    ];
-
     return view('practice.home', [
         'announcements' => $announcements,
-        'scholarships' => $scholarships,
+        'scholarships' => [],
     ]);
 });
-
-Route::get('/practice/about', function () {
-    return view('practice.about');
-});
-
-Route::get('/practice/faqs', function () {
-    return view('practice.faqs');
-});
-
+Route::get('/practice/about', fn() => view('practice.about'));
+Route::get('/practice/faqs', fn() => view('practice.faqs'));
 Route::get('/practice/contact', function () {
-    return view('practice.contact', [
-        'submitted' => false,
-    ]);
+    return view('practice.contact', ['submitted' => false]);
 });
-
 Route::get('/practice/scholarships', function () {
-    $scholarships = [
-        [
-            'id' => 1,
-            'title' => 'Barangay Academic Excellence Grant',
-            'description' => 'For graduating students with high academic standing (GPA 90 and above).',
-            'allowance' => 5000.00,
-            'slots' => 10,
-            'deadline' => '2026-08-31',
-            'status' => 'available',
-        ],
-        [
-            'id' => 2,
-            'title' => 'Barangay Sports Scholarship',
-            'description' => 'For student-athletes representing the barangay in regional competitions.',
-            'allowance' => 3000.00,
-            'slots' => 5,
-            'deadline' => '2026-07-15',
-            'status' => 'full',
-        ],
-        [
-            'id' => 3,
-            'title' => 'Out-of-School Youth Support Grant',
-            'description' => 'For out-of-school youth pursuing alternative learning programs.',
-            'allowance' => 2000.00,
-            'slots' => 8,
-            'deadline' => '2026-09-30',
-            'status' => 'unavailable',
-        ],
-    ];
-
     return view('practice.scholarships.index', [
-        'scholarships' => $scholarships,
+        'scholarships' => [],
         'filter' => 'available',
     ]);
 });
-
 Route::get('/practice/scholarships/show', function () {
-    $scholarship = [
-        'id' => 1,
-        'title' => 'Barangay Academic Excellence Grant',
-        'description' => 'For graduating students with high academic standing (GPA 90 and above).',
-        'allowance' => 5000.00,
-        'slots' => 10,
-        'deadline' => '2026-08-31',
-        'status' => 'available',
-    ];
-
-    $requirements = [
-        ['category' => 'eligibility', 'field_type' => 'number', 'label' => 'Current GPA', 'is_required' => true],
-        ['category' => 'eligibility', 'field_type' => 'select', 'label' => 'Year Level', 'options' => ['Grade 11', 'Grade 12', 'College'], 'is_required' => true],
-        ['category' => 'general_document', 'field_type' => 'file', 'label' => 'Valid ID', 'is_required' => true],
-        ['category' => 'general_document', 'field_type' => 'file', 'label' => 'Certificate of Indigency', 'is_required' => true],
-        ['category' => 'specific_document', 'field_type' => 'file', 'label' => 'Report Card / Transcript', 'is_required' => true],
-        ['category' => 'additional_field', 'field_type' => 'textarea', 'label' => 'Why do you deserve this scholarship?', 'is_required' => false],
-    ];
-
     return view('practice.scholarships.show', [
-        'scholarship' => $scholarship,
-        'requirements' => $requirements,
+        'scholarship' => [],
+        'requirements' => [],
     ]);
 });

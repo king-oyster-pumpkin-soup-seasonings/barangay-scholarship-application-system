@@ -15,6 +15,11 @@
                     <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
+                    @if(auth()->user()->role === 'superadmin')
+                        <flux:sidebar.item icon="users" :href="route('superadmin.admins')" :current="request()->routeIs('superadmin.admins')" wire:navigate>
+                            {{ __('Admin Applications') }}
+                        </flux:sidebar.item>
+                    @endif
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 
