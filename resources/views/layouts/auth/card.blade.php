@@ -29,6 +29,8 @@
             </flux:toast.group>
         @endpersist
 
+        <x-accessibility-widget />
+
         @fluxScripts
     </body>
 </html>

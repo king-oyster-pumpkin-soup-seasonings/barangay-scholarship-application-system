@@ -271,6 +271,8 @@
         </div>
     </footer>
 
+    <x-accessibility-widget />
+
     @livewireScripts
 </body>
 </html>

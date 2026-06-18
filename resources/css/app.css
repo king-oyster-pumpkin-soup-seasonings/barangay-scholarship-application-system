@@ -1,5 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
 @import 'tailwindcss';
 @import '../../vendor/livewire/flux/dist/flux.css';
+
+@font-face {
+    font-family: 'OpenDyslexic3';
+    src: url('../fonts/OpenDyslexic3-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'OpenDyslexic3';
+    src: url('../fonts/OpenDyslexic3-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -116,4 +135,66 @@ select:focus[data-flux-control] {
     border-color: #1D74E3 !important;
     box-shadow: 0 0 0 2px rgba(29, 116, 227, 0.2) !important;
 }
+
+/* Accessibility Control Widget Overrides */
+
+/* Dyslexia-friendly font override */
+.acc-dyslexic, 
+.acc-dyslexic * {
+    font-family: 'OpenDyslexic3', 'Comic Neue', 'Comic Sans MS', cursive, sans-serif !important;
+}
+
+/* Text Resizing (Relative scale on root) */
+html.acc-text-lg {
+    font-size: 1.125rem !important; /* 18px base */
+}
+html.acc-text-xl {
+    font-size: 1.25rem !important; /* 20px base */
+}
+
+/* High Contrast Mode */
+.acc-high-contrast {
+    background-color: #000000 !important;
+    background: #000000 !important;
+    color: #ffff00 !important;
+}
+.acc-high-contrast *, 
+.acc-high-contrast [data-flux-control],
+.acc-high-contrast [data-flux-control] * {
+    background-color: #000000 !important;
+    background: #000000 !important;
+    color: #ffff00 !important;
+    border-color: #ffff00 !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+}
+.acc-high-contrast a, 
+.acc-high-contrast a *, 
+.acc-high-contrast button,
+.acc-high-contrast button * {
+    color: #00ffff !important;
+    text-decoration: underline !important;
+    border-color: #00ffff !important;
+}
+.acc-high-contrast a:hover, 
+.acc-high-contrast button:hover {
+    background-color: #ffff00 !important;
+    color: #000000 !important;
+}
+
+/* Grayscale Filter */
+.acc-grayscale {
+    filter: grayscale(100%) !important;
+}
+
+/* Highlight Links */
+.acc-highlight-links a, 
+.acc-highlight-links button:not([data-flux-control]),
+.acc-highlight-links [role="button"] {
+    outline: 3px solid #ff5722 !important;
+    outline-offset: 2px !important;
+    text-decoration: underline !important;
+    font-weight: bold !important;
+}
+
 
