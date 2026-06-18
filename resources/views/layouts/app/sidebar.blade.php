@@ -88,9 +88,17 @@
                             {{ __('Scholarship Applications') }}
                         </flux:sidebar.item>
 
+                        <flux:sidebar.item icon="document-check" :href="route('admin.verifications')" :current="request()->routeIs('admin.verifications')" wire:navigate>
+                            {{ __('Residence Verifications') }}
+                        </flux:sidebar.item>
+
+                        <flux:sidebar.item icon="megaphone" :href="route('admin.announcements')" :current="request()->routeIs('admin.announcements')" wire:navigate>
+                            {{ __('Manage Announcements') }}
+                        </flux:sidebar.item>
+
                         @if(auth()->user()->role === 'superadmin')
                             <flux:sidebar.item icon="users" :href="route('superadmin.admins')" :current="request()->routeIs('superadmin.admins')" wire:navigate>
-                                {{ __('Admin Applications') }}
+                                {{ __('Admin Management') }}
                             </flux:sidebar.item>
                         @endif
 
