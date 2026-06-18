@@ -67,7 +67,7 @@ test('admin dashboard renders and calculates statistics correctly', function () 
 
     Livewire::test(Dashboard::class)
         ->assertOk()
-        ->assertSee('Admin Dashboard')
+        ->assertSee('Welcome back')
         ->assertViewHas('pendingVerifications', 1)
         ->assertViewHas('pendingApplications', 1)
         ->assertViewHas('totalScholars', 1);

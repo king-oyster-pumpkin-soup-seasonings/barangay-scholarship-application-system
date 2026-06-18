@@ -7,8 +7,10 @@ use Livewire\Component;
 class Faqs extends Component
 {
     public function render()
-    {
-        return view('pages.faqs')
-            ->layout('layouts.public', ['title' => 'FAQs']);
-    }
+{
+    $layout = auth()->check() ? 'layouts.app' : 'layouts.public';
+
+    return view('pages.faqs')
+        ->layout($layout, ['title' => 'FAQs']);
+}
 }

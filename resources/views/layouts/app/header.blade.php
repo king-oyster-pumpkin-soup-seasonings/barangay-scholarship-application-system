@@ -1,109 +1,127 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:header container class="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
-            <flux:sidebar.toggle class="lg:hidden mr-2" icon="bars-2" inset="left" />
+    <body class="min-h-screen bg-zinc-50 dark:bg-zinc-900">
+        {{-- ── Clean Top Horizontal Navbar ── --}}
+        <header class="sticky top-0 z-40 w-full border-b border-zinc-200 bg-white px-6 py-4 dark:border-zinc-700 dark:bg-zinc-800">
+            <div class="mx-auto flex max-w-7xl items-center justify-between">
 
-            <x-app-logo href="{{ auth()->user()->role === 'user' ? route('dashboard') : route('admin.dashboard') }}" wire:navigate />
-
-            <flux:navbar class="-mb-px max-lg:hidden">
-                @if(auth()->user()->role === 'user')
-                    <flux:navbar.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
-                        {{ __('Dashboard') }}
-                    </flux:navbar.item>
-                @endif
-                @if(in_array(auth()->user()->role, ['admin', 'superadmin']))
-                    <flux:navbar.item icon="home" :href="route('admin.dashboard')" :current="request()->routeIs('admin.dashboard')" wire:navigate>
-                        {{ __('Admin Dashboard') }}
-                    </flux:navbar.item>
-                    <flux:navbar.item icon="academic-cap" :href="route('admin.applications')" :current="request()->routeIs('admin.applications')" wire:navigate>
-                        {{ __('Applications') }}
-                    </flux:navbar.item>
-                @endif
-            </flux:navbar>
-
-            <flux:spacer />
-
-            <flux:navbar class="me-1.5 space-x-0.5 rtl:space-x-reverse py-0!">
-                <flux:tooltip :content="__('Search')" position="bottom">
-                    <flux:navbar.item class="!h-10 [&>div>svg]:size-5" icon="magnifying-glass" href="#" :label="__('Search')" />
-                </flux:tooltip>
-                <flux:tooltip :content="__('Repository')" position="bottom">
-                    <flux:navbar.item
-                        class="h-10 max-lg:hidden [&>div>svg]:size-5"
-                        icon="folder-git-2"
-                        href="https://github.com/laravel/livewire-starter-kit"
-                        target="_blank"
-                        :label="__('Repository')"
-                    />
-                </flux:tooltip>
-                <flux:tooltip :content="__('Documentation')" position="bottom">
-                    <flux:navbar.item
-                        class="h-10 max-lg:hidden [&>div>svg]:size-5"
-                        icon="book-open-text"
-                        href="https://laravel.com/docs/starter-kits#livewire"
-                        target="_blank"
-                        :label="__('Documentation')"
-                    />
-                </flux:tooltip>
-            </flux:navbar>
-
-            <x-desktop-user-menu />
-        </flux:header>
-
-        <!-- Mobile Menu -->
-        <flux:sidebar collapsible="mobile" sticky class="lg:hidden custom-sidebar border-e border-zinc-200 dark:border-zinc-700">
-            <flux:sidebar.header>
-                <x-app-logo :sidebar="true" href="{{ auth()->user()->role === 'user' ? route('dashboard') : route('admin.dashboard') }}" wire:navigate />
-                <flux:sidebar.collapse class="in-data-flux-sidebar-on-desktop:not-in-data-flux-sidebar-collapsed-desktop:-mr-2" />
-            </flux:sidebar.header>
-
-            <flux:sidebar.nav>
-                <flux:sidebar.group :heading="__('Platform')">
-                    @if(auth()->user()->role === 'user')
-                        <flux:sidebar.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
-                            {{ __('Resident Dashboard') }}
-                        </flux:sidebar.item>
-                    @endif
-
-                    @if(in_array(auth()->user()->role, ['admin', 'superadmin']))
-                        <flux:sidebar.item icon="home" :href="route('admin.dashboard')" :current="request()->routeIs('admin.dashboard')" wire:navigate>
-                            {{ __('Admin Dashboard')  }}
-                        </flux:sidebar.item>
-                        <flux:sidebar.item icon="academic-cap" :href="route('admin.applications')" :current="request()->routeIs('admin.applications')" wire:navigate>
-                            {{ __('Scholarship Applications') }}
-                        </flux:sidebar.item>
-                        <flux:sidebar.item icon="document-check" :href="route('admin.verifications')" :current="request()->routeIs('admin.verifications')" wire:navigate>
-                            {{ __('Residence Verifications') }}
-                        </flux:sidebar.item>
-                        <flux:sidebar.item icon="megaphone" :href="route('admin.announcements')" :current="request()->routeIs('admin.announcements')" wire:navigate>
-                            {{ __('Manage Announcements') }}
-                        </flux:sidebar.item>
-                        @if(auth()->user()->role === 'superadmin')
-                            <flux:sidebar.item icon="users" :href="route('superadmin.admins')" :current="request()->routeIs('superadmin.admins')" wire:navigate>
-                                {{ __('Admin Management') }}
-                            </flux:sidebar.item>
+                {{-- Left Side: Brand Logo & Title --}}
+                <div class="flex items-center space-x-3">
+                    @auth
+                        @if (auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin')
+                            <x-app-logo href="{{ route('admin.dashboard') }}" wire:navigate />
+                        @else
+                            <x-app-logo href="{{ route('dashboard') }}" wire:navigate />
                         @endif
-                    @endif
-                </flux:sidebar.group>
-            </flux:sidebar.nav>
+                    @else
+                        <x-app-logo href="{{ route('home') }}" wire:navigate />
+                    @endauth
+                </div>
 
-            <flux:spacer />
+                {{-- Center Side: Navigation Menu Links --}}
+                <nav class="hidden items-center space-x-1 md:flex">
+                    @auth
+                        @if (auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin')
+                            {{-- 🔒 ADMIN LINKS --}}
+                            <a href="{{ route('admin.dashboard') }}" wire:navigate
+                               class="text-sm font-medium px-3 py-1.5 rounded-lg transition-colors
+                                      {{ request()->routeIs('admin.dashboard') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-700' }}">
+                                {{ __('Dashboard') }}
+                            </a>
+                            <a href="{{ route('admin.applications') }}" wire:navigate
+                               class="text-sm font-medium px-3 py-1.5 rounded-lg transition-colors
+                                      {{ request()->routeIs('admin.applications') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-700' }}">
+                                {{ __('Scholarship Applications') }}
+                            </a>
+                            <a href="{{ route('admin.verifications') }}" wire:navigate
+                               class="text-sm font-medium px-3 py-1.5 rounded-lg transition-colors
+                                      {{ request()->routeIs('admin.verifications') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-700' }}">
+                                {{ __('Verifications') }}
+                            </a>
+                            <a href="{{ route('admin.announcements') }}" wire:navigate
+                               class="text-sm font-medium px-3 py-1.5 rounded-lg transition-colors
+                                      {{ request()->routeIs('admin.announcements') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-700' }}">
+                                {{ __('Announcements') }}
+                            </a>
+                        @else
+                            {{-- 👤 RESIDENT LINKS --}}
+                            <a href="{{ route('dashboard') }}" wire:navigate
+                               class="text-sm font-medium px-3 py-1.5 rounded-lg transition-colors
+                                      {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-700' }}">
+                                {{ __('Dashboard') }}
+                            </a>
+                            <a href="{{ route('scholarships.index') }}" wire:navigate
+                               class="text-sm font-medium px-3 py-1.5 rounded-lg transition-colors
+                                      {{ request()->routeIs('scholarships.*') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-700' }}">
+                                {{ __('Scholarships') }}
+                            </a>
+                            <a href="{{ route('about') }}" wire:navigate
+                               class="text-sm font-medium px-3 py-1.5 rounded-lg transition-colors
+                                      {{ request()->routeIs('about') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-700' }}">
+                                {{ __('About') }}
+                            </a>
+                            <a href="{{ route('faqs') }}" wire:navigate
+                               class="text-sm font-medium px-3 py-1.5 rounded-lg transition-colors
+                                      {{ request()->routeIs('faqs') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-700' }}">
+                                {{ __('FAQ') }}
+                            </a>
+                            <a href="{{ route('contact') }}" wire:navigate
+                               class="text-sm font-medium px-3 py-1.5 rounded-lg transition-colors
+                                      {{ request()->routeIs('contact') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-700' }}">
+                                {{ __('Contact') }}
+                            </a>
+                        @endif
+                    @else
+                        {{-- 🌐 GUEST LINKS --}}
+                        <a href="{{ route('scholarships.index') }}" wire:navigate
+                           class="text-sm font-medium px-3 py-1.5 rounded-lg transition-colors
+                                  {{ request()->routeIs('scholarships.*') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-700' }}">
+                            {{ __('Scholarships') }}
+                        </a>
+                        <a href="{{ route('about') }}" wire:navigate
+                           class="text-sm font-medium px-3 py-1.5 rounded-lg transition-colors
+                                  {{ request()->routeIs('about') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-700' }}">
+                            {{ __('About') }}
+                        </a>
+                        <a href="{{ route('faqs') }}" wire:navigate
+                           class="text-sm font-medium px-3 py-1.5 rounded-lg transition-colors
+                                  {{ request()->routeIs('faqs') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-700' }}">
+                            {{ __('FAQ') }}
+                        </a>
+                        <a href="{{ route('contact') }}" wire:navigate
+                           class="text-sm font-medium px-3 py-1.5 rounded-lg transition-colors
+                                  {{ request()->routeIs('contact') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-700' }}">
+                            {{ __('Contact') }}
+                        </a>
+                    @endauth
+                </nav>
 
-            <flux:sidebar.nav>
-                <flux:sidebar.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                    {{ __('Repository') }}
-                </flux:sidebar.item>
-                <flux:sidebar.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                    {{ __('Documentation') }}
-                </flux:sidebar.item>
-            </flux:sidebar.nav>
-        </flux:sidebar>
+                {{-- Right Side: Profile Menu (auth) or Login/Register (guest) --}}
+                <div class="flex items-center space-x-4">
+                    @auth
+                        <x-desktop-user-menu />
+                    @else
+                        <a href="{{ route('login') }}" wire:navigate
+                           class="text-sm font-medium text-zinc-600 hover:text-blue-600 dark:text-zinc-300 dark:hover:text-blue-400">
+                            {{ __('Log in') }}
+                        </a>
+                        <a href="{{ route('register') }}" wire:navigate
+                           class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+                            {{ __('Register') }}
+                        </a>
+                    @endauth
+                </div>
 
-        {{ $slot }}
+            </div>
+        </header>
+
+        {{-- ── Main Page Content Slot ── --}}
+        <main class="w-full">
+            {{ $slot }}
+        </main>
 
         @persist('toast')
             <flux:toast.group>

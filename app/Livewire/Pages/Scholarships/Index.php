@@ -38,7 +38,9 @@ class Index extends Component
         ])->values()->all();
 
         return view('pages.scholarships.index', [
-            'scholarships' => $scholarships,
-        ])->layout('layouts.public', ['title' => 'Scholarships']);
+            'scholarships' => array_values($scholarships),
+        ])->layout(auth()->check() ? 'layouts.app' : 'layouts.public', ['title' => 'Scholarships']);
+        //     'scholarships' => $scholarships,
+        // ])->layout('layouts.public', ['title' => 'Scholarships']);
     }
 }
