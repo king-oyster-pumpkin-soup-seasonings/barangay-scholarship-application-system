@@ -145,7 +145,13 @@
                             <input type="text" wire:model="name" placeholder="Juan Dela Cruz"
                                 class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none transition-all duration-200 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100/80 @error('name') border-red-400 focus:ring-red-500/10 @enderror" />
                             @error('name')
-                                <span class="text-xs text-red-500 font-medium mt-1.5 block flex items-center gap-1">⚠️
+                                <span class="text-xs text-red-500 font-medium mt-1.5 block flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5 inline animate-pulse" fill="none" stroke="currentColor"
+                                        stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z">
+                                        </path>
+                                    </svg>
                                     {{ $message }}</span>
                             @enderror
                         </div>
@@ -158,7 +164,13 @@
                             <input type="email" wire:model="email" placeholder="juan@example.com"
                                 class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none transition-all duration-200 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100/80 @error('email') border-red-400 focus:ring-red-500/10 @enderror" />
                             @error('email')
-                                <span class="text-xs text-red-500 font-medium mt-1.5 block flex items-center gap-1">⚠️
+                                <span class="text-xs text-red-500 font-medium mt-1.5 block flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5 inline animate-pulse" fill="none" stroke="currentColor"
+                                        stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z">
+                                        </path>
+                                    </svg>
                                     {{ $message }}</span>
                             @enderror
                         </div>
