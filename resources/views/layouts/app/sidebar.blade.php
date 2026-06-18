@@ -84,8 +84,12 @@
                             {{ __('Admin Dashboard') }}
                         </flux:sidebar.item>
 
-                        <flux:sidebar.item icon="academic-cap" :href="route('admin.applications')" :current="request()->routeIs('admin.applications')" wire:navigate>
+                        <flux:sidebar.item icon="document-text" :href="route('admin.applications')" :current="request()->routeIs('admin.applications')" wire:navigate>
                             {{ __('Scholarship Applications') }}
+                        </flux:sidebar.item>
+
+                        <flux:sidebar.item icon="academic-cap" :href="route('admin.scholarships')" :current="request()->routeIs('admin.scholarships')" wire:navigate>
+                            {{ __('Manage Scholarships') }}
                         </flux:sidebar.item>
 
                         <flux:sidebar.item icon="document-check" :href="route('admin.verifications')" :current="request()->routeIs('admin.verifications')" wire:navigate>

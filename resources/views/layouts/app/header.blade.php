@@ -36,6 +36,11 @@
                                       {{ request()->routeIs('admin.applications') ? 'text-[#1D74E3] bg-[#1D74E3]/10 font-bold' : 'text-[#33333B] hover:bg-[#E5E8EF]/50 hover:text-[#1D74E3] dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-[#1D74E3] font-medium' }}">
                                 {{ __('Scholarship Applications') }}
                             </a>
+                            <a href="{{ route('admin.scholarships') }}" wire:navigate
+                               class="text-xs lg:text-sm px-2 lg:px-3.5 py-2 rounded-lg transition-all duration-200
+                                      {{ request()->routeIs('admin.scholarships') ? 'text-[#1D74E3] bg-[#1D74E3]/10 font-bold' : 'text-[#33333B] hover:bg-[#E5E8EF]/50 hover:text-[#1D74E3] dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-[#1D74E3] font-medium' }}">
+                                {{ __('Manage Scholarships') }}
+                            </a>
                             <a href="{{ route('admin.verifications') }}" wire:navigate
                                class="text-xs lg:text-sm px-2 lg:px-3.5 py-2 rounded-lg transition-all duration-200
                                       {{ request()->routeIs('admin.verifications') ? 'text-[#1D74E3] bg-[#1D74E3]/10 font-bold' : 'text-[#33333B] hover:bg-[#E5E8EF]/50 hover:text-[#1D74E3] dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-[#1D74E3] font-medium' }}">
