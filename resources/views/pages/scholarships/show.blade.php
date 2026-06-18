@@ -1,59 +1,72 @@
-<div style="background-color: #F5F0E8;" class="min-h-screen pb-24">
+<div style="background-color: #E5E8EF;" class="min-h-screen pb-24">
 
     {{-- HERO --}}
-    <section class="relative overflow-hidden py-14 px-6 text-white" style="background-color: #1C398E;">
-        <div class="absolute inset-0 opacity-10"
-             style="background-image: linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px); background-size: 4rem 4rem;">
-        </div>
+<section class="relative overflow-hidden py-20 px-6 text-white">
+    {{-- Dynamic Background Gradient --}}
+    <div class="absolute inset-0 bg-gradient-to-br from-[#0f246e] to-[#1C398E] z-0"></div>
 
-        <div class="relative z-10 max-w-6xl mx-auto">
+    {{-- Grid Pattern --}}
+    <div class="absolute inset-0 opacity-[0.06] pointer-events-none z-0"
+         style="background-image: linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px); background-size: 40px 40px;">
+    </div>
 
-            {{-- Breadcrumb --}}
-            <a href="{{ route('scholarships.index') }}"
-               class="inline-flex items-center gap-2 text-sm font-medium mb-8 transition-opacity hover:opacity-75"
-               style="color: rgba(255,255,255,0.8);">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-                </svg>
-                Back to Scholarships
-            </a>
+    {{-- Spotlight Glow --}}
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-4xl bg-blue-400/10 blur-[100px] rounded-full z-0 pointer-events-none"></div>
 
-            {{-- Badges + Title --}}
-            <div class="max-w-3xl">
-                <div class="flex items-center gap-3 mb-5">
-                    @if($scholarship->status === 'available')
-                        <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full"
-                              style="background-color: rgba(74,222,128,0.2); color: #bbf7d0; border: 1px solid rgba(74,222,128,0.3);">
-                            <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
-                            Open Application
+    <div class="relative z-10 max-w-6xl mx-auto">
+
+        {{-- Breadcrumb --}}
+        <a href="{{ route('scholarships.index') }}"
+           class="inline-flex items-center gap-2 text-sm font-medium transition-all duration-300 group text-blue-100/80 hover:text-white hover:gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 transition-transform group-hover:-translate-x-1">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+            </svg>
+            Back to Scholarships
+        </a>
+
+        {{-- Badges + Title --}}
+        <div class="mt-8 max-w-3xl">
+            <div class="flex flex-wrap items-center gap-3 mb-6">
+                @if($scholarship->status === 'available')
+                    <span class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full
+                               bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                         </span>
-                    @elseif($scholarship->status === 'full')
-                        <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full"
-                              style="background-color: rgba(248,113,113,0.2); color: #fecaca; border: 1px solid rgba(248,113,113,0.3);">
-                            No Open Slots
-                        </span>
-                    @else
-                        <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full"
-                              style="background-color: rgba(156,163,175,0.2); color: #e5e7eb; border: 1px solid rgba(156,163,175,0.3);">
-                            Inactive
-                        </span>
-                    @endif
-                    <span class="text-xs font-mono px-2.5 py-1 rounded-lg"
-                          style="background-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.15);">
-                        ID: #{{ str_pad($scholarship->id, 3, '0', STR_PAD_LEFT) }}
+                        Open Application
                     </span>
-                </div>
+                @elseif($scholarship->status === 'full')
+                    <span class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full
+                               bg-rose-500/10 text-rose-300 border border-rose-500/20">
+                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                        No Open Slots
+                    </span>
+                @else
+                    <span class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full
+                               bg-slate-500/10 text-slate-300 border border-slate-500/20">
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
+                        Inactive
+                    </span>
+                @endif
 
-                <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4"
-                    style="font-family: 'Playfair Display', serif;">
-                    {{ $scholarship->title }}
-                </h1>
-                <p class="text-base max-w-2xl" style="color: rgba(255,255,255,0.8);">
-                    {{ $scholarship->description }}
-                </p>
+                <span class="text-xs font-mono font-medium px-3 py-1.5 rounded-lg
+                           bg-white/5 text-blue-100/70 border border-white/10 backdrop-blur-sm">
+                    ID: #{{ str_pad($scholarship->id, 3, '0', STR_PAD_LEFT) }}
+                </span>
             </div>
+
+            <h1 class="text-3xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-blue-200"
+                style="font-family: 'Playfair Display', serif; text-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                {{ $scholarship->title }}
+            </h1>
+
+            <p class="text-base md:text-lg leading-relaxed text-blue-100/90 max-w-2xl font-light drop-shadow-sm">
+                {{ $scholarship->description }}
+            </p>
         </div>
-    </section>
+    </div>
+</section>
 
     {{-- MAIN CONTENT --}}
     <section class="max-w-6xl mx-auto px-6 py-10">
@@ -138,7 +151,7 @@
                     </h2>
                     <ul class="space-y-3">
                         @foreach($generalDocs as $req)
-                            <li class="flex items-center gap-3 p-3 rounded-xl" style="background-color: #F5F0E8;">
+                            <li class="flex items-center gap-3 p-3 rounded-xl" style="background-color: #E5E8EF;">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 flex-shrink-0" style="color: #1D74E3;">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m6.75 12-3-3m0 0-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                                 </svg>
@@ -169,7 +182,7 @@
                     </h2>
                     <ul class="space-y-3">
                         @foreach($specificDocs as $req)
-                            <li class="flex items-center gap-3 p-3 rounded-xl" style="background-color: #F5F0E8;">
+                            <li class="flex items-center gap-3 p-3 rounded-xl" style="background-color: #E5E8EF;">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 flex-shrink-0" style="color: #1D74E3;">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m6.75 12-3-3m0 0-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                                 </svg>
@@ -238,7 +251,7 @@
                         </h3>
 
                         {{-- Allowance --}}
-                        <div class="rounded-xl p-4 mb-4" style="background-color: #F5F0E8;">
+                        <div class="rounded-xl p-4 mb-4" style="background-color: #E5E8EF;">
                             <span class="block text-xs font-medium mb-1" style="color: #AA9A98;">Financial Grant</span>
                             <span class="block text-3xl font-extrabold" style="color: #1D74E3;">
                                 ₱{{ number_format($scholarship->allowance, 2) }}
@@ -275,14 +288,25 @@
                         {{-- Action Button --}}
                         <div class="mt-5">
                             @if($scholarship->status === 'available')
-                                <a href="{{ route('register') }}"
-                                   class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
-                                   style="background-color: #1D74E3;">
-                                    Begin Application
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                                    </svg>
-                                </a>
+                                @auth
+                                    <a href="{{ route('applications.create', $scholarship) }}"
+                                       class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
+                                       style="background-color: #1D74E3;">
+                                        Begin Application
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                                        </svg>
+                                    </a>
+                                @else
+                                    <a href="{{ route('login') }}"
+                                       class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
+                                       style="background-color: #1D74E3;">
+                                        Sign In to Apply
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                                        </svg>
+                                    </a>
+                                @endauth
                                 <p class="text-center text-xs mt-3" style="color: #AA9A98;">
                                     Takes approximately 10-15 minutes.
                                 </p>

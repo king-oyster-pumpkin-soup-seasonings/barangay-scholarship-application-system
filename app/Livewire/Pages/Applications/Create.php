@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-
 class Create extends Component
 {
     use WithFileUploads;
@@ -29,7 +28,9 @@ class Create extends Component
 
     // Requirements grouped by category, loaded once in mount()
     public array $eligibilityRequirements = [];
+
     public array $generalRequirements = [];
+
     public array $specificRequirements = [];
 
     // Total number of steps (only count categories that have requirements)
@@ -59,22 +60,22 @@ class Create extends Component
 
             // Sort into the correct group by category
             match ($req->category) {
-                'eligibility'       => $this->eligibilityRequirements[] = $req->toArray(),
-                'general_document'  => $this->generalRequirements[]     = $req->toArray(),
-                'specific_document' => $this->specificRequirements[]    = $req->toArray(),
-                default             => null,
+                'eligibility' => $this->eligibilityRequirements[] = $req->toArray(),
+                'general_document' => $this->generalRequirements[] = $req->toArray(),
+                'specific_document' => $this->specificRequirements[] = $req->toArray(),
+                default => null,
             };
         }
 
         // Build a dynamic step map so steps with no requirements are skipped
         $stepNumber = 1;
-        if (!empty($this->eligibilityRequirements)) {
+        if (! empty($this->eligibilityRequirements)) {
             $this->stepMap[$stepNumber++] = 'eligibility';
         }
-        if (!empty($this->generalRequirements)) {
+        if (! empty($this->generalRequirements)) {
             $this->stepMap[$stepNumber++] = 'general_document';
         }
-        if (!empty($this->specificRequirements)) {
+        if (! empty($this->specificRequirements)) {
             $this->stepMap[$stepNumber++] = 'specific_document';
         }
 
@@ -95,10 +96,10 @@ class Create extends Component
         $category = $this->stepMap[$this->step] ?? null;
 
         return match ($category) {
-            'eligibility'       => $this->eligibilityRequirements,
-            'general_document'  => $this->generalRequirements,
+            'eligibility' => $this->eligibilityRequirements,
+            'general_document' => $this->generalRequirements,
             'specific_document' => $this->specificRequirements,
-            default             => [],
+            default => [],
         };
     }
 
@@ -110,10 +111,10 @@ class Create extends Component
         $category = $this->stepMap[$this->step] ?? null;
 
         return match ($category) {
-            'eligibility'       => 'Eligibility Questions',
-            'general_document'  => 'General Documents',
+            'eligibility' => 'Eligibility Questions',
+            'general_document' => 'General Documents',
             'specific_document' => 'Specific Documents',
-            default             => 'Review',
+            default => 'Review',
         };
     }
 
@@ -138,7 +139,7 @@ class Create extends Component
      * Validate only the fields that belong to the current step.
      * This prevents Livewire from complaining about future steps' empty values.
      */
-protected function validateCurrentStep(): void
+    protected function validateCurrentStep(): void
     {
         $requirements = $this->getCurrentRequirements();
         $rules = [];
@@ -183,10 +184,10 @@ protected function validateCurrentStep(): void
 
         // Create the Application record
         $application = Application::create([
-            'user_id'       => Auth::id(),
-            'scholarship_id'=> $this->scholarship->id,
-            'status'        => 'pending',
-            'submitted_at'  => now(),
+            'user_id' => Auth::id(),
+            'scholarship_id' => $this->scholarship->id,
+            'status' => 'pending',
+            'submitted_at' => now(),
         ]);
 
         // Save all non-file answers
@@ -197,10 +198,10 @@ protected function validateCurrentStep(): void
             }
 
             ApplicationAnswer::create([
-                'application_id'  => $application->id,
-                'requirement_id'  => $requirementId,
-                'value'           => is_array($value) ? implode(',', $value) : $value,
-                'file_path'       => null,
+                'application_id' => $application->id,
+                'requirement_id' => $requirementId,
+                'value' => is_array($value) ? implode(',', $value) : $value,
+                'file_path' => null,
             ]);
         }
 
@@ -214,10 +215,10 @@ protected function validateCurrentStep(): void
             $path = $file->store("applications/{$application->id}", 'public');
 
             ApplicationAnswer::create([
-                'application_id'  => $application->id,
-                'requirement_id'  => $requirementId,
-                'value'           => null,
-                'file_path'       => $path,
+                'application_id' => $application->id,
+                'requirement_id' => $requirementId,
+                'value' => null,
+                'file_path' => $path,
             ]);
         }
 
@@ -230,7 +231,7 @@ protected function validateCurrentStep(): void
     {
         return view('livewire.pages.applications.create', [
             'currentRequirements' => $this->getCurrentRequirements(),
-            'stepLabel'           => $this->getStepLabel(),
+            'stepLabel' => $this->getStepLabel(),
         ]);
     }
 }

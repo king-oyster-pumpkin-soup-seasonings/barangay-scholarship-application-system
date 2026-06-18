@@ -13,7 +13,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="min-h-screen" style="background-color: #F5F0E8; color: #1B1A1C; font-family: 'Inter', sans-serif;">
+<body class="min-h-screen" style="background-color: #E5E8EF; color: #1B1A1C; font-family: 'Inter', sans-serif;">
 
     {{-- NAVBAR --}}
     <nav class="bg-white border-b sticky top-0 z-50" style="border-color: #F0EDE8;">

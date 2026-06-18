@@ -21,7 +21,7 @@ class CreateApplication
         }
 
         // 2. Check scholarship status
-        if ($scholarship->status !== 'open') {
+        if ($scholarship->status !== 'available') {
             throw new \Exception('This scholarship is not open for applications.');
         }
 

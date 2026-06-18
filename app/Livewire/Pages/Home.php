@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Pages;
 
-use Livewire\Component;
-use App\Models\Scholarship;
 use App\Models\Announcement;
+use App\Models\Scholarship;
+use Livewire\Component;
 
 class Home extends Component
 {

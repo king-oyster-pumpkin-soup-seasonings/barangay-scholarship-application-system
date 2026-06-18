@@ -2,8 +2,9 @@
 
 namespace App\Livewire\Admin;
 
+use App\Actions\Application\ApproveApplication;
+use App\Actions\Application\RejectApplication;
 use App\Models\Application;
-use App\Models\ApplicationLog;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -51,7 +52,7 @@ class Applications extends Component
 
         if ($application->status === 'pending') {
 
-            app(\App\Actions\Application\ApproveApplication::class)
+            app(ApproveApplication::class)
                 ->handle($application, auth()->user(), 'Application approved.');
 
             session()->flash('success', 'Application approved successfully.');
@@ -99,7 +100,7 @@ class Applications extends Component
 
         if ($application->status === 'pending') {
 
-            app(\App\Actions\Application\RejectApplication::class)
+            app(RejectApplication::class)
                 ->handle($application, auth()->user(), $this->rejectionRemarks);
 
             session()->flash('info', 'Application has been rejected.');
