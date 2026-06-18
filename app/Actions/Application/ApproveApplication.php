@@ -38,7 +38,7 @@ class ApproveApplication
         ]);
 
         $application->user->notify(
-            new ApplicationStatusUpdatedNotification('approved')
+            new ApplicationStatusUpdatedNotification($application)
         );
 
         return $application->fresh();
