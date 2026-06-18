@@ -25,7 +25,7 @@ Route::get('/scholarships/{scholarship}', Show::class)->name('scholarships.show'
 Route::get('/scholarships', Index::class)->name('scholarships.index');
 
 // Authenticated resident pages
-Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
+Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('dashboard', Dashboard::class)->name('dashboard');
 });
 
