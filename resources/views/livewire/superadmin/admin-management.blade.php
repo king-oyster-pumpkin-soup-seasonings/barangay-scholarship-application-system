@@ -1,4 +1,5 @@
-<div class="min-h-screen bg-[#E5E8EF] p-8">
+<div class="min-h-screen bg-[#E5E8EF] py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Enhanced Page Header & Interactive Breadcrumbs -->
     <div class="mb-10 flex justify-between items-end">
         <div>
@@ -110,4 +111,5 @@
             </form>
         </div>
     </flux:modal>
+    </div>
 </div>

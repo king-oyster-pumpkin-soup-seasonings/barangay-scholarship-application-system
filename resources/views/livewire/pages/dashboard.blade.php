@@ -1,4 +1,5 @@
-<div style="background-color: #E5E8EF; min-height: 100%;" class="p-4 pb-10 space-y-8">
+<div style="background-color: #E5E8EF; min-height: 100vh;" class="py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 
     @if (auth()->user()->role === 'admin')
         {{-- ========================================================================== --}}
@@ -313,4 +314,5 @@
         @endif
     @endif
 
+    </div>
 </div>

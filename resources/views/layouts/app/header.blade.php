@@ -46,6 +46,13 @@
                                       {{ request()->routeIs('admin.announcements') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-700' }}">
                                 {{ __('Announcements') }}
                             </a>
+                            @if (auth()->user()->role === 'superadmin')
+                                <a href="{{ route('superadmin.admins') }}" wire:navigate
+                                   class="text-sm font-medium px-3 py-1.5 rounded-lg transition-colors
+                                          {{ request()->routeIs('superadmin.admins') ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-700' }}">
+                                    {{ __('Admin Management') }}
+                                </a>
+                            @endif
                         @else
                             {{-- 👤 RESIDENT LINKS --}}
                             <a href="{{ route('dashboard') }}" wire:navigate

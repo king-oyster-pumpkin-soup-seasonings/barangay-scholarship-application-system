@@ -1,4 +1,5 @@
-<div class="min-h-screen bg-[#E5E8EF] p-8">
+<div class="min-h-screen bg-[#E5E8EF] py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Enhanced Page Header -->
     <div class="mb-10">
         <h1 class="text-3xl font-extrabold text-[#33333B] tracking-tight">Welcome back, {{ auth()->user()->name }}! ({{ ucfirst(auth()->user()->role) }})</h1>
@@ -146,5 +147,6 @@
                 </tbody>
             </table>
         </div>
+    </div>
     </div>
 </div>

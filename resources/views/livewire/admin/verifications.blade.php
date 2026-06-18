@@ -1,4 +1,5 @@
-<div class="min-h-screen bg-[#E5E8EF] p-8">
+<div class="min-h-screen bg-[#E5E8EF] py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Enhanced Page Header & Interactive Breadcrumbs -->
     <div class="mb-10">
         <div class="text-sm font-medium mb-2 flex items-center space-x-1.5">
@@ -102,4 +103,5 @@
             </div>
         </div>
     @endif
+    </div>
 </div>
