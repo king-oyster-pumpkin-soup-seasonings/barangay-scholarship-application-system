@@ -116,7 +116,7 @@ class DemoScholarshipSeeder extends Seeder
                 'description' => 'Financial assistance for PWD residents pursuing vocational or college-level education.',
                 'allowance' => 40000.00,
                 'slots' => 10,
-                'deadline' => '2026-12-31',
+                'deadline' => '2026-03-31',
                 'status' => 'unavailable',
                 'created_by' => $admin->id,
             ]
@@ -129,7 +129,7 @@ class DemoScholarshipSeeder extends Seeder
                 'description' => 'Supports SHS students enrolled in TVL tracks with toolkits and training allowance.',
                 'allowance' => 22000.00,
                 'slots' => 20,
-                'deadline' => '2027-01-15',
+                'deadline' => '2026-01-15',
                 'status' => 'unavailable',
                 'created_by' => $admin->id,
             ]
@@ -140,12 +140,12 @@ class DemoScholarshipSeeder extends Seeder
     private function createRequirements(Scholarship $scholarship): void
     {
         $requirements = [
-            ['category' => 'eligibility',       'field_type' => 'number',   'label' => 'Current GPA',                          'is_required' => true,  'order' => 1],
-            ['category' => 'eligibility',       'field_type' => 'select',   'label' => 'Year Level',  'options' => ['Grade 11', 'Grade 12', 'College'], 'is_required' => true,  'order' => 2],
-            ['category' => 'general_document',  'field_type' => 'file',     'label' => 'Valid ID',                             'is_required' => true,  'order' => 1],
-            ['category' => 'general_document',  'field_type' => 'file',     'label' => 'Certificate of Indigency',             'is_required' => true,  'order' => 2],
-            ['category' => 'specific_document', 'field_type' => 'file',     'label' => 'Report Card / Transcript',             'is_required' => true,  'order' => 1],
-            ['category' => 'additional_field',  'field_type' => 'textarea', 'label' => 'Why do you deserve this scholarship?', 'is_required' => false, 'order' => 1],
+            ['category' => 'eligibility', 'field_type' => 'number', 'label' => 'Current GPA', 'is_required' => true, 'order' => 1],
+            ['category' => 'eligibility', 'field_type' => 'select', 'label' => 'Year Level', 'options' => ['Grade 11', 'Grade 12', 'College'], 'is_required' => true, 'order' => 2],
+            ['category' => 'general_document', 'field_type' => 'file', 'label' => 'Valid ID', 'is_required' => true, 'order' => 1],
+            ['category' => 'general_document', 'field_type' => 'file', 'label' => 'Certificate of Indigency', 'is_required' => true, 'order' => 2],
+            ['category' => 'specific_document', 'field_type' => 'file', 'label' => 'Report Card / Transcript', 'is_required' => true, 'order' => 1],
+            ['category' => 'additional_field', 'field_type' => 'textarea', 'label' => 'Why do you deserve this scholarship?', 'is_required' => false, 'order' => 1],
         ];
 
         foreach ($requirements as $requirement) {
