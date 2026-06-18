@@ -2,7 +2,7 @@
     <!-- Enhanced Page Header & Interactive Breadcrumbs -->
     <div class="mb-10">
         <div class="text-sm font-medium mb-2 flex items-center space-x-1.5">
-            <a href="{{ route('admin.dashboard') }}" class="text-[#1D74E3] hover:underline font-semibold transition duration-150">Dashboard</a>
+            <a href="{{ route('admin.dashboard') }}" class="text-[#1D74E3] hover:underline font-semibold transition duration-150">Admin Dashboard</a>
             <span class="text-[#AA9A98]">&rarr;</span>
             <span class="text-[#AA9A98]">Admin Applications</span>
         </div>
