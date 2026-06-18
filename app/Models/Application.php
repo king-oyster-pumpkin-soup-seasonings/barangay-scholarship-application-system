@@ -27,7 +27,7 @@ class Application extends Model
     }
 
     // The resident who applied
-    /** @return BelongsTo<User, $this> */     // user()
+    /** @return BelongsTo<User, $this> */ // user()
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -41,7 +41,7 @@ class Application extends Model
     }
 
     // The admin who reviewed this application
-    /** @return BelongsTo<User, $this> */     // reviewer()
+    /** @return BelongsTo<User, $this> */ // reviewer()
     public function reviewer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewed_by');
