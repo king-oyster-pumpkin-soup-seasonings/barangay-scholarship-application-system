@@ -1,41 +1,53 @@
 <div class="min-h-screen" style="background-color: #F5F0E8;">
 
-    {{-- PAGE HEADER --}}
-    <section class="px-6 py-12" style="background-color: #1C398E;">
-        <div class="absolute inset-0 pointer-events-none opacity-10 bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
-        <div class="max-w-6xl mx-auto">
-            <p class="text-xs font-semibold tracking-widest uppercase mb-2"
-               style="color: rgba(255,255,255,0.6);">
-                SCHOLARSHIP PROGRAMS
-            </p>
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <div>
-                    <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-2"
-                        style="font-family: 'Playfair Display', serif;">
-                        Browse All Scholarships
-                    </h1>
-                    <p class="text-sm" style="color: rgba(255,255,255,0.7);">
-                        Showing all programs available to barangay residents
-                    </p>
-                </div>
-                {{-- Search Bar --}}
-                <div class="relative w-full md:w-80">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                         class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2"
-                         style="color: #AA9A98;">
+   {{-- PAGE HEADER --}}
+<section class="relative px-6 py-16 overflow-hidden bg-gradient-to-br from-[#0f246e] to-[#1C398E]">
+    {{-- Animated Background Grid --}}
+    <div class="absolute inset-0 z-0 opacity-[0.07] pointer-events-none"
+         style="background-image: linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px); background-size: 40px 40px;">
+    </div>
+
+    {{-- Subtle Glow Effect --}}
+    <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-blue-400 opacity-10 blur-3xl z-0"></div>
+    <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-indigo-500 opacity-10 blur-3xl z-0"></div>
+
+    <div class="relative z-10 max-w-6xl mx-auto">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div class="space-y-3">
+                <span class="inline-block px-3 py-1 text-xs font-bold tracking-[0.15em] uppercase rounded-full
+                           bg-white/10 text-blue-100 border border-white/10 backdrop-blur-sm">
+                    Scholarship Programs
+                </span>
+                <h1 class="text-3xl md:text-5xl font-extrabold text-white leading-tight"
+                    style="font-family: 'Playfair Display', serif;">
+                    Browse All <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-indigo-200">Scholarships</span>
+                </h1>
+                <p class="text-sm md:text-base text-blue-100/80 max-w-lg font-light">
+                    Discover opportunities tailored for barangay residents. Filter by category or keyword to find your path.
+                </p>
+            </div>
+
+            {{-- Glassmorphism Search Bar --}}
+            <div class="relative w-full md:w-96 group">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                         class="w-5 h-5 text-blue-300 group-focus-within:text-white transition-colors duration-300">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                     </svg>
-                    <input
-                        type="text"
-                        wire:model.live="search"
-                        placeholder="Search scholarships..."
-                        class="w-full pl-9 pr-4 py-2.5 rounded-xl text-sm outline-none"
-                        style="background-color: white; color: #1B1A1C; border: none;"
-                    />
                 </div>
+                <input
+                    type="text"
+                    wire:model.live="search"
+                    placeholder="Search scholarships..."
+                    class="w-full pl-12 pr-4 py-3 rounded-2xl text-sm font-medium outline-none transition-all duration-300
+                           bg-white/95 backdrop-blur-md shadow-lg shadow-blue-900/20
+                           text-gray-800 placeholder-gray-400 border border-white/20
+                           focus:bg-white focus:ring-2 focus:ring-blue-400/50 focus:border-transparent"
+                />
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
     {{-- MAIN CONTENT --}}
     <section class="max-w-6xl mx-auto px-6 py-10">

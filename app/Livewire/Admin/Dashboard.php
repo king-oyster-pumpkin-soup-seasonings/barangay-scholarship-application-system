@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Announcement;
 use App\Models\Application;
 use App\Models\ResidenceVerification;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -18,14 +18,21 @@ class Dashboard extends Component
         // Scholars are residents with approved applications
         $totalScholars = Application::where('status', 'approved')->count();
 
-        // Active system announcements count
-        $activeAnnouncements = Announcement::count();
+        // Total registered residents
+        $totalResidents = User::where('role', 'user')->count();
+
+        // Recent applications
+        $recentApplications = Application::with(['user', 'scholarship'])
+            ->latest()
+            ->take(5)
+            ->get();
 
         return view('livewire.admin.dashboard', [
             'pendingVerifications' => $pendingVerifications,
             'pendingApplications' => $pendingApplications,
             'totalScholars' => $totalScholars,
-            'activeAnnouncements' => $activeAnnouncements,
+            'totalResidents' => $totalResidents,
+            'recentApplications' => $recentApplications,
         ]);
     }
 }

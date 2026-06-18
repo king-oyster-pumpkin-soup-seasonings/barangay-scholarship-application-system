@@ -24,8 +24,8 @@ Route::get('/contact', Contact::class)->name('contact');
 Route::get('/scholarships/{scholarship}', Show::class)->name('scholarships.show');
 Route::get('/scholarships', Index::class)->name('scholarships.index');
 
-// Authenticated pages
-Route::middleware(['auth', 'verified'])->group(function () {
+// Authenticated resident pages
+Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
     Route::get('dashboard', Dashboard::class)->name('dashboard');
 });
 
