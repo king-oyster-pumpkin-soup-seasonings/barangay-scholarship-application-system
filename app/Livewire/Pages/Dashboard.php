@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Pages;
 
-use Livewire\Component;
 use App\Models\Application;
 use App\Models\ResidenceVerification;
 use App\Models\Scholarship;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class Dashboard extends Component
 {
@@ -38,9 +38,9 @@ class Dashboard extends Component
         }
 
         return view('livewire.pages.dashboard', [
-            'verification'  => $verification,
-            'applications'  => $applications,
-            'scholarships'  => $scholarships,
+            'verification' => $verification,
+            'applications' => $applications,
+            'scholarships' => $scholarships,
         ]);
     }
 }

@@ -3,7 +3,7 @@
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-10">
         <div>
             <div class="text-sm font-medium mb-2 flex items-center space-x-1.5">
-                <a href="{{ route('admin.dashboard') }}" class="text-[#1D74E3] hover:underline font-semibold transition duration-150">Dashboard</a>
+                <a href="{{ route('admin.dashboard') }}" class="text-[#1D74E3] hover:underline font-semibold transition duration-150">Admin Dashboard</a>
                 <span class="text-[#AA9A98]">&rarr;</span>
                 <span class="text-[#AA9A98]">Announcements</span>
             </div>

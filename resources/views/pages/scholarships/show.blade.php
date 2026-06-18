@@ -1,4 +1,4 @@
-<div style="background-color: #F5F0E8;" class="min-h-screen pb-24">
+<div style="background-color: #E5E8EF;" class="min-h-screen pb-24">
 
     {{-- HERO --}}
 <section class="relative overflow-hidden py-20 px-6 text-white">
@@ -151,7 +151,7 @@
                     </h2>
                     <ul class="space-y-3">
                         @foreach($generalDocs as $req)
-                            <li class="flex items-center gap-3 p-3 rounded-xl" style="background-color: #F5F0E8;">
+                            <li class="flex items-center gap-3 p-3 rounded-xl" style="background-color: #E5E8EF;">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 flex-shrink-0" style="color: #1D74E3;">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m6.75 12-3-3m0 0-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                                 </svg>
@@ -182,7 +182,7 @@
                     </h2>
                     <ul class="space-y-3">
                         @foreach($specificDocs as $req)
-                            <li class="flex items-center gap-3 p-3 rounded-xl" style="background-color: #F5F0E8;">
+                            <li class="flex items-center gap-3 p-3 rounded-xl" style="background-color: #E5E8EF;">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 flex-shrink-0" style="color: #1D74E3;">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m6.75 12-3-3m0 0-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                                 </svg>
@@ -251,7 +251,7 @@
                         </h3>
 
                         {{-- Allowance --}}
-                        <div class="rounded-xl p-4 mb-4" style="background-color: #F5F0E8;">
+                        <div class="rounded-xl p-4 mb-4" style="background-color: #E5E8EF;">
                             <span class="block text-xs font-medium mb-1" style="color: #AA9A98;">Financial Grant</span>
                             <span class="block text-3xl font-extrabold" style="color: #1D74E3;">
                                 ₱{{ number_format($scholarship->allowance, 2) }}
@@ -288,14 +288,25 @@
                         {{-- Action Button --}}
                         <div class="mt-5">
                             @if($scholarship->status === 'available')
-                                <a href="{{ route('register') }}"
-                                   class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
-                                   style="background-color: #1D74E3;">
-                                    Begin Application
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                                    </svg>
-                                </a>
+                                @auth
+                                    <a href="{{ route('applications.create', $scholarship) }}"
+                                       class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
+                                       style="background-color: #1D74E3;">
+                                        Begin Application
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                                        </svg>
+                                    </a>
+                                @else
+                                    <a href="{{ route('login') }}"
+                                       class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
+                                       style="background-color: #1D74E3;">
+                                        Sign In to Apply
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                                        </svg>
+                                    </a>
+                                @endauth
                                 <p class="text-center text-xs mt-3" style="color: #AA9A98;">
                                     Takes approximately 10-15 minutes.
                                 </p>

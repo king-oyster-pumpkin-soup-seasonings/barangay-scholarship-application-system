@@ -1,7 +1,7 @@
 
 
 @section('content')
-    <div style="background-color: #F5F0E8;" class="min-h-screen pb-24">
+    <div style="background-color: #E5E8EF;" class="min-h-screen pb-24">
 
         {{-- HERO --}}
         <section class="relative overflow-hidden py-14 px-6 text-white" style="background-color: #1D74E3;">
@@ -162,7 +162,7 @@
                             </h2>
                             <ul class="space-y-3">
                                 @foreach ($generalDocs as $req)
-                                    <li class="flex items-center gap-3 p-3 rounded-xl" style="background-color: #F5F0E8;">
+                                    <li class="flex items-center gap-3 p-3 rounded-xl" style="background-color: #E5E8EF;">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                             stroke-width="1.5" stroke="currentColor" class="w-5 h-5 flex-shrink-0"
                                             style="color: #1D74E3;">
@@ -206,7 +206,7 @@
                             </h2>
                             <ul class="space-y-3">
                                 @foreach ($specificDocs as $req)
-                                    <li class="flex items-center gap-3 p-3 rounded-xl" style="background-color: #F5F0E8;">
+                                    <li class="flex items-center gap-3 p-3 rounded-xl" style="background-color: #E5E8EF;">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                             stroke-width="1.5" stroke="currentColor" class="w-5 h-5 flex-shrink-0"
                                             style="color: #1D74E3;">
@@ -285,7 +285,7 @@
                             </h3>
 
                             {{-- Allowance --}}
-                            <div class="rounded-xl p-4 mb-4" style="background-color: #F5F0E8;">
+                            <div class="rounded-xl p-4 mb-4" style="background-color: #E5E8EF;">
                                 <span class="block text-xs font-medium mb-1" style="color: #AA9A98;">
                                     Financial Grant
                                 </span>
