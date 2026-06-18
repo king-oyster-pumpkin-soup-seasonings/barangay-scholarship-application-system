@@ -7,7 +7,6 @@ use App\Notifications\AdminAccountApprovedNotification;
 
 class ApproveAdmin
 {
-
     public function handle(
         User $admin,
         User $superadmin,

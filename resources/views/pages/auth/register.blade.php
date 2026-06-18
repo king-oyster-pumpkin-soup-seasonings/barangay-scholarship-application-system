@@ -1,5 +1,5 @@
 <x-layouts::auth.card :title="__('Register')">
-    <div class="flex flex-col gap-6" x-data="{ firstName: '', middleName: '', lastName: '', role: 'user' }">
+    <div class="flex flex-col gap-6" x-data="{ firstName: '', middleName: '', lastName: '' }">
         <!-- User Plus Icon (Logo) -->
         <div class="h-12 w-12 rounded-xl bg-[#1D74E3]/10 flex items-center justify-center border border-[#1D74E3]/25 shadow-sm">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 text-[#1D74E3]">
@@ -164,6 +164,9 @@
                 @enderror
             </div>
 
+<<<<<<< HEAD
+
+=======
             <!-- Account Type (Role Selection) -->
             <div class="flex flex-col gap-1.5">
                 <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider mb-2 block">
@@ -207,6 +210,7 @@
                     <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
                 @enderror
             </div>
+>>>>>>> 5a7852a8247af5fd814bbd8ce20f091035636e78
 
             <!-- Password & Confirm Password Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

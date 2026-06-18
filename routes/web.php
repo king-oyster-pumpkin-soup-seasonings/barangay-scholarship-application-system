@@ -1,20 +1,20 @@
 <?php
 
-use App\Livewire\Admin\AdminApplications;
 use App\Livewire\Admin\Announcements;
 use App\Livewire\Admin\Applications;
 use App\Livewire\Admin\Dashboard as AdminDashboard;
 use App\Livewire\Admin\Verifications;
-use Illuminate\Support\Facades\Route;
-use App\Livewire\Pages\Home;
 use App\Livewire\Pages\About;
-use App\Livewire\Pages\Faqs;
+use App\Livewire\Pages\Applications\Create;
 use App\Livewire\Pages\Contact;
+use App\Livewire\Pages\Dashboard;
+use App\Livewire\Pages\Faqs;
+use App\Livewire\Pages\Home;
 use App\Livewire\Pages\Scholarships\Index;
 use App\Livewire\Pages\Scholarships\Show;
 use App\Livewire\Pages\Verification;
-use App\Livewire\Pages\Dashboard;
-use App\Livewire\Pages\Applications\Create;
+use App\Livewire\Superadmin\AdminManagement;
+use Illuminate\Support\Facades\Route;
 
 // Public pages
 Route::get('/', Home::class)->name('home');
@@ -24,8 +24,8 @@ Route::get('/contact', Contact::class)->name('contact');
 Route::get('/scholarships/{scholarship}', Show::class)->name('scholarships.show');
 Route::get('/scholarships', Index::class)->name('scholarships.index');
 
-// Authenticated pages
-Route::middleware(['auth', 'verified'])->group(function () {
+// Authenticated resident pages
+Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
     Route::get('dashboard', Dashboard::class)->name('dashboard');
 });
 
@@ -44,7 +44,7 @@ Route::middleware(['auth', 'role:admin,superadmin', 'approved.admin'])->prefix('
 
 // Superadmin-only routes
 Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->group(function () {
-    Route::get('/admins', AdminApplications::class)->name('superadmin.admins');
+    Route::get('/admins', AdminManagement::class)->name('superadmin.admins');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -52,7 +52,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Practice routes (demo UI only)
-require __DIR__ . '/settings.php';
+require __DIR__.'/settings.php';
 
 Route::get('/practice/home', function () {
     $announcements = [
@@ -67,13 +67,14 @@ Route::get('/practice/home', function () {
             'created_at' => '2026-06-12',
         ],
     ];
+
     return view('practice.home', [
         'announcements' => $announcements,
         'scholarships' => [],
     ]);
 });
-Route::get('/practice/about', fn() => view('practice.about'));
-Route::get('/practice/faqs', fn() => view('practice.faqs'));
+Route::get('/practice/about', fn () => view('practice.about'));
+Route::get('/practice/faqs', fn () => view('practice.faqs'));
 Route::get('/practice/contact', function () {
     return view('practice.contact', ['submitted' => false]);
 });

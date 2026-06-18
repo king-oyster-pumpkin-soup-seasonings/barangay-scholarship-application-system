@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Pages\Scholarships;
 
-use Livewire\Component;
 use App\Models\Scholarship;
+use Livewire\Component;
 
 class Show extends Component
 {
@@ -24,7 +24,7 @@ class Show extends Component
     // This ensures the data is fresh and available even if Livewire "lost" the object
     public function hydrate()
     {
-        if ($this->scholarshipId && !$this->scholarship) {
+        if ($this->scholarshipId && ! $this->scholarship) {
             $this->scholarship = Scholarship::with('requirements')->findOrFail($this->scholarshipId);
         }
     }
@@ -32,7 +32,7 @@ class Show extends Component
     public function render()
     {
         // Fallback safety: if hydrate didn't run or failed, try to fetch here
-        if (!$this->scholarship && $this->scholarshipId) {
+        if (! $this->scholarship && $this->scholarshipId) {
             $this->scholarship = Scholarship::with('requirements')->findOrFail($this->scholarshipId);
         }
 

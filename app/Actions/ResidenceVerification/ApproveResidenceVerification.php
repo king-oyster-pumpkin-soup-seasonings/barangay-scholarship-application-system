@@ -19,7 +19,7 @@ class ApproveResidenceVerification
             'rejection_reason' => null,
         ]);
         $verification->user->notify(
-            new ResidenceVerificationApprovedNotification()
+            new ResidenceVerificationApprovedNotification
         );
 
         $verification->user->update([
