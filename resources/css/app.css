@@ -1,24 +1,22 @@
-@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
-@import 'tailwindcss';
-@import '../../vendor/livewire/flux/dist/flux.css';
+@import url("https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Playfair+Display:wght@700;800&display=swap");
+@import "tailwindcss";
+@import "../../vendor/livewire/flux/dist/flux.css";
 
 @font-face {
-    font-family: 'OpenDyslexic3';
-    src: url('../fonts/OpenDyslexic3-Regular.ttf') format('truetype');
+    font-family: "OpenDyslexic3";
+    src: url("../fonts/OpenDyslexic3-Regular.ttf") format("truetype");
     font-weight: normal;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: 'OpenDyslexic3';
-    src: url('../fonts/OpenDyslexic3-Bold.ttf') format('truetype');
+    font-family: "OpenDyslexic3";
+    src: url("../fonts/OpenDyslexic3-Bold.ttf") format("truetype");
     font-weight: bold;
     font-style: normal;
     font-display: swap;
 }
-
-
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -28,7 +26,10 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans:
+        "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
     --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 
     --color-zinc-50: #fafafa;
@@ -44,31 +45,30 @@
     --color-zinc-950: #0a0a0a;
 
     /* Brand Theme Colors */
-    --color-brand-gold: #FBB701;
-    --color-brand-orange: #FFAD3B;
-    --color-brand-success: #00BC7D;
-    --color-brand-danger: #F54A00;
-    --color-brand-heading: #0F172B;
-    --color-brand-primary: #1D74E3;
-    --color-brand-bg-light: #F8FAFC;
-    --color-brand-bg-white: #FFFFFF;
-    --color-brand-darkblue: #12325E;
+    --color-brand-gold: #fbb701;
+    --color-brand-orange: #ffad3b;
+    --color-brand-success: #00bc7d;
+    --color-brand-danger: #f54a00;
+    --color-brand-heading: #0f172b;
+    --color-brand-primary: #1d74e3;
+    --color-brand-bg-light: #f8fafc;
+    --color-brand-bg-white: #ffffff;
+    --color-brand-darkblue: #12325e;
 
-    --color-accent: #1D74E3;
-    --color-accent-content: #1D74E3;
+    --color-accent: #1d74e3;
+    --color-accent-content: #1d74e3;
     --color-accent-foreground: var(--color-white);
 }
 
 @layer theme {
     .dark {
-        --color-accent: #1D74E3;
-        --color-accent-content: #1D74E3;
+        --color-accent: #1d74e3;
+        --color-accent-content: #1d74e3;
         --color-accent-foreground: var(--color-white);
     }
 }
 
 @layer base {
-
     *,
     ::after,
     ::before,
@@ -83,7 +83,7 @@
 }
 
 [data-flux-label] {
-    @apply  !mb-0 !leading-tight;
+    @apply !mb-0 !leading-tight;
 }
 
 input:focus[data-flux-control],
@@ -108,12 +108,12 @@ select:focus[data-flux-control] {
 
 /* Force white background and black text on autofill / autocomplete states */
 .auth-page input:-webkit-autofill,
-.auth-page input:-webkit-autofill:hover, 
-.auth-page input:-webkit-autofill:focus, 
+.auth-page input:-webkit-autofill:hover,
+.auth-page input:-webkit-autofill:focus,
 .auth-page input:-webkit-autofill:active,
 .auth-page select:-webkit-autofill,
-.auth-page select:-webkit-autofill:hover, 
-.auth-page select:-webkit-autofill:focus, 
+.auth-page select:-webkit-autofill:hover,
+.auth-page select:-webkit-autofill:focus,
 .auth-page select:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
     -webkit-text-fill-color: #000000 !important;
@@ -132,16 +132,17 @@ select:focus[data-flux-control] {
     background-color: #ffffff !important;
     background: #ffffff !important;
     color: #000000 !important;
-    border-color: #1D74E3 !important;
+    border-color: #1d74e3 !important;
     box-shadow: 0 0 0 2px rgba(29, 116, 227, 0.2) !important;
 }
 
 /* Accessibility Control Widget Overrides */
 
 /* Dyslexia-friendly font override */
-.acc-dyslexic, 
+.acc-dyslexic,
 .acc-dyslexic * {
-    font-family: 'OpenDyslexic3', 'Comic Neue', 'Comic Sans MS', cursive, sans-serif !important;
+    font-family:
+        "OpenDyslexic3", "Comic Neue", "Comic Sans MS", cursive, sans-serif !important;
 }
 
 /* Text Resizing (Relative scale on root) */
@@ -158,7 +159,7 @@ html.acc-text-xl {
     background: #000000 !important;
     color: #ffff00 !important;
 }
-.acc-high-contrast *, 
+.acc-high-contrast *,
 .acc-high-contrast [data-flux-control],
 .acc-high-contrast [data-flux-control] * {
     background-color: #000000 !important;
@@ -168,15 +169,15 @@ html.acc-text-xl {
     text-shadow: none !important;
     box-shadow: none !important;
 }
-.acc-high-contrast a, 
-.acc-high-contrast a *, 
+.acc-high-contrast a,
+.acc-high-contrast a *,
 .acc-high-contrast button,
 .acc-high-contrast button * {
     color: #00ffff !important;
     text-decoration: underline !important;
     border-color: #00ffff !important;
 }
-.acc-high-contrast a:hover, 
+.acc-high-contrast a:hover,
 .acc-high-contrast button:hover {
     background-color: #ffff00 !important;
     color: #000000 !important;
@@ -188,7 +189,7 @@ html.acc-text-xl {
 }
 
 /* Highlight Links */
-.acc-highlight-links a, 
+.acc-highlight-links a,
 .acc-highlight-links button:not([data-flux-control]),
 .acc-highlight-links [role="button"] {
     outline: 3px solid #ff5722 !important;
@@ -196,5 +197,3 @@ html.acc-text-xl {
     text-decoration: underline !important;
     font-weight: bold !important;
 }
-
-
