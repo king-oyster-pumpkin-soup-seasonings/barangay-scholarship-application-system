@@ -23,6 +23,12 @@ class ApproveApplication
             'remarks' => $notes,
         ]);
 
+        $scholarship = $application->scholarship;
+        $scholarship->decrement('slots');
+        if ($scholarship->slots <= 0) {
+            $scholarship->update(['status' => 'full']);
+        }
+
         ApplicationLog::create([
             'application_id' => $application->id,
             'old_status' => $oldStatus,

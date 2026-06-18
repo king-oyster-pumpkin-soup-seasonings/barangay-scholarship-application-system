@@ -1,4 +1,4 @@
-<div class="min-h-screen" style="background-color: #F5F0E8;">
+<div class="min-h-screen" style="background-color: #E5E8EF;">
 
     {{-- PAGE HEADER --}}
     <section class="px-6 py-12" style="background-color: #1C398E;">
@@ -151,7 +151,7 @@
                                 {{-- Badges --}}
                                 <div class="flex items-center gap-2 mb-3">
                                     <span class="text-xs px-2.5 py-1 rounded-full font-medium"
-                                          style="background-color: #F5F0E8; color: #AA9A98;">
+                                          style="background-color: #E5E8EF; color: #AA9A98;">
                                         Academic
                                     </span>
                                     @if($scholarship['status'] === 'available')

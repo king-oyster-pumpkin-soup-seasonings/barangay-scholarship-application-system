@@ -188,6 +188,50 @@ test('admin can approve scholarship application', function () {
     expect($scholarship->refresh()->slots)->toBe(4);
 });
 
+test('scholarship status transitions to full when slots reach zero upon application approval', function () {
+    $admin = User::create([
+        'name' => 'Admin User',
+        'email' => 'admin@example.com',
+        'password' => bcrypt('password123'),
+        'role' => 'admin',
+    ]);
+
+    $user = User::create([
+        'name' => 'Resident User',
+        'email' => 'resident@example.com',
+        'password' => bcrypt('password123'),
+        'role' => 'user',
+        'verification_status' => 'verified',
+    ]);
+
+    $scholarship = Scholarship::create([
+        'title' => 'Test Scholarship',
+        'description' => 'Test Description',
+        'allowance' => 5000.00,
+        'slots' => 1,
+        'deadline' => now()->addDays(30),
+        'status' => 'available',
+        'created_by' => $admin->id,
+    ]);
+
+    $application = Application::create([
+        'user_id' => $user->id,
+        'scholarship_id' => $scholarship->id,
+        'status' => 'pending',
+        'submitted_at' => now(),
+    ]);
+
+    $this->actingAs($admin);
+
+    Livewire::test(Applications::class)
+        ->call('approve', $application->id)
+        ->assertHasNoErrors();
+
+    expect($application->refresh()->status)->toBe('approved');
+    expect($scholarship->refresh()->slots)->toBe(0);
+    expect($scholarship->refresh()->status)->toBe('full');
+});
+
 test('admin can reject scholarship application with remarks', function () {
     $admin = User::create([
         'name' => 'Admin User',
