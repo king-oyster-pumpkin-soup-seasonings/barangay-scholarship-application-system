@@ -5,6 +5,7 @@ namespace App\Livewire\Pages\Applications;
 use App\Models\Application;
 use App\Models\ApplicationAnswer;
 use App\Models\Scholarship;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -22,26 +23,34 @@ class Create extends Component
     public int $step = 1;
 
     // Stores answers for non-file fields: ['requirement_id' => 'value']
+    /** @var array<int|string, string|array<int, string>> */
     public array $answers = [];
 
     // Stores uploaded files: ['requirement_id' => UploadedFile]
+    /** @var array<int|string, mixed> */
     public array $files = [];
 
     // Requirements grouped by category, loaded once in mount()
+    /** @var array<int, array<string, mixed>> */
     public array $eligibilityRequirements = [];
 
+    /** @var array<int, array<string, mixed>> */
     public array $generalRequirements = [];
 
+    /** @var array<int, array<string, mixed>> */
     public array $specificRequirements = [];
 
+    /** @var array<int, array<string, mixed>> */
     public array $additionalRequirements = [];
 
     // Total number of steps (only count categories that have requirements)
     public int $totalSteps = 0;
 
-    protected $rules = [];
+    /** @var array<string, array<int, string>> */
+    protected array $rules = [];
 
     // Map of step number → category name (built dynamically)
+    /** @var array<int, string> */
     public array $stepMap = [];
 
     /**
@@ -100,6 +109,8 @@ class Create extends Component
     /**
      * Returns the requirements for the current step.
      * Used in the blade to know what to render.
+     *
+     * @return array<int, array<string, mixed>>
      */
     public function getCurrentRequirements(): array
     {
@@ -245,7 +256,7 @@ class Create extends Component
         $this->redirect(route('dashboard'), navigate: true);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.pages.applications.create', [
             'currentRequirements' => $this->getCurrentRequirements(),
@@ -288,7 +299,7 @@ class Create extends Component
 
     /**
      * @param  array{id: int, field_type: string, is_required: bool, options?: array<int, string>|string|null}  $requirement
-     * @return list<mixed>
+     * @return array<int, string>
      */
     protected function rulesForRequirement(array $requirement): array
     {
@@ -306,14 +317,17 @@ class Create extends Component
 
     /**
      * @param  array{options?: array<int, string>|string|null}  $requirement
-     * @return list<string>
+     * @return array<int, string>
      */
     protected function requirementOptions(array $requirement): array
     {
-        if (is_array($requirement['options'] ?? null)) {
-            return array_values($requirement['options']);
+        $options = $requirement['options'] ?? null;
+
+        if (is_array($options)) {
+            return array_values($options);
         }
 
-        return json_decode($requirement['options'] ?? '[]', true) ?: [];
+        $decoded = json_decode($options ?? '[]', true);
+        return is_array($decoded) ? $decoded : [];
     }
 }
