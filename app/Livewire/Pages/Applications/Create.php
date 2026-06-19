@@ -183,6 +183,11 @@ class Create extends Component
         $this->step--;
     }
 
+    public function removeFile(int $requirementId): void
+    {
+    unset($this->files[$requirementId]);
+    }
+
     /**
      * Validate only the fields that belong to the current step.
      * This prevents Livewire from complaining about future steps' empty values.
@@ -326,7 +331,7 @@ class Create extends Component
         $requiredRule = $requirement['is_required'] ? 'required' : 'nullable';
 
         return match ($requirement['field_type']) {
-            'number' => [$requiredRule, 'numeric'],
+            'number' => [$requiredRule, 'numeric', 'min:1.0', 'max:5.0'],
             'date' => [$requiredRule, 'date'],
             'select' => [$requiredRule, Rule::in($this->requirementOptions($requirement))],
             'checkbox' => $requirement['is_required'] ? ['required', 'array', 'min:1'] : ['nullable', 'array'],
