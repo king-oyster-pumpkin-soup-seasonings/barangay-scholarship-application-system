@@ -146,8 +146,9 @@
                                 @break
 
                             @case('file')
-                                {{-- File upload area --}}
-                                <div>
+                            <div>
+                                {{-- Only show upload area if no file is selected yet --}}
+                                @if (empty($files[$req['id']]))
                                     <label
                                         for="file-{{ $req['id'] }}"
                                         class="flex flex-col items-center justify-center gap-2 w-full rounded-xl border-2 border-dashed border-gray-200 hover:border-[#1D74E3] transition-colors px-4 py-8 cursor-pointer bg-gray-50/50 hover:bg-blue-50/30 group"
@@ -164,32 +165,46 @@
                                             id="file-{{ $req['id'] }}"
                                             type="file"
                                             wire:model="files.{{ $req['id'] }}"
+                                            accept=".pdf,.jpg,.jpeg,.png"
                                             class="sr-only"
                                         />
                                     </label>
+                                @endif
 
-                                    {{-- Selected File Indicator Badge matching Verification page --}}
-                                    @if (!empty($files[$req['id']]))
-                                        <div class="mt-2 flex items-center gap-1.5 text-xs text-green-600 font-semibold bg-green-50/60 border border-green-100 rounded-lg py-1.5 px-2.5 w-fit">
+                                {{-- Loading indicator --}}
+                                <div wire:loading wire:target="files.{{ $req['id'] }}" class="mt-2 text-xs text-[#1D74E3] font-semibold flex items-center gap-1">
+                                    <svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                                    </svg>
+                                    Uploading file...
+                                </div>
+
+                                {{-- Uploaded file badge + remove button --}}
+                                @if (!empty($files[$req['id']]))
+                                    <div class="mt-2 flex items-center justify-between gap-2 bg-green-50/60 border border-green-100 rounded-lg py-1.5 px-2.5">
+                                        <div class="flex items-center gap-1.5 text-xs text-green-600 font-semibold min-w-0">
                                             <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                                             </svg>
-                                            <span class="truncate max-w-[280px]">
+                                            <span class="truncate max-w-[240px]">
                                                 {{ $files[$req['id']]->getClientOriginalName() }}
                                             </span>
                                         </div>
-                                    @endif
-
-                                    {{-- Loading indicator while Livewire uploads the file --}}
-                                    <div wire:loading wire:target="files.{{ $req['id'] }}" class="mt-2 text-xs text-[#1D74E3] font-semibold flex items-center gap-1">
-                                        <svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-                                        </svg>
-                                        Uploading file...
+                                        <button
+                                            type="button"
+                                            wire:click="removeFile({{ $req['id'] }})"
+                                            class="shrink-0 text-[#AA9A98] hover:text-red-500 transition-colors ml-2"
+                                            title="Remove file"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
                                     </div>
-                                </div>
-                            @break
+                                @endif
+                            </div>
+                        @break
 
                             @default
                                 {{-- Fallback for unknown field types --}}
