@@ -213,15 +213,7 @@
                 </div>
                 <div class="flex-1">
                     <p class="font-bold text-red-800 text-sm">Verification Rejected</p>
-                    <p class="text-sm text-red-700 mt-0.5">Your documents were rejected. Please re-submit with valid files.</p>
-                    <a href="{{ route('verification') }}"
-                       class="inline-flex items-center gap-1.5 mt-3 text-sm font-bold px-4 py-2 rounded-xl text-white transition hover:opacity-90"
-                       style="background-color: #1D74E3;">
-                        Re-submit Documents
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
-                        </svg>
-                    </a>
+                    <p class="text-sm text-red-700 mt-0.5">Your documents were rejected. Please visit the Barangay Hall to re-submit your documents in person or contact the scholarship office for assistance.</p>
                 </div>
             </div>
 

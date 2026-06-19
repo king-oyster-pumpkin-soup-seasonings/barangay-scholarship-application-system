@@ -39,9 +39,14 @@ class Show extends Component
         // Pass the model to the view
         $layout = auth()->check() ? 'layouts.app' : 'layouts.public';
 
-        return view('pages.scholarships.show', [
-            'scholarship' => $this->scholarship,
-            'requirements' => $this->scholarship->requirements()->orderBy('order')->get(),
-        ])->layout($layout, ['title' => $this->scholarship->title]);
+        $verification = auth()->check()
+        ? \App\Models\ResidenceVerification::where('user_id', auth()->id())->first()
+        : null;
+
+    return view('pages.scholarships.show', [
+        'scholarship'  => $this->scholarship,
+        'requirements' => $this->scholarship->requirements()->orderBy('order')->get(),
+        'verification' => $verification,
+    ])->layout($layout, ['title' => $this->scholarship->title]);
     }
 }

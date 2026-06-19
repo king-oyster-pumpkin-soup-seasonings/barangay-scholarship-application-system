@@ -286,39 +286,69 @@
                         </div>
 
                         {{-- Action Button --}}
-                        <div class="mt-5">
-                            @if($scholarship->status === 'available')
-                                @auth
-                                    <a href="{{ route('applications.create', $scholarship) }}"
-                                       class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
-                                       style="background-color: #1D74E3;">
-                                        Begin Application
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                                        </svg>
-                                    </a>
-                                @else
-                                    <a href="{{ route('login') }}"
-                                       class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
-                                       style="background-color: #1D74E3;">
-                                        Sign In to Apply
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                                        </svg>
-                                    </a>
-                                @endauth
-                                <p class="text-center text-xs mt-3" style="color: #AA9A98;">
-                                    Takes approximately 10-15 minutes.
-                                </p>
-                            @else
-                                <button disabled
-                                        class="w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl cursor-not-allowed"
-                                        style="background-color: #F0EDE8; color: #AA9A98; border: 1px solid #E5E8EF;">
-                                    Applications Closed
-                                </button>
-                            @endif
-                        </div>
-                    </div>
+<div class="mt-5">
+    @if($scholarship->status === 'available')
+        @auth
+            @php $vstatus = $verification?->status; @endphp
+
+            @if($vstatus === 'verified')
+                <a href="{{ route('applications.create', $scholarship) }}"
+                   class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
+                   style="background-color: #1D74E3;">
+                    Begin Application
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                    </svg>
+                </a>
+                <p class="text-center text-xs mt-3" style="color: #AA9A98;">
+                    Takes approximately 10-15 minutes.
+                </p>
+
+            @elseif($vstatus === 'pending')
+                <div class="w-full rounded-xl px-4 py-3.5 text-center text-sm font-medium"
+                     style="background-color: #fefce8; border: 1px solid #fde047; color: #854d0e; margin-bottom: 1.25rem;">
+                    ⏳ Your verification is under review. You can apply once approved.
+                </div>
+
+            @elseif($vstatus === 'rejected')
+                <div class="w-full rounded-xl px-4 py-3.5 text-center text-sm font-medium"
+                     style="background-color: #fef2f2; border: 1px solid #fca5a5; color: #991b1b;">
+                    ✗ Your verification was rejected. Contact the barangay office for assistance.
+                </div>
+
+            @else
+                {{-- null — never submitted --}}
+                <a href="{{ route('verification') }}"
+                   class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
+                   style="background-color: #1D74E3;">
+                    Verify Residency First
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                    </svg>
+                </a>
+                <p class="text-center text-xs mt-3" style="color: #AA9A98;">
+                    Residency verification is required before applying.
+                </p>
+            @endif
+
+        @else
+            <a href="{{ route('login') }}"
+               class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
+               style="background-color: #1D74E3;">
+                Sign In to Apply
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                </svg>
+            </a>
+        @endauth
+    @else
+        <button disabled
+                class="w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl cursor-not-allowed"
+                style="background-color: #F0EDE8; color: #AA9A98; border: 1px solid #E5E8EF;">
+            Applications Closed
+        </button>
+    @endif
+</div>
 
                     {{-- Help Card --}}
                     <div class="rounded-2xl p-6 border" style="background-color: #EBF3FF; border-color: #BFDBFE;">
