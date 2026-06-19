@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
             DemoScholarshipSeeder::class,
             DemoAnnouncementSeeder::class,
             DemoApplicationSeeder::class,
+            DemoApplicantSeeder::class,
         ]);
     }
 }

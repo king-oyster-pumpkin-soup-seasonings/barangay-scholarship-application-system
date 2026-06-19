@@ -1,33 +1,41 @@
 <div style="background-color: #E5E8EF;" class="min-h-screen pb-24">
 
-    {{-- HERO --}}
-<section class="relative overflow-hidden py-20 px-6 text-white">
-    {{-- Dynamic Background Gradient --}}
-    <div class="absolute inset-0 bg-gradient-to-br from-[#0f246e] to-[#1C398E] z-0"></div>
-
-    {{-- Grid Pattern --}}
-    <div class="absolute inset-0 opacity-[0.06] pointer-events-none z-0"
-         style="background-image: linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px); background-size: 40px 40px;">
+    @if (session('message'))
+    <div class="max-w-6xl mx-auto px-6 pt-6">
+        <div class="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-medium text-blue-700">
+            {{ session('message') }}
+        </div>
     </div>
+    @endif
 
-    {{-- Spotlight Glow --}}
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-4xl bg-blue-400/10 blur-[100px] rounded-full z-0 pointer-events-none"></div>
+    {{-- HERO --}}
+    <section class="relative overflow-hidden py-20 px-6 text-white">
+        {{-- Dynamic Background Gradient --}}
+        <div class="absolute inset-0 bg-gradient-to-br from-[#0f246e] to-[#1C398E] z-0"></div>
 
-    <div class="relative z-10 max-w-6xl mx-auto">
+        {{-- Grid Pattern --}}
+        <div class="absolute inset-0 opacity-[0.06] pointer-events-none z-0"
+            style="background-image: linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px); background-size: 40px 40px;">
+        </div>
 
-        {{-- Breadcrumb --}}
-        <a href="{{ route('scholarships.index') }}"
-           class="inline-flex items-center gap-2 text-sm font-medium transition-all duration-300 group text-blue-100/80 hover:text-white hover:gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 transition-transform group-hover:-translate-x-1">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-            </svg>
-            Back to Scholarships
-        </a>
+        {{-- Spotlight Glow --}}
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-4xl bg-blue-400/10 blur-[100px] rounded-full z-0 pointer-events-none"></div>
 
-        {{-- Badges + Title --}}
-        <div class="mt-8 max-w-3xl">
-            <div class="flex flex-wrap items-center gap-3 mb-6">
-                @if($scholarship->status === 'available')
+        <div class="relative z-10 max-w-6xl mx-auto">
+
+            {{-- Breadcrumb --}}
+            <a href="{{ route('scholarships.index') }}"
+                class="inline-flex items-center gap-2 text-sm font-medium transition-all duration-300 group text-blue-100/80 hover:text-white hover:gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 transition-transform group-hover:-translate-x-1">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                </svg>
+                Back to Scholarships
+            </a>
+
+            {{-- Badges + Title --}}
+            <div class="mt-8 max-w-3xl">
+                <div class="flex flex-wrap items-center gap-3 mb-6">
+                    @if($scholarship->status === 'available')
                     <span class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full
                                bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
                         <span class="relative flex h-2 w-2">
@@ -36,37 +44,37 @@
                         </span>
                         Open Application
                     </span>
-                @elseif($scholarship->status === 'full')
+                    @elseif($scholarship->status === 'full')
                     <span class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full
                                bg-rose-500/10 text-rose-300 border border-rose-500/20">
                         <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
                         No Open Slots
                     </span>
-                @else
+                    @else
                     <span class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full
                                bg-slate-500/10 text-slate-300 border border-slate-500/20">
                         <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
                         Inactive
                     </span>
-                @endif
+                    @endif
 
-                <span class="text-xs font-mono font-medium px-3 py-1.5 rounded-lg
+                    <span class="text-xs font-mono font-medium px-3 py-1.5 rounded-lg
                            bg-white/5 text-blue-100/70 border border-white/10 backdrop-blur-sm">
-                    ID: #{{ str_pad($scholarship->id, 3, '0', STR_PAD_LEFT) }}
-                </span>
+                        ID: #{{ str_pad($scholarship->id, 3, '0', STR_PAD_LEFT) }}
+                    </span>
+                </div>
+
+                <h1 class="text-3xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-blue-200"
+                    style="font-family: 'Playfair Display', serif; text-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                    {{ $scholarship->title }}
+                </h1>
+
+                <p class="text-base md:text-lg leading-relaxed text-blue-100/90 max-w-2xl font-light drop-shadow-sm">
+                    {{ $scholarship->description }}
+                </p>
             </div>
-
-            <h1 class="text-3xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-blue-200"
-                style="font-family: 'Playfair Display', serif; text-shadow: 0 10px 30px rgba(0,0,0,0.2);">
-                {{ $scholarship->title }}
-            </h1>
-
-            <p class="text-base md:text-lg leading-relaxed text-blue-100/90 max-w-2xl font-light drop-shadow-sm">
-                {{ $scholarship->description }}
-            </p>
         </div>
-    </div>
-</section>
+    </section>
 
     {{-- MAIN CONTENT --}}
     <section class="max-w-6xl mx-auto px-6 py-10">
@@ -80,7 +88,7 @@
                     <h2 class="text-xl font-bold mb-4 flex items-center gap-3"
                         style="color: #33333B; font-family: 'Playfair Display', serif;">
                         <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                             style="background-color: #EBF3FF;">
+                            style="background-color: #EBF3FF;">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4" style="color: #1D74E3;">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                             </svg>
@@ -99,10 +107,10 @@
 
                 {{-- Requirements sections using Eloquent collection filter --}}
                 @php
-                    $eligibility     = $requirements->where('category', 'eligibility');
-                    $generalDocs     = $requirements->where('category', 'general_document');
-                    $specificDocs    = $requirements->where('category', 'specific_document');
-                    $additionalFields = $requirements->where('category', 'additional_field');
+                $eligibility = $requirements->where('category', 'eligibility');
+                $generalDocs = $requirements->where('category', 'general_document');
+                $specificDocs = $requirements->where('category', 'specific_document');
+                $additionalFields = $requirements->where('category', 'additional_field');
                 @endphp
 
                 {{-- Eligibility --}}
@@ -111,7 +119,7 @@
                     <h2 class="text-xl font-bold mb-5 flex items-center gap-3"
                         style="color: #33333B; font-family: 'Playfair Display', serif;">
                         <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                             style="background-color: #EBF3FF;">
+                            style="background-color: #EBF3FF;">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4" style="color: #1D74E3;">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                             </svg>
@@ -120,17 +128,17 @@
                     </h2>
                     <ul class="space-y-3">
                         @foreach($eligibility as $req)
-                            <li class="flex items-start gap-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 mt-0.5 flex-shrink-0" style="color: #1D74E3;">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                                </svg>
-                                <div>
-                                    <span class="text-sm font-medium" style="color: #1B1A1C;">{{ $req->label }}</span>
-                                    @if($req->is_required)
-                                        <span class="text-xs ml-2 text-red-500">*Required</span>
-                                    @endif
-                                </div>
-                            </li>
+                        <li class="flex items-start gap-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 mt-0.5 flex-shrink-0" style="color: #1D74E3;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                            </svg>
+                            <div>
+                                <span class="text-sm font-medium" style="color: #1B1A1C;">{{ $req->label }}</span>
+                                @if($req->is_required)
+                                <span class="text-xs ml-2 text-red-500">*Required</span>
+                                @endif
+                            </div>
+                        </li>
                         @endforeach
                     </ul>
                 </div>
@@ -142,7 +150,7 @@
                     <h2 class="text-xl font-bold mb-5 flex items-center gap-3"
                         style="color: #33333B; font-family: 'Playfair Display', serif;">
                         <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                             style="background-color: #EBF3FF;">
+                            style="background-color: #EBF3FF;">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4" style="color: #1D74E3;">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                             </svg>
@@ -151,17 +159,17 @@
                     </h2>
                     <ul class="space-y-3">
                         @foreach($generalDocs as $req)
-                            <li class="flex items-center gap-3 p-3 rounded-xl" style="background-color: #E5E8EF;">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 flex-shrink-0" style="color: #1D74E3;">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m6.75 12-3-3m0 0-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                                </svg>
-                                <span class="flex-1 text-sm font-medium" style="color: #33333B;">{{ $req->label }}</span>
-                                @if($req->is_required)
-                                    <span class="text-xs font-medium text-red-500">Required</span>
-                                @else
-                                    <span class="text-xs" style="color: #AA9A98;">Optional</span>
-                                @endif
-                            </li>
+                        <li class="flex items-center gap-3 p-3 rounded-xl" style="background-color: #E5E8EF;">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 flex-shrink-0" style="color: #1D74E3;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m6.75 12-3-3m0 0-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                            </svg>
+                            <span class="flex-1 text-sm font-medium" style="color: #33333B;">{{ $req->label }}</span>
+                            @if($req->is_required)
+                            <span class="text-xs font-medium text-red-500">Required</span>
+                            @else
+                            <span class="text-xs" style="color: #AA9A98;">Optional</span>
+                            @endif
+                        </li>
                         @endforeach
                     </ul>
                 </div>
@@ -173,7 +181,7 @@
                     <h2 class="text-xl font-bold mb-5 flex items-center gap-3"
                         style="color: #33333B; font-family: 'Playfair Display', serif;">
                         <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                             style="background-color: #EBF3FF;">
+                            style="background-color: #EBF3FF;">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4" style="color: #1D74E3;">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
                             </svg>
@@ -182,17 +190,17 @@
                     </h2>
                     <ul class="space-y-3">
                         @foreach($specificDocs as $req)
-                            <li class="flex items-center gap-3 p-3 rounded-xl" style="background-color: #E5E8EF;">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 flex-shrink-0" style="color: #1D74E3;">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m6.75 12-3-3m0 0-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                                </svg>
-                                <span class="flex-1 text-sm font-medium" style="color: #33333B;">{{ $req->label }}</span>
-                                @if($req->is_required)
-                                    <span class="text-xs font-medium text-red-500">Required</span>
-                                @else
-                                    <span class="text-xs" style="color: #AA9A98;">Optional</span>
-                                @endif
-                            </li>
+                        <li class="flex items-center gap-3 p-3 rounded-xl" style="background-color: #E5E8EF;">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 flex-shrink-0" style="color: #1D74E3;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m6.75 12-3-3m0 0-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                            </svg>
+                            <span class="flex-1 text-sm font-medium" style="color: #33333B;">{{ $req->label }}</span>
+                            @if($req->is_required)
+                            <span class="text-xs font-medium text-red-500">Required</span>
+                            @else
+                            <span class="text-xs" style="color: #AA9A98;">Optional</span>
+                            @endif
+                        </li>
                         @endforeach
                     </ul>
                 </div>
@@ -204,7 +212,7 @@
                     <h2 class="text-xl font-bold mb-5 flex items-center gap-3"
                         style="color: #33333B; font-family: 'Playfair Display', serif;">
                         <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                             style="background-color: #EBF3FF;">
+                            style="background-color: #EBF3FF;">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4" style="color: #1D74E3;">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125" />
                             </svg>
@@ -213,15 +221,15 @@
                     </h2>
                     <ul class="space-y-3">
                         @foreach($additionalFields as $req)
-                            <li class="flex items-start gap-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mt-0.5 flex-shrink-0" style="color: #AA9A98;">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                </svg>
-                                <div>
-                                    <span class="text-sm font-medium" style="color: #1B1A1C;">{{ $req->label }}</span>
-                                    <span class="text-xs ml-2" style="color: #AA9A98;">(Optional)</span>
-                                </div>
-                            </li>
+                        <li class="flex items-start gap-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mt-0.5 flex-shrink-0" style="color: #AA9A98;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            </svg>
+                            <div>
+                                <span class="text-sm font-medium" style="color: #1B1A1C;">{{ $req->label }}</span>
+                                <span class="text-xs ml-2" style="color: #AA9A98;">(Optional)</span>
+                            </div>
+                        </li>
                         @endforeach
                     </ul>
                 </div>
@@ -281,80 +289,72 @@
                                 <span class="text-sm" style="color: #AA9A98;">Deadline</span>
                             </div>
                             <span class="font-semibold text-sm text-red-500">
-                                {{ $scholarship->deadline}}
+                                {{ $scholarship->deadline->format('M d, Y') }}
                             </span>
                         </div>
 
                         {{-- Action Button --}}
-<div class="mt-5">
-    @if($scholarship->status === 'available')
-        @auth
-            @php $vstatus = $verification?->status; @endphp
-
-            @if($vstatus === 'verified')
-                <a href="{{ route('applications.create', $scholarship) }}"
-                   class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
-                   style="background-color: #1D74E3;">
-                    Begin Application
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                    </svg>
-                </a>
-                <p class="text-center text-xs mt-3" style="color: #AA9A98;">
-                    Takes approximately 10-15 minutes.
-                </p>
-
-            @elseif($vstatus === 'pending')
-                <div class="w-full rounded-xl px-4 py-3.5 text-center text-sm font-medium"
-                     style="background-color: #fefce8; border: 1px solid #fde047; color: #854d0e; margin-bottom: 1.25rem;">
-                    ⏳ Your verification is under review. You can apply once approved.
-                </div>
-
-            @elseif($vstatus === 'rejected')
-                <div class="w-full rounded-xl px-4 py-3.5 text-center text-sm font-medium"
-                     style="background-color: #fef2f2; border: 1px solid #fca5a5; color: #991b1b;">
-                    ✗ Your verification was rejected. Contact the barangay office for assistance.
-                </div>
-
-            @else
-                {{-- null — never submitted --}}
-                <a href="{{ route('verification') }}"
-                   class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
-                   style="background-color: #1D74E3;">
-                    Verify Residency First
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                    </svg>
-                </a>
-                <p class="text-center text-xs mt-3" style="color: #AA9A98;">
-                    Residency verification is required before applying.
-                </p>
-            @endif
-
-        @else
-            <a href="{{ route('login') }}"
-               class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
-               style="background-color: #1D74E3;">
-                Sign In to Apply
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                </svg>
-            </a>
-        @endauth
-    @else
-        <button disabled
-                class="w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl cursor-not-allowed"
-                style="background-color: #F0EDE8; color: #AA9A98; border: 1px solid #E5E8EF;">
-            Applications Closed
-        </button>
-    @endif
-</div>
+                        <div class="mt-5">
+                            @auth
+                            @if($alreadyApplied)
+                            <div class="w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl"
+                                style="background-color: #EBF3FF; color: #1D74E3; border: 1px solid #BFDBFE;">
+                                ✓ Application Submitted
+                            </div>
+                            <p class="text-center text-xs mt-3" style="color: #AA9A98;">
+                                Track its status on your <a href="{{ route('dashboard') }}" wire:navigate class="underline">dashboard</a>.
+                            </p>
+                            @elseif(auth()->user()->role !== 'user')
+                            <div class="w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl"
+                                style="background-color: #F0EDE8; color: #AA9A98; border: 1px solid #E5E8EF;">
+                                Admin accounts cannot apply
+                            </div>
+                            @elseif(auth()->user()->verification_status !== 'verified')
+                            <a href="{{ route('verification') }}" wire:navigate
+                                class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
+                                style="background-color: #1D74E3;">
+                                Verify Residency to Apply
+                            </a>
+                            <p class="text-center text-xs mt-3" style="color: #AA9A98;">
+                                You must verify your residency before applying.
+                            </p>
+                            @elseif($scholarship->status === 'available' && ! $deadlinePassed)
+                            <a href="{{ route('applications.create', $scholarship) }}" wire:navigate
+                                class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
+                                style="background-color: #1D74E3;">
+                                Begin Application
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                                </svg>
+                            </a>
+                            <p class="text-center text-xs mt-3" style="color: #AA9A98;">
+                                Takes approximately 10-15 minutes.
+                            </p>
+                            @else
+                            <button disabled
+                                class="w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl cursor-not-allowed"
+                                style="background-color: #F0EDE8; color: #AA9A98; border: 1px solid #E5E8EF;">
+                                {{ $deadlinePassed ? 'Deadline Passed' : 'Applications Closed' }}
+                            </button>
+                            @endif
+                            @else
+                            <a href="{{ route('login') }}"
+                                class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
+                                style="background-color: #1D74E3;">
+                                Sign In to Apply
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                                </svg>
+                            </a>
+                            @endauth
+                        </div>
+                    </div>
 
                     {{-- Help Card --}}
                     <div class="rounded-2xl p-6 border" style="background-color: #EBF3FF; border-color: #BFDBFE;">
                         <div class="flex items-start gap-4">
                             <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                                 style="background-color: #DBEAFE;">
+                                style="background-color: #DBEAFE;">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" style="color: #1D74E3;">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
                                 </svg>
@@ -365,8 +365,8 @@
                                     Questions about this scholarship? Contact our scholarship secretariat.
                                 </p>
                                 <a href="{{ route('contact') }}"
-                                   class="text-xs font-semibold hover:opacity-75 transition flex items-center gap-1"
-                                   style="color: #1D74E3;">
+                                    class="text-xs font-semibold hover:opacity-75 transition flex items-center gap-1"
+                                    style="color: #1D74E3;">
                                     Contact Us
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
