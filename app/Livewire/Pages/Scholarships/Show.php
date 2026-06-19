@@ -2,26 +2,27 @@
 
 namespace App\Livewire\Pages\Scholarships;
 
+use App\Models\Application;
+use App\Models\ResidenceVerification;
 use App\Models\Scholarship;
 use Livewire\Component;
 
 class Show extends Component
 {
-    // 1. Store the ID (integer), NOT the model. Integers persist across Livewire updates.
+    // Store the ID (integer), NOT the model. Integers persist across Livewire updates.
     public $scholarshipId;
 
-    // 2. Store the model as a private/protected variable so it's not sent to the browser
+    // Store the model as a private/protected variable so it's not sent to the browser
     protected $scholarship;
 
-    // 3. Accept the model from the route (Route Model Binding)
+    // Accept the model from the route (Route Model Binding)
     public function mount(Scholarship $scholarship)
     {
         $this->scholarship = $scholarship;
         $this->scholarshipId = $scholarship->id;
     }
 
-    // 4. CRITICAL: Re-fetch the model on every request if it's missing
-    // This ensures the data is fresh and available even if Livewire "lost" the object
+    // Re-fetch the model on every request if it's missing
     public function hydrate()
     {
         if ($this->scholarshipId && ! $this->scholarship) {
@@ -36,35 +37,28 @@ class Show extends Component
             $this->scholarship = Scholarship::with('requirements')->findOrFail($this->scholarshipId);
         }
 
-        $user = auth()->user();
-
-        // Has this resident already applied to this scholarship?
-        $alreadyApplied = $user
-            ? \App\Models\Application::where('user_id', $user->id)
-            ->where('scholarship_id', $this->scholarship->id)
-            ->exists()
+        $alreadyApplied = auth()->check()
+            ? Application::where('user_id', auth()->id())
+                ->where('scholarship_id', $this->scholarship->id)
+                ->exists()
             : false;
 
         $deadlinePassed = $this->scholarship->deadline
-            && now()->startOfDay()->gt($this->scholarship->deadline);
+            ? now()->startOfDay()->gt($this->scholarship->deadline)
+            : false;
+
+        $verification = auth()->check()
+            ? ResidenceVerification::where('user_id', auth()->id())->first()
+            : null;
 
         $layout = auth()->check() ? 'layouts.app' : 'layouts.public';
 
-        $verification = auth()->check()
-    ? \App\Models\ResidenceVerification::where('user_id', auth()->id())->first()
-    : null;
-
-$alreadyApplied = auth()->check()
-    ? \App\Models\Application::where('user_id', auth()->id())
-        ->where('scholarship_id', $this->scholarship->id)
-        ->exists()
-    : false;
-
-return view('pages.scholarships.show', [
-    'scholarship'   => $this->scholarship,
-    'requirements'  => $this->scholarship->requirements()->orderBy('order')->get(),
-    'verification'  => $verification,
-    'alreadyApplied' => $alreadyApplied,
-])->layout($layout, ['title' => $this->scholarship->title]);
+        return view('pages.scholarships.show', [
+            'scholarship'    => $this->scholarship,
+            'requirements'   => $this->scholarship->requirements()->orderBy('order')->get(),
+            'verification'   => $verification,
+            'alreadyApplied' => $alreadyApplied,
+            'deadlinePassed' => $deadlinePassed,
+        ])->layout($layout, ['title' => $this->scholarship->title]);
     }
 }
