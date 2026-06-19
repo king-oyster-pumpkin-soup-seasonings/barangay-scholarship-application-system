@@ -3,14 +3,19 @@
 use App\Livewire\Admin\Announcements;
 use App\Livewire\Admin\Applications;
 use App\Livewire\Admin\Dashboard;
+use App\Livewire\Admin\Scholarships;
 use App\Livewire\Admin\Verifications;
+use App\Livewire\Pages\Applications\Create as CreateApplicationPage;
 use App\Livewire\Superadmin\AdminManagement;
 use App\Models\Announcement;
 use App\Models\Application;
+use App\Models\ApplicationAnswer;
 use App\Models\ResidenceVerification;
 use App\Models\Scholarship;
 use App\Models\User;
+use App\Notifications\ApplicationStatusUpdatedNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -146,6 +151,8 @@ test('admin can reject residence verification with remarks', function () {
 });
 
 test('admin can approve scholarship application', function () {
+    Notification::fake();
+
     $admin = User::create([
         'name' => 'Admin User',
         'email' => 'admin@example.com',
@@ -186,6 +193,15 @@ test('admin can approve scholarship application', function () {
 
     expect($application->refresh()->status)->toBe('approved');
     expect($scholarship->refresh()->slots)->toBe(4);
+
+    Notification::assertSentTo(
+        $user,
+        ApplicationStatusUpdatedNotification::class,
+        function ($notification) use ($scholarship) {
+            return $notification->application->status === 'approved'
+                && $notification->application->scholarship_id === $scholarship->id;
+        }
+    );
 });
 
 test('scholarship status transitions to full when slots reach zero upon application approval', function () {
@@ -233,6 +249,8 @@ test('scholarship status transitions to full when slots reach zero upon applicat
 });
 
 test('admin can reject scholarship application with remarks', function () {
+    Notification::fake();
+
     $admin = User::create([
         'name' => 'Admin User',
         'email' => 'admin@example.com',
@@ -275,6 +293,16 @@ test('admin can reject scholarship application with remarks', function () {
 
     expect($application->refresh()->status)->toBe('rejected');
     expect($application->remarks)->toBe('GPA requirement not met');
+
+    Notification::assertSentTo(
+        $user,
+        ApplicationStatusUpdatedNotification::class,
+        function ($notification) use ($scholarship) {
+            return $notification->application->status === 'rejected'
+                && $notification->application->remarks === 'GPA requirement not met'
+                && $notification->application->scholarship_id === $scholarship->id;
+        }
+    );
 });
 
 test('admin can manage announcements', function () {
@@ -341,4 +369,168 @@ test('superadmin can create a new admin directly', function () {
     expect($newAdmin->verification_status)->toBe('verified');
     expect($newAdmin->verified_by)->toBe($superadmin->id);
     expect($newAdmin->verified_at)->not->toBeNull();
+});
+
+test('admin can manage scholarships', function () {
+    $admin = User::create([
+        'name' => 'Admin User',
+        'email' => 'admin@example.com',
+        'password' => bcrypt('password123'),
+        'role' => 'admin',
+    ]);
+
+    $this->actingAs($admin);
+
+    // Create
+    Livewire::test(Scholarships::class)
+        ->call('openCreateModal')
+        ->set('title', 'New Tertiary Education Subsidy')
+        ->set('description', 'This is a test description for scholarship program.')
+        ->set('allowance', '15000')
+        ->set('slotsCount', '10')
+        ->set('deadline', '2026-12-31')
+        ->set('status', 'available')
+        ->set('requirements', [
+            [
+                'id' => null,
+                'category' => 'eligibility',
+                'field_type' => 'number',
+                'label' => 'Minimum GPA',
+                'optionsText' => '',
+                'is_required' => true,
+            ],
+            [
+                'id' => null,
+                'category' => 'specific_document',
+                'field_type' => 'file',
+                'label' => 'Latest Certificate of Registration',
+                'optionsText' => '',
+                'is_required' => true,
+            ],
+            [
+                'id' => null,
+                'category' => 'additional_field',
+                'field_type' => 'select',
+                'label' => 'Preferred payout method',
+                'optionsText' => "Cash\nBank Transfer",
+                'is_required' => false,
+            ],
+        ])
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $scholarship = Scholarship::where('title', 'New Tertiary Education Subsidy')->first();
+    expect($scholarship)->not->toBeNull();
+    expect($scholarship->description)->toBe('This is a test description for scholarship program.');
+    expect($scholarship->allowance)->toEqual(15000);
+    expect($scholarship->slots)->toBe(10);
+    expect($scholarship->status)->toBe('available');
+
+    expect($scholarship->requirements()->count())->toBe(3);
+    expect($scholarship->requirements()->where('label', 'Minimum GPA')->exists())->toBeTrue();
+    expect($scholarship->requirements()->where('label', 'Preferred payout method')->first()->options)->toBe(['Cash', 'Bank Transfer']);
+
+    // Update
+    Livewire::test(Scholarships::class)
+        ->call('openEditModal', $scholarship->id)
+        ->set('title', 'Updated Tertiary Education Subsidy')
+        ->set('slotsCount', '5')
+        ->set('requirements.0.label', 'Current weighted average')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect($scholarship->refresh()->title)->toBe('Updated Tertiary Education Subsidy');
+    expect($scholarship->slots)->toBe(5);
+    expect($scholarship->requirements()->where('label', 'Current weighted average')->exists())->toBeTrue();
+
+    // Update slots to 0 should set status to full
+    Livewire::test(Scholarships::class)
+        ->call('openEditModal', $scholarship->id)
+        ->set('slotsCount', '0')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect($scholarship->refresh()->slots)->toBe(0);
+    expect($scholarship->status)->toBe('full');
+
+    // Delete
+    Livewire::test(Scholarships::class)
+        ->call('delete', $scholarship->id)
+        ->assertHasNoErrors();
+
+    expect(Scholarship::count())->toBe(0);
+});
+
+test('resident can submit custom additional scholarship requirements', function () {
+    $admin = User::create([
+        'name' => 'Admin User',
+        'email' => 'admin@example.com',
+        'password' => bcrypt('password123'),
+        'role' => 'admin',
+    ]);
+
+    $user = User::create([
+        'name' => 'Resident User',
+        'email' => 'resident@example.com',
+        'password' => bcrypt('password123'),
+        'role' => 'user',
+        'verification_status' => 'verified',
+    ]);
+
+    $scholarship = Scholarship::create([
+        'title' => 'Flexible Scholarship',
+        'description' => 'A scholarship with custom application requirements.',
+        'allowance' => 5000.00,
+        'slots' => 5,
+        'deadline' => now()->addDays(30),
+        'status' => 'available',
+        'created_by' => $admin->id,
+    ]);
+
+    $gpaRequirement = $scholarship->requirements()->create([
+        'category' => 'eligibility',
+        'field_type' => 'number',
+        'label' => 'Current GPA',
+        'is_required' => true,
+        'order' => 1,
+    ]);
+
+    $interviewDateRequirement = $scholarship->requirements()->create([
+        'category' => 'additional_field',
+        'field_type' => 'date',
+        'label' => 'Preferred interview date',
+        'is_required' => true,
+        'order' => 2,
+    ]);
+
+    $interestRequirement = $scholarship->requirements()->create([
+        'category' => 'additional_field',
+        'field_type' => 'checkbox',
+        'label' => 'Academic interests',
+        'options' => ['STEM', 'Arts'],
+        'is_required' => true,
+        'order' => 3,
+    ]);
+
+    $this->actingAs($user);
+
+    Livewire::test(CreateApplicationPage::class, ['scholarship' => $scholarship])
+        ->assertSee('Current GPA')
+        ->set("answers.{$gpaRequirement->id}", '93')
+        ->call('nextStep')
+        ->assertHasNoErrors()
+        ->assertSee('Preferred interview date')
+        ->assertSee('Academic interests')
+        ->set("answers.{$interviewDateRequirement->id}", now()->addWeek()->format('Y-m-d'))
+        ->set("answers.{$interestRequirement->id}", ['STEM'])
+        ->call('submit')
+        ->assertHasNoErrors();
+
+    $application = Application::where('user_id', $user->id)
+        ->where('scholarship_id', $scholarship->id)
+        ->first();
+
+    expect($application)->not->toBeNull();
+    expect(ApplicationAnswer::where('application_id', $application->id)->count())->toBe(3);
+    expect(ApplicationAnswer::where('requirement_id', $interestRequirement->id)->first()->value)->toBe('STEM');
 });

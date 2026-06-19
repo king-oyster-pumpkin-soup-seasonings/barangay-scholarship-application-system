@@ -24,8 +24,12 @@ class Verification extends Component
     // Runs automatically when the component loads
     public function mount()
     {
-        // Check if this user already submitted a verification
         $this->existingVerification = ResidenceVerification::where('user_id', Auth::id())->first();
+    }
+
+    public function removeFile(string $field): void
+    {
+        $this->$field = null;
     }
 
     // Runs when the user clicks Submit

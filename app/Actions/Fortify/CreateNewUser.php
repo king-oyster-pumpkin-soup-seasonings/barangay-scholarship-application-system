@@ -25,7 +25,6 @@ class CreateNewUser implements CreatesNewUsers
             'birthdate' => ['required', 'date', 'before:today'],
             'sex' => ['required', 'in:male,female'],
             'address' => ['required', 'string', 'max:255'],
-            'role' => ['required', 'in:user,admin'],
             'password' => $this->passwordRules(),
         ])->validate();
 
@@ -36,7 +35,7 @@ class CreateNewUser implements CreatesNewUsers
             'birthdate' => $input['birthdate'],
             'sex' => $input['sex'],
             'address' => $input['address'],
-            'role' => $input['role'],
+            'role' => 'user',
             'password' => $input['password'],
         ]);
     }

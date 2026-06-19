@@ -36,10 +36,35 @@ class Show extends Component
             $this->scholarship = Scholarship::with('requirements')->findOrFail($this->scholarshipId);
         }
 
-        // Pass the model to the view
-        return view('pages.scholarships.show', [
-            'scholarship' => $this->scholarship,
-            'requirements' => $this->scholarship->requirements()->orderBy('order')->get(),
-        ])->layout('layouts.public', ['title' => $this->scholarship->title]);
+        $user = auth()->user();
+
+        // Has this resident already applied to this scholarship?
+        $alreadyApplied = $user
+            ? \App\Models\Application::where('user_id', $user->id)
+            ->where('scholarship_id', $this->scholarship->id)
+            ->exists()
+            : false;
+
+        $deadlinePassed = $this->scholarship->deadline
+            && now()->startOfDay()->gt($this->scholarship->deadline);
+
+        $layout = auth()->check() ? 'layouts.app' : 'layouts.public';
+
+        $verification = auth()->check()
+    ? \App\Models\ResidenceVerification::where('user_id', auth()->id())->first()
+    : null;
+
+$alreadyApplied = auth()->check()
+    ? \App\Models\Application::where('user_id', auth()->id())
+        ->where('scholarship_id', $this->scholarship->id)
+        ->exists()
+    : false;
+
+return view('pages.scholarships.show', [
+    'scholarship'   => $this->scholarship,
+    'requirements'  => $this->scholarship->requirements()->orderBy('order')->get(),
+    'verification'  => $verification,
+    'alreadyApplied' => $alreadyApplied,
+])->layout($layout, ['title' => $this->scholarship->title]);
     }
 }

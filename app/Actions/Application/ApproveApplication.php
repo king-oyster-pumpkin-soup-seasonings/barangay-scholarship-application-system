@@ -6,6 +6,7 @@ use App\Models\Application;
 use App\Models\ApplicationLog;
 use App\Models\User;
 use App\Notifications\ApplicationStatusUpdatedNotification;
+use Illuminate\Support\Facades\Log;
 
 class ApproveApplication
 {
@@ -37,9 +38,14 @@ class ApproveApplication
             'notes' => $notes,
         ]);
 
-        $application->user->notify(
-            new ApplicationStatusUpdatedNotification('approved')
-        );
+        try {
+            $application->user->notify(
+                new ApplicationStatusUpdatedNotification($application)
+            );
+        } catch (\Throwable $e) {
+            // Log the error so you can check it later, but don't crash.
+            Log::warning('Could not send approval email notification: ' . $e->getMessage());
+        }
 
         return $application->fresh();
     }
