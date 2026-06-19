@@ -96,7 +96,7 @@
         <!-- Create/Edit Modal -->
         @if ($showFormModal)
             <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-xl max-w-lg w-full">
+                <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-xl max-w-4xl w-full">
                     <div class="p-6 border-b border-gray-100 dark:border-zinc-700 flex items-center justify-between">
                         <h3 class="text-lg font-bold text-[#33333B] dark:text-white">
                             {{ $isEditing ? 'Edit Scholarship Program' : 'Create Scholarship Program' }}
@@ -165,6 +165,97 @@
                                     @error('status')
                                         <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
                                     @enderror
+                                </div>
+                            </div>
+
+                            <div class="pt-4 border-t border-gray-100 dark:border-zinc-700">
+                                <div class="flex items-center justify-between gap-4 mb-4">
+                                    <div>
+                                        <h4 class="text-sm font-bold text-[#33333B] dark:text-white">Application Requirements</h4>
+                                        <p class="text-xs text-[#AA9A98] dark:text-zinc-400 mt-1">Build the questions and document uploads applicants must complete.</p>
+                                    </div>
+                                    <button type="button" wire:click="addRequirement" class="shrink-0 px-3 py-2 text-xs font-semibold border border-[#1D74E3] text-[#1D74E3] rounded-lg hover:bg-[#EBF3FF] transition">
+                                        Add Field
+                                    </button>
+                                </div>
+
+                                @error('requirements')
+                                    <span class="text-red-500 text-xs mb-3 block">{{ $message }}</span>
+                                @enderror
+
+                                <div class="space-y-4">
+                                    @foreach ($requirements as $index => $requirement)
+                                        <div wire:key="requirement-{{ $requirement['id'] ?? 'new' }}-{{ $index }}" class="border border-gray-200 dark:border-zinc-700 rounded-lg p-4 bg-gray-50/70 dark:bg-zinc-900/60">
+                                            <div class="flex items-center justify-between gap-3 mb-3">
+                                                <span class="text-xs font-bold uppercase tracking-wider text-[#AA9A98] dark:text-zinc-400">Field {{ $index + 1 }}</span>
+                                                <div class="flex items-center gap-2">
+                                                    <button type="button" wire:click="moveRequirementUp({{ $index }})" class="px-2 py-1 text-xs font-semibold border border-gray-200 dark:border-zinc-700 rounded text-gray-500 dark:text-zinc-300 hover:text-[#1D74E3] transition">
+                                                        Up
+                                                    </button>
+                                                    <button type="button" wire:click="moveRequirementDown({{ $index }})" class="px-2 py-1 text-xs font-semibold border border-gray-200 dark:border-zinc-700 rounded text-gray-500 dark:text-zinc-300 hover:text-[#1D74E3] transition">
+                                                        Down
+                                                    </button>
+                                                    <button type="button" wire:click="removeRequirement({{ $index }})" class="px-2 py-1 text-xs font-semibold border border-red-100 dark:border-red-950/60 rounded text-red-500 hover:text-red-700 transition">
+                                                        Remove
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div class="md:col-span-2">
+                                                    <label class="block text-xs font-semibold text-[#33333B] dark:text-zinc-300 mb-2 uppercase tracking-wider">Label</label>
+                                                    <input type="text" wire:model="requirements.{{ $index }}.label" class="w-full border border-gray-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white rounded-lg p-3 text-sm focus:ring-[#1D74E3] focus:border-[#1D74E3] focus:outline-none" placeholder="e.g., Latest certificate of registration">
+                                                    @error("requirements.{$index}.label")
+                                                        <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-[#33333B] dark:text-zinc-300 mb-2 uppercase tracking-wider">Category</label>
+                                                    <select wire:model="requirements.{{ $index }}.category" class="w-full border border-gray-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white rounded-lg p-3 text-sm focus:ring-[#1D74E3] focus:border-[#1D74E3] focus:outline-none">
+                                                        <option value="eligibility">Eligibility</option>
+                                                        <option value="general_document">General Document</option>
+                                                        <option value="specific_document">Specific Document</option>
+                                                        <option value="additional_field">Additional Field</option>
+                                                    </select>
+                                                    @error("requirements.{$index}.category")
+                                                        <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-[#33333B] dark:text-zinc-300 mb-2 uppercase tracking-wider">Input Type</label>
+                                                    <select wire:model.live="requirements.{{ $index }}.field_type" class="w-full border border-gray-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white rounded-lg p-3 text-sm focus:ring-[#1D74E3] focus:border-[#1D74E3] focus:outline-none">
+                                                        <option value="text">Text</option>
+                                                        <option value="textarea">Long Text</option>
+                                                        <option value="number">Number</option>
+                                                        <option value="date">Date</option>
+                                                        <option value="select">Select</option>
+                                                        <option value="checkbox">Checkboxes</option>
+                                                        <option value="file">File Upload</option>
+                                                    </select>
+                                                    @error("requirements.{$index}.field_type")
+                                                        <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+
+                                                @if (in_array($requirement['field_type'], ['select', 'checkbox'], true))
+                                                    <div class="md:col-span-2">
+                                                        <label class="block text-xs font-semibold text-[#33333B] dark:text-zinc-300 mb-2 uppercase tracking-wider">Options</label>
+                                                        <textarea wire:model="requirements.{{ $index }}.optionsText" rows="3" class="w-full border border-gray-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white rounded-lg p-3 text-sm focus:ring-[#1D74E3] focus:border-[#1D74E3] focus:outline-none" placeholder="Add one option per line"></textarea>
+                                                        @error("requirements.{$index}.optionsText")
+                                                            <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                @endif
+
+                                                <label class="md:col-span-2 inline-flex items-center gap-2 text-sm font-semibold text-[#33333B] dark:text-zinc-300">
+                                                    <input type="checkbox" wire:model="requirements.{{ $index }}.is_required" class="w-4 h-4 rounded border-gray-300 text-[#1D74E3] focus:ring-[#1D74E3]">
+                                                    Required field
+                                                </label>
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>

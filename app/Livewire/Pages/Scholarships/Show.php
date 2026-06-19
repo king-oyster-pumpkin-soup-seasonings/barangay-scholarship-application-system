@@ -37,9 +37,11 @@ class Show extends Component
         }
 
         // Pass the model to the view
+        $layout = auth()->check() ? 'layouts.app' : 'layouts.public';
+
         return view('pages.scholarships.show', [
             'scholarship' => $this->scholarship,
             'requirements' => $this->scholarship->requirements()->orderBy('order')->get(),
-        ])->layout('layouts.public', ['title' => $this->scholarship->title]);
+        ])->layout($layout, ['title' => $this->scholarship->title]);
     }
 }

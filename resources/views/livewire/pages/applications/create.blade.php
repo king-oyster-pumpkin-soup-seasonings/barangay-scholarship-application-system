@@ -53,6 +53,11 @@
 
         {{-- Form Card --}}
         <div class="bg-white rounded-2xl shadow-sm border border-white/60 p-8">
+            @error('scholarship')
+                <div class="mb-6 rounded-lg border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+                    {{ $message }}
+                </div>
+            @enderror
 
             {{-- Step Title --}}
             <div class="mb-6 pb-5 border-b border-[#E5E8EF]">
@@ -102,6 +107,14 @@
                                     class="w-full rounded-lg border border-[#D1D5DB] px-3.5 py-2.5 text-sm text-[#1B1A1C] placeholder-[#AA9A98] focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition resize-none"
                                     placeholder="Type your answer here"
                                 ></textarea>
+                                @break
+
+                            @case('date')
+                                <input
+                                    type="date"
+                                    wire:model="answers.{{ $req['id'] }}"
+                                    class="w-full rounded-lg border border-[#D1D5DB] px-3.5 py-2.5 text-sm text-[#1B1A1C] placeholder-[#AA9A98] focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition"
+                                />
                                 @break
 
                             @case('select')

@@ -5,9 +5,11 @@ use App\Livewire\Admin\Applications;
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\Scholarships;
 use App\Livewire\Admin\Verifications;
+use App\Livewire\Pages\Applications\Create as CreateApplicationPage;
 use App\Livewire\Superadmin\AdminManagement;
 use App\Models\Announcement;
 use App\Models\Application;
+use App\Models\ApplicationAnswer;
 use App\Models\ResidenceVerification;
 use App\Models\Scholarship;
 use App\Models\User;
@@ -388,6 +390,32 @@ test('admin can manage scholarships', function () {
         ->set('slotsCount', '10')
         ->set('deadline', '2026-12-31')
         ->set('status', 'available')
+        ->set('requirements', [
+            [
+                'id' => null,
+                'category' => 'eligibility',
+                'field_type' => 'number',
+                'label' => 'Minimum GPA',
+                'optionsText' => '',
+                'is_required' => true,
+            ],
+            [
+                'id' => null,
+                'category' => 'specific_document',
+                'field_type' => 'file',
+                'label' => 'Latest Certificate of Registration',
+                'optionsText' => '',
+                'is_required' => true,
+            ],
+            [
+                'id' => null,
+                'category' => 'additional_field',
+                'field_type' => 'select',
+                'label' => 'Preferred payout method',
+                'optionsText' => "Cash\nBank Transfer",
+                'is_required' => false,
+            ],
+        ])
         ->call('save')
         ->assertHasNoErrors();
 
@@ -398,20 +426,22 @@ test('admin can manage scholarships', function () {
     expect($scholarship->slots)->toBe(10);
     expect($scholarship->status)->toBe('available');
 
-    // Default requirements created automatically
-    expect($scholarship->requirements()->count())->toBe(6);
-    expect($scholarship->requirements()->where('label', 'Current GPA')->exists())->toBeTrue();
+    expect($scholarship->requirements()->count())->toBe(3);
+    expect($scholarship->requirements()->where('label', 'Minimum GPA')->exists())->toBeTrue();
+    expect($scholarship->requirements()->where('label', 'Preferred payout method')->first()->options)->toBe(['Cash', 'Bank Transfer']);
 
     // Update
     Livewire::test(Scholarships::class)
         ->call('openEditModal', $scholarship->id)
         ->set('title', 'Updated Tertiary Education Subsidy')
         ->set('slotsCount', '5')
+        ->set('requirements.0.label', 'Current weighted average')
         ->call('save')
         ->assertHasNoErrors();
 
     expect($scholarship->refresh()->title)->toBe('Updated Tertiary Education Subsidy');
     expect($scholarship->slots)->toBe(5);
+    expect($scholarship->requirements()->where('label', 'Current weighted average')->exists())->toBeTrue();
 
     // Update slots to 0 should set status to full
     Livewire::test(Scholarships::class)
@@ -429,4 +459,78 @@ test('admin can manage scholarships', function () {
         ->assertHasNoErrors();
 
     expect(Scholarship::count())->toBe(0);
+});
+
+test('resident can submit custom additional scholarship requirements', function () {
+    $admin = User::create([
+        'name' => 'Admin User',
+        'email' => 'admin@example.com',
+        'password' => bcrypt('password123'),
+        'role' => 'admin',
+    ]);
+
+    $user = User::create([
+        'name' => 'Resident User',
+        'email' => 'resident@example.com',
+        'password' => bcrypt('password123'),
+        'role' => 'user',
+        'verification_status' => 'verified',
+    ]);
+
+    $scholarship = Scholarship::create([
+        'title' => 'Flexible Scholarship',
+        'description' => 'A scholarship with custom application requirements.',
+        'allowance' => 5000.00,
+        'slots' => 5,
+        'deadline' => now()->addDays(30),
+        'status' => 'available',
+        'created_by' => $admin->id,
+    ]);
+
+    $gpaRequirement = $scholarship->requirements()->create([
+        'category' => 'eligibility',
+        'field_type' => 'number',
+        'label' => 'Current GPA',
+        'is_required' => true,
+        'order' => 1,
+    ]);
+
+    $interviewDateRequirement = $scholarship->requirements()->create([
+        'category' => 'additional_field',
+        'field_type' => 'date',
+        'label' => 'Preferred interview date',
+        'is_required' => true,
+        'order' => 2,
+    ]);
+
+    $interestRequirement = $scholarship->requirements()->create([
+        'category' => 'additional_field',
+        'field_type' => 'checkbox',
+        'label' => 'Academic interests',
+        'options' => ['STEM', 'Arts'],
+        'is_required' => true,
+        'order' => 3,
+    ]);
+
+    $this->actingAs($user);
+
+    Livewire::test(CreateApplicationPage::class, ['scholarship' => $scholarship])
+        ->assertSee('Current GPA')
+        ->set("answers.{$gpaRequirement->id}", '93')
+        ->call('nextStep')
+        ->assertHasNoErrors()
+        ->assertSee('Preferred interview date')
+        ->assertSee('Academic interests')
+        ->set("answers.{$interviewDateRequirement->id}", now()->addWeek()->format('Y-m-d'))
+        ->set("answers.{$interestRequirement->id}", ['STEM'])
+        ->call('submit')
+        ->assertHasNoErrors();
+
+    $application = Application::where('user_id', $user->id)
+        ->where('scholarship_id', $scholarship->id)
+        ->first();
+
+    expect($application)->not->toBeNull();
+    expect(ApplicationAnswer::where('application_id', $application->id)->count())->toBe(3);
+    expect(ApplicationAnswer::where('requirement_id', $interestRequirement->id)->first()->value)->toBe('STEM');
 });

@@ -4,6 +4,8 @@ namespace App\Livewire\Admin;
 
 use App\Models\Scholarship;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 class Scholarships extends Component
@@ -26,6 +28,9 @@ class Scholarships extends Component
 
     public string $status = 'available';
 
+    /** @var list<array{id: int|null, category: string, field_type: string, label: string, optionsText: string, is_required: bool}> */
+    public array $requirements = [];
+
     /** @var array<string, string> */
     protected array $rules = [
         'title' => 'required|string|min:3|max:255',
@@ -34,6 +39,13 @@ class Scholarships extends Component
         'slotsCount' => 'required|integer|min:0',
         'deadline' => 'required|date',
         'status' => 'required|in:available,unavailable,full',
+        'requirements' => 'required|array|min:1',
+        'requirements.*.id' => 'nullable|integer',
+        'requirements.*.category' => 'required|in:eligibility,general_document,specific_document,additional_field',
+        'requirements.*.field_type' => 'required|in:file,text,textarea,number,select,checkbox,date',
+        'requirements.*.label' => 'required|string|min:2|max:255',
+        'requirements.*.optionsText' => 'nullable|string|max:2000',
+        'requirements.*.is_required' => 'boolean',
     ];
 
     /** @var array<string, string> */
@@ -50,6 +62,9 @@ class Scholarships extends Component
         'deadline.date' => 'Please provide a valid deadline date.',
         'status.required' => 'Please select a status.',
         'status.in' => 'Selected status is invalid.',
+        'requirements.required' => 'Please add at least one application requirement.',
+        'requirements.*.label.required' => 'Each requirement needs a label.',
+        'requirements.*.label.min' => 'Requirement labels must be at least 2 characters.',
     ];
 
     /**
@@ -59,6 +74,7 @@ class Scholarships extends Component
     {
         $this->reset(['title', 'description', 'allowance', 'slotsCount', 'deadline', 'selectedScholarshipId', 'isEditing']);
         $this->status = 'available';
+        $this->requirements = $this->defaultRequirements();
         $this->showFormModal = true;
     }
 
@@ -67,7 +83,7 @@ class Scholarships extends Component
      */
     public function openEditModal(int $id): void
     {
-        $scholarship = Scholarship::findOrFail($id);
+        $scholarship = Scholarship::with('requirements')->findOrFail($id);
         $this->selectedScholarshipId = $id;
         $this->title = $scholarship->title;
         $this->description = $scholarship->description;
@@ -75,6 +91,23 @@ class Scholarships extends Component
         $this->slotsCount = (string) $scholarship->slots;
         $this->deadline = $scholarship->deadline ? $scholarship->deadline->format('Y-m-d') : '';
         $this->status = $scholarship->status;
+        $this->requirements = $scholarship->requirements
+            ->sortBy([['category', 'asc'], ['order', 'asc'], ['id', 'asc']])
+            ->map(fn ($requirement): array => [
+                'id' => $requirement->id,
+                'category' => $requirement->category,
+                'field_type' => $requirement->field_type,
+                'label' => $requirement->label,
+                'optionsText' => implode(PHP_EOL, $requirement->options ?? []),
+                'is_required' => $requirement->is_required,
+            ])
+            ->values()
+            ->all();
+
+        if ($this->requirements === []) {
+            $this->requirements = $this->defaultRequirements();
+        }
+
         $this->isEditing = true;
         $this->showFormModal = true;
     }
@@ -85,8 +118,52 @@ class Scholarships extends Component
     public function closeModal(): void
     {
         $this->showFormModal = false;
-        $this->reset(['title', 'description', 'allowance', 'slotsCount', 'deadline', 'selectedScholarshipId', 'isEditing']);
+        $this->reset(['title', 'description', 'allowance', 'slotsCount', 'deadline', 'selectedScholarshipId', 'isEditing', 'requirements']);
         $this->status = 'available';
+    }
+
+    public function addRequirement(): void
+    {
+        $this->requirements[] = [
+            'id' => null,
+            'category' => 'additional_field',
+            'field_type' => 'text',
+            'label' => '',
+            'optionsText' => '',
+            'is_required' => true,
+        ];
+    }
+
+    public function removeRequirement(int $index): void
+    {
+        if (count($this->requirements) <= 1) {
+            return;
+        }
+
+        unset($this->requirements[$index]);
+        $this->requirements = array_values($this->requirements);
+    }
+
+    public function moveRequirementUp(int $index): void
+    {
+        if ($index <= 0 || ! isset($this->requirements[$index])) {
+            return;
+        }
+
+        $previous = $this->requirements[$index - 1];
+        $this->requirements[$index - 1] = $this->requirements[$index];
+        $this->requirements[$index] = $previous;
+    }
+
+    public function moveRequirementDown(int $index): void
+    {
+        if (! isset($this->requirements[$index], $this->requirements[$index + 1])) {
+            return;
+        }
+
+        $next = $this->requirements[$index + 1];
+        $this->requirements[$index + 1] = $this->requirements[$index];
+        $this->requirements[$index] = $next;
     }
 
     /**
@@ -95,6 +172,7 @@ class Scholarships extends Component
     public function save(): void
     {
         $this->validate();
+        $this->validateRequirementOptions();
 
         $resolvedSlots = (int) $this->slotsCount;
         $resolvedStatus = $this->status;
@@ -106,92 +184,158 @@ class Scholarships extends Component
             $resolvedStatus = 'available';
         }
 
-        if ($this->isEditing) {
-            $scholarship = Scholarship::findOrFail($this->selectedScholarshipId);
-            $scholarship->update([
-                'title' => $this->title,
-                'description' => $this->description,
-                'allowance' => $this->allowance,
-                'slots' => $resolvedSlots,
-                'deadline' => $this->deadline,
-                'status' => $resolvedStatus,
-            ]);
+        DB::transaction(function () use ($resolvedSlots, $resolvedStatus): void {
+            if ($this->isEditing) {
+                $scholarship = Scholarship::findOrFail($this->selectedScholarshipId);
+                $scholarship->update([
+                    'title' => $this->title,
+                    'description' => $this->description,
+                    'allowance' => $this->allowance,
+                    'slots' => $resolvedSlots,
+                    'deadline' => $this->deadline,
+                    'status' => $resolvedStatus,
+                ]);
 
-            session()->flash('success', 'Scholarship program updated successfully.');
-        } else {
-            $scholarship = Scholarship::create([
-                'title' => $this->title,
-                'description' => $this->description,
-                'allowance' => $this->allowance,
-                'slots' => $resolvedSlots,
-                'deadline' => $this->deadline,
-                'status' => $resolvedStatus,
-                'created_by' => auth()->id(),
-            ]);
+                $this->syncRequirements($scholarship);
 
-            // Auto-create standard requirements for the new scholarship
-            $this->createDefaultRequirements($scholarship);
+                session()->flash('success', 'Scholarship program updated successfully.');
+            } else {
+                $scholarship = Scholarship::create([
+                    'title' => $this->title,
+                    'description' => $this->description,
+                    'allowance' => $this->allowance,
+                    'slots' => $resolvedSlots,
+                    'deadline' => $this->deadline,
+                    'status' => $resolvedStatus,
+                    'created_by' => auth()->id(),
+                ]);
 
-            session()->flash('success', 'Scholarship program created successfully.');
-        }
+                $this->syncRequirements($scholarship);
+
+                session()->flash('success', 'Scholarship program created successfully.');
+            }
+        });
 
         $this->closeModal();
     }
 
-    /**
-     * Create the default set of requirements for a scholarship.
-     */
-    protected function createDefaultRequirements(Scholarship $scholarship): void
+    /** @return list<array{id: int|null, category: string, field_type: string, label: string, optionsText: string, is_required: bool}> */
+    protected function defaultRequirements(): array
     {
-        $requirements = [
+        return [
             [
+                'id' => null,
                 'category' => 'eligibility',
                 'field_type' => 'number',
                 'label' => 'Current GPA',
+                'optionsText' => '',
                 'is_required' => true,
-                'order' => 1,
             ],
             [
+                'id' => null,
                 'category' => 'eligibility',
                 'field_type' => 'select',
                 'label' => 'Year Level',
-                'options' => ['Grade 11', 'Grade 12', 'College'],
+                'optionsText' => "Grade 11\nGrade 12\nCollege",
                 'is_required' => true,
-                'order' => 2,
             ],
             [
+                'id' => null,
                 'category' => 'general_document',
                 'field_type' => 'file',
                 'label' => 'Valid ID',
+                'optionsText' => '',
                 'is_required' => true,
-                'order' => 1,
             ],
             [
+                'id' => null,
                 'category' => 'general_document',
                 'field_type' => 'file',
                 'label' => 'Certificate of Indigency',
+                'optionsText' => '',
                 'is_required' => true,
-                'order' => 2,
             ],
             [
+                'id' => null,
                 'category' => 'specific_document',
                 'field_type' => 'file',
                 'label' => 'Report Card / Transcript',
+                'optionsText' => '',
                 'is_required' => true,
-                'order' => 1,
             ],
             [
+                'id' => null,
                 'category' => 'additional_field',
                 'field_type' => 'textarea',
                 'label' => 'Why do you deserve this scholarship?',
+                'optionsText' => '',
                 'is_required' => false,
-                'order' => 1,
             ],
         ];
+    }
 
-        foreach ($requirements as $requirement) {
-            $scholarship->requirements()->create($requirement);
+    protected function validateRequirementOptions(): void
+    {
+        $messages = [];
+
+        foreach ($this->requirements as $index => $requirement) {
+            if (! in_array($requirement['field_type'], ['select', 'checkbox'], true)) {
+                continue;
+            }
+
+            if ($this->parseOptions($requirement['optionsText']) === []) {
+                $messages["requirements.{$index}.optionsText"] = 'Add at least one option for select and checkbox requirements.';
+            }
         }
+
+        if ($messages !== []) {
+            throw ValidationException::withMessages($messages);
+        }
+    }
+
+    protected function syncRequirements(Scholarship $scholarship): void
+    {
+        $keptRequirementIds = [];
+
+        foreach (array_values($this->requirements) as $index => $requirement) {
+            $payload = [
+                'category' => $requirement['category'],
+                'field_type' => $requirement['field_type'],
+                'label' => $requirement['label'],
+                'options' => in_array($requirement['field_type'], ['select', 'checkbox'], true)
+                    ? $this->parseOptions($requirement['optionsText'])
+                    : null,
+                'is_required' => (bool) $requirement['is_required'],
+                'order' => $index + 1,
+            ];
+
+            if ($requirement['id']) {
+                $scholarshipRequirement = $scholarship->requirements()
+                    ->whereKey($requirement['id'])
+                    ->firstOrFail();
+
+                $scholarshipRequirement->update($payload);
+            } else {
+                $scholarshipRequirement = $scholarship->requirements()->create($payload);
+            }
+
+            $keptRequirementIds[] = $scholarshipRequirement->id;
+        }
+
+        $scholarship->requirements()
+            ->whereNotIn('id', $keptRequirementIds)
+            ->delete();
+    }
+
+    /** @return list<string> */
+    protected function parseOptions(string $optionsText): array
+    {
+        return collect(preg_split('/[\r\n,]+/', $optionsText) ?: [])
+            ->map(fn (string $option): string => trim($option))
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
     }
 
     /**
