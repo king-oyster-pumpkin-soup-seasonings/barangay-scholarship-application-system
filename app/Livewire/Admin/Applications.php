@@ -10,59 +10,101 @@ use Livewire\Component;
 
 class Applications extends Component
 {
+    // --- Modal visibility flags ---
+    public bool $showDetailsModal = false;
+    public bool $showApprovalModal = false;
     public bool $showRejectionModal = false;
 
-    public bool $showDetailsModal = false;
+    // --- IDs for tracking which application is being acted on ---
+    public ?int $selectedApplicationId = null;   // used by details modal
+    public ?int $pendingApprovalId = null;        // used by approval confirmation modal
+    // (rejection reuses selectedApplicationId)
 
+    // --- Rejection form field ---
     public string $rejectionRemarks = '';
 
-    public ?int $selectedApplicationId = null;
+    // --- Alert messages (use public properties, NOT session()->flash()) ---
+    public string $successMessage = '';
+    public string $infoMessage = '';
 
-    public ?Application $selectedApplication = null;
+    // =========================================================
+    // DETAILS MODAL
+    // =========================================================
 
     /**
-     * View the details and answers of a specific application
+     * Open the details modal for a specific application.
      */
     public function viewDetails(int $id): void
     {
-        $this->selectedApplication = Application::with([
-            'user',
-            'scholarship.requirements',
-            'answers.requirement',
-        ])->findOrFail($id);
-
+        $this->selectedApplicationId = $id;
         $this->showDetailsModal = true;
+
+        // Clear old alert messages when opening a fresh modal
+        $this->successMessage = '';
+        $this->infoMessage = '';
     }
 
     /**
-     * Close the application details modal
+     * Close the details modal.
      */
     public function closeDetailsModal(): void
     {
         $this->showDetailsModal = false;
-        $this->selectedApplication = null;
+        $this->selectedApplicationId = null;
+    }
+
+    // =========================================================
+    // APPROVAL FLOW (2-step: open modal → confirm)
+    // =========================================================
+
+    /**
+     * Step 1: Clicking "Approve" opens a confirmation modal first.
+     */
+    public function openApprovalModal(int $id): void
+    {
+        $this->pendingApprovalId = $id;
+        $this->showApprovalModal = true;
+
+        // Close details modal if it was open (to prevent overlap)
+        $this->showDetailsModal = false;
     }
 
     /**
-     * Approve a pending scholarship application
+     * Close the approval confirmation modal without doing anything.
      */
-    public function approve(int $id): void
+    public function closeApprovalModal(): void
     {
-        $application = Application::findOrFail($id);
+        $this->showApprovalModal = false;
+        $this->pendingApprovalId = null;
+    }
+
+    /**
+     * Step 2: Admin confirmed — now actually approve the application.
+     */
+    public function confirmApprove(): void
+    {
+        $application = Application::findOrFail($this->pendingApprovalId);
 
         if ($application->status === 'pending') {
-
             app(ApproveApplication::class)
                 ->handle($application, auth()->user(), 'Application approved.');
 
-            session()->flash('success', 'Application approved successfully.');
+            $this->successMessage = 'Application approved successfully.';
         }
 
-        $this->closeDetailsModal();
+        // Reset ALL modal state cleanly in one place
+        $this->showApprovalModal = false;
+        $this->showDetailsModal = false;
+        $this->pendingApprovalId = null;
+        $this->selectedApplicationId = null;
     }
 
+    // =========================================================
+    // REJECTION FLOW
+    // =========================================================
+
     /**
-     * Open the rejection modal for a specific application
+     * Open the rejection remarks modal.
      */
     public function openRejectionModal(int $id): void
     {
@@ -70,12 +112,13 @@ class Applications extends Component
         $this->rejectionRemarks = '';
         $this->showRejectionModal = true;
 
-        // Close details modal if open to prevent stack overlap
+        // Close other modals to prevent overlap
         $this->showDetailsModal = false;
+        $this->showApprovalModal = false;
     }
 
     /**
-     * Close the rejection modal
+     * Close the rejection modal without doing anything.
      */
     public function closeRejectionModal(): void
     {
@@ -85,7 +128,7 @@ class Applications extends Component
     }
 
     /**
-     * Reject the selected application with remarks
+     * Submit the rejection with remarks.
      */
     public function reject(): void
     {
@@ -99,27 +142,51 @@ class Applications extends Component
         $application = Application::findOrFail($this->selectedApplicationId);
 
         if ($application->status === 'pending') {
-
             app(RejectApplication::class)
                 ->handle($application, auth()->user(), $this->rejectionRemarks);
 
-            session()->flash('info', 'Application has been rejected.');
+            $this->infoMessage = 'Application has been rejected.';
         }
 
         $this->closeRejectionModal();
-        $this->selectedApplication = null;
     }
+
+    // =========================================================
+    // RENDER
+    // =========================================================
 
     public function render(): View
     {
-        // Fetch pending applications to review
+        // Fetch all pending applications for the table
         $pendingApplications = Application::with(['user', 'scholarship'])
             ->where('status', 'pending')
             ->orderBy('created_at', 'desc')
             ->get();
 
+        // Re-query selected application with eager-loaded relationships.
+        // We do this here (not as a public model property) so relationships
+        // are always fresh and never lost between Livewire re-renders.
+        $selectedApplication = null;
+        if ($this->selectedApplicationId && $this->showDetailsModal) {
+            $selectedApplication = Application::with([
+                'user',
+                'scholarship.requirements',
+                'answers.requirement',
+            ])->find($this->selectedApplicationId);
+        }
+
+        // Re-query the application waiting for approval confirmation
+        // (so we can show the applicant name and scholarship in the modal)
+        $pendingApprovalApplication = null;
+        if ($this->pendingApprovalId && $this->showApprovalModal) {
+            $pendingApprovalApplication = Application::with(['user', 'scholarship'])
+                ->find($this->pendingApprovalId);
+        }
+
         return view('livewire.admin.applications', [
-            'pendingApplications' => $pendingApplications,
+            'pendingApplications'       => $pendingApplications,
+            'selectedApplication'       => $selectedApplication,
+            'pendingApprovalApplication' => $pendingApprovalApplication,
         ]);
     }
 }
