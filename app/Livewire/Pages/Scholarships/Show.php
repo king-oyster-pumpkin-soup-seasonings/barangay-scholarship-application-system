@@ -40,13 +40,20 @@ class Show extends Component
         $layout = auth()->check() ? 'layouts.app' : 'layouts.public';
 
         $verification = auth()->check()
-        ? \App\Models\ResidenceVerification::where('user_id', auth()->id())->first()
-        : null;
+    ? \App\Models\ResidenceVerification::where('user_id', auth()->id())->first()
+    : null;
 
-    return view('pages.scholarships.show', [
-        'scholarship'  => $this->scholarship,
-        'requirements' => $this->scholarship->requirements()->orderBy('order')->get(),
-        'verification' => $verification,
-    ])->layout($layout, ['title' => $this->scholarship->title]);
+$alreadyApplied = auth()->check()
+    ? \App\Models\Application::where('user_id', auth()->id())
+        ->where('scholarship_id', $this->scholarship->id)
+        ->exists()
+    : false;
+
+return view('pages.scholarships.show', [
+    'scholarship'   => $this->scholarship,
+    'requirements'  => $this->scholarship->requirements()->orderBy('order')->get(),
+    'verification'  => $verification,
+    'alreadyApplied' => $alreadyApplied,
+])->layout($layout, ['title' => $this->scholarship->title]);
     }
 }

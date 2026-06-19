@@ -292,17 +292,27 @@
             @php $vstatus = $verification?->status; @endphp
 
             @if($vstatus === 'verified')
-                <a href="{{ route('applications.create', $scholarship) }}"
-                   class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
-                   style="background-color: #1D74E3;">
-                    Begin Application
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                    </svg>
-                </a>
-                <p class="text-center text-xs mt-3" style="color: #AA9A98;">
-                    Takes approximately 10-15 minutes.
-                </p>
+                @if ($alreadyApplied)
+    <div class="w-full rounded-xl px-4 py-3.5 text-center text-sm font-medium"
+         style="background-color: #EEF4FD; border: 1px solid #BFDBFE; color: #1e40af;">
+        ✓ You have already applied to this scholarship.
+    </div>
+    <p class="text-center text-xs mt-3" style="color: #AA9A98;">
+        Track your application status on your dashboard.
+    </p>
+@else
+    <a href="{{ route('applications.create', $scholarship) }}"
+       class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
+       style="background-color: #1D74E3;">
+        Begin Application
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+        </svg>
+    </a>
+    <p class="text-center text-xs mt-3" style="color: #AA9A98;">
+        Takes approximately 10-15 minutes.
+    </p>
+@endif
 
             @elseif($vstatus === 'pending')
                 <div class="w-full rounded-xl px-4 py-3.5 text-center text-sm font-medium"
