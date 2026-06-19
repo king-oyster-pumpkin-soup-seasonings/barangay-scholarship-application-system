@@ -184,58 +184,122 @@
                 @enderror
             </div>
 
-            <!-- Password & Confirm Password Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {{-- Password & Confirm Password Grid --}}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" x-data="{
+                showPassword: false,
+                showConfirmPassword: false,
+                password: '',
+                get hasUpper() { return /[A-Z]/.test(this.password) },
+                get hasLower() { return /[a-z]/.test(this.password) },
+                get hasNumber() { return /[0-9]/.test(this.password) },
+                get hasSpecial() { return /[^A-Za-z0-9]/.test(this.password) },
+                get hasLength() { return this.password.length >= 8 },
+                get score() { return [this.hasUpper, this.hasLower, this.hasNumber, this.hasSpecial, this.hasLength].filter(Boolean).length },
+                get barColor() {
+                    if (this.score <= 2) return '#ef4444';
+                    if (this.score === 3) return '#f97316';
+                    if (this.score === 4) return '#eab308';
+                    return '#16a34a';
+                },
+                get strengthLabel() {
+                    const labels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+                    return this.score > 0 ? labels[Math.min(this.score, 4)] : '';
+                }
+            }">
+
+                {{-- Password --}}
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider">
                         {{ __('Password') }} <span class="text-[#F54A00]">*</span>
                     </label>
                     <div class="relative w-full">
-                        <input
-                            name="password"
-                            :type="showPassword ? 'text' : 'password'"
-                            required
-                            autocomplete="new-password"
-                            placeholder="Min. 8 characters"
-                            class="w-full rounded-xl border border-zinc-300 bg-white pl-3.5 pr-11 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition"
-                        />
+                        <input name="password" :type="showPassword ? 'text' : 'password'" x-model="password" required
+                            autocomplete="new-password" placeholder="Min. 8 characters"
+                            class="w-full rounded-xl border border-zinc-300 bg-white pl-3.5 pr-11 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition" />
                         <button type="button" @click="showPassword = !showPassword"
                             class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition focus:outline-none">
-                            <svg x-show="!showPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            {{-- eye icon (same SVGs as before) --}}
+                            <svg x-show="!showPassword" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                             </svg>
-                            <svg x-show="showPassword" x-cloak xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+                            <svg x-show="showPassword" x-cloak xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
                             </svg>
                         </button>
                     </div>
+
+                    {{-- Strength bars --}}
+                    <div x-show="password.length > 0" class="grid grid-cols-4 gap-1 mt-1">
+                        <template x-for="i in 4">
+                            <div class="h-1 rounded-full transition-all duration-300"
+                                :style="i <= score ? `background:${barColor}` : 'background:#e4e4e7'">
+                            </div>
+                        </template>
+                    </div>
+
+                    {{-- Strength label --}}
+                    <p x-show="password.length > 0" class="text-xs font-medium transition-colors duration-300"
+                        :style="`color:${barColor}`" x-text="'Strength: ' + strengthLabel">
+                    </p>
+
+                    {{-- Requirements checklist --}}
+                    <ul x-show="password.length > 0" class="mt-1 space-y-0.5">
+                        <template
+                            x-for="[met, label] in [
+                [hasUpper,  'Uppercase letter'],
+                [hasLower,  'Lowercase letter'],
+                [hasNumber, 'Number'],
+                [hasSpecial,'Special character (!@#$...)'],
+                [hasLength, 'At least 8 characters']
+            ]">
+                            <li class="flex items-center gap-1.5 text-xs transition-colors duration-200"
+                                :class="met ? 'text-green-600' : 'text-zinc-400'">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="none"
+                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path x-show="met" stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    <path x-show="!met" stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9.75 9.75l4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                </svg>
+                                <span x-text="label"></span>
+                            </li>
+                        </template>
+                    </ul>
+
                     @error('password')
                         <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
                     @enderror
                 </div>
 
+                {{-- Confirm Password --}}
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider">
                         {{ __('Confirm Password') }} <span class="text-[#F54A00]">*</span>
                     </label>
                     <div class="relative w-full">
-                        <input
-                            name="password_confirmation"
-                            :type="showConfirmPassword ? 'text' : 'password'"
-                            required
-                            autocomplete="new-password"
-                            placeholder="Re-enter password"
-                            class="w-full rounded-xl border border-zinc-300 bg-white pl-3.5 pr-11 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition"
-                        />
+                        <input name="password_confirmation" :type="showConfirmPassword ? 'text' : 'password'" required
+                            autocomplete="new-password" placeholder="Re-enter password"
+                            class="w-full rounded-xl border border-zinc-300 bg-white pl-3.5 pr-11 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition" />
                         <button type="button" @click="showConfirmPassword = !showConfirmPassword"
                             class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition focus:outline-none">
-                            <svg x-show="!showConfirmPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            <svg x-show="!showConfirmPassword" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                             </svg>
-                            <svg x-show="showConfirmPassword" x-cloak xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+                            <svg x-show="showConfirmPassword" x-cloak xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                class="h-5 w-5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
                             </svg>
                         </button>
                     </div>
@@ -243,6 +307,7 @@
                         <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
                     @enderror
                 </div>
+
             </div>
 
             <!-- Terms checkbox -->
