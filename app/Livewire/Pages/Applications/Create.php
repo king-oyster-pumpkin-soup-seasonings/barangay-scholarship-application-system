@@ -61,6 +61,25 @@ class Create extends Component
     {
         $this->scholarship = $scholarship;
 
+        $alreadyApplied = Application::where('user_id', Auth::id())
+            ->where('scholarship_id', $scholarship->id)
+            ->exists();
+
+        if ($alreadyApplied) {
+            $this->redirectWithToast($scholarship, 'You already applied to this scholarship.');
+            return;
+        }
+
+        if ($scholarship->status !== 'available') {
+            $this->redirectWithToast($scholarship, 'This scholarship is not currently open for applications.');
+            return;
+        }
+
+        if ($scholarship->deadline && now()->startOfDay()->gt($scholarship->deadline)) {
+            $this->redirectWithToast($scholarship, 'The application deadline for this scholarship has passed.');
+            return;
+        }
+
         // Load and group all requirements for this scholarship by category
         $requirements = $scholarship->requirements()
             ->orderBy('order')
@@ -104,6 +123,12 @@ class Create extends Component
         if ($this->totalSteps === 0) {
             $this->totalSteps = 1;
         }
+    }
+
+    private function redirectWithToast(Scholarship $scholarship, string $message): void
+    {
+        session()->flash('toast', $message);
+        $this->redirect(route('scholarships.show', $scholarship), navigate: true);
     }
 
     /**

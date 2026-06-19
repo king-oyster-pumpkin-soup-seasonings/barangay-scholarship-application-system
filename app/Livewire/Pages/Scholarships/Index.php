@@ -27,7 +27,18 @@ class Index extends Component
             });
         }
 
-        $scholarships = $query->orderBy('created_at')->get()->map(fn ($s) => [
+        $scholarshipModels = $query->orderBy('created_at')->get();
+
+        // Fetch all scholarship IDs this user has already applied to,
+        // in ONE query — not one query per card.
+        $appliedScholarshipIds = auth()->check()
+            ? \App\Models\Application::where('user_id', auth()->id())
+            ->whereIn('scholarship_id', $scholarshipModels->pluck('id'))
+            ->pluck('scholarship_id')
+            ->all()
+            : [];
+
+        $scholarships = $scholarshipModels->map(fn($s) => [
             'id' => $s->id,
             'title' => $s->title,
             'description' => $s->description,
@@ -35,12 +46,11 @@ class Index extends Component
             'slots' => $s->slots,
             'deadline' => $s->deadline->format('Y-m-d'),
             'status' => $s->status,
+            'already_applied' => in_array($s->id, $appliedScholarshipIds, true),
         ])->values()->all();
 
         return view('pages.scholarships.index', [
             'scholarships' => array_values($scholarships),
         ])->layout(auth()->check() ? 'layouts.app' : 'layouts.public', ['title' => 'Scholarships']);
-        //     'scholarships' => $scholarships,
-        // ])->layout('layouts.public', ['title' => 'Scholarships']);
     }
 }

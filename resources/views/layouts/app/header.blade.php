@@ -14,13 +14,13 @@
             {{-- Left Side: Brand Logo & Title --}}
             <div class="flex items-center space-x-3">
                 @auth
-                    @if (auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin')
-                        <x-app-logo href="{{ route('admin.dashboard') }}" wire:navigate />
-                    @else
-                        <x-app-logo href="{{ route('dashboard') }}" wire:navigate />
-                    @endif
+                @if (auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin')
+                <x-app-logo href="{{ route('admin.dashboard') }}" wire:navigate />
                 @else
-                    <x-app-logo href="{{ route('home') }}" wire:navigate />
+                <x-app-logo href="{{ route('dashboard') }}" wire:navigate />
+                @endif
+                @else
+                <x-app-logo href="{{ route('home') }}" wire:navigate />
                 @endauth
             </div>
 
@@ -134,16 +134,16 @@
             {{-- Right Side: Profile Menu (auth) or Login/Register (guest) --}}
             <div class="flex items-center space-x-4">
                 @auth
-                    <x-desktop-user-menu />
+                <x-desktop-user-menu />
                 @else
-                    <a href="{{ route('login') }}" wire:navigate
-                        class="text-sm font-bold text-[#33333B] hover:text-[#1D74E3] dark:text-zinc-300 dark:hover:text-[#1D74E3] transition-colors duration-200">
-                        {{ __('Log in') }}
-                    </a>
-                    <a href="{{ route('register') }}" wire:navigate
-                        class="rounded-lg bg-[#1D74E3] px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:bg-[#155ab2] transition-all duration-200">
-                        {{ __('Register') }}
-                    </a>
+                <a href="{{ route('login') }}" wire:navigate
+                    class="text-sm font-bold text-[#33333B] hover:text-[#1D74E3] dark:text-zinc-300 dark:hover:text-[#1D74E3] transition-colors duration-200">
+                    {{ __('Log in') }}
+                </a>
+                <a href="{{ route('register') }}" wire:navigate
+                    class="rounded-lg bg-[#1D74E3] px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:bg-[#155ab2] transition-all duration-200">
+                    {{ __('Register') }}
+                </a>
                 @endauth
             </div>
 
@@ -160,6 +160,19 @@
         <flux:toast />
     </flux:toast.group>
     @endpersist
+
+    @if (session('toast'))
+    <script>
+        document.addEventListener('livewire:navigated', () => {
+            Flux.toast({
+                text: @json(session('toast')),
+                variant: 'success',
+            });
+        }, {
+            once: true
+        });
+    </script>
+    @endif
 
     <x-accessibility-widget />
 
