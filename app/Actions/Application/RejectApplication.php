@@ -6,6 +6,7 @@ use App\Models\Application;
 use App\Models\ApplicationLog;
 use App\Models\User;
 use App\Notifications\ApplicationStatusUpdatedNotification;
+use Illuminate\Support\Facades\Log;
 
 class RejectApplication
 {
@@ -31,9 +32,13 @@ class RejectApplication
             'notes' => $reason,
         ]);
 
-        $application->user->notify(
-            new ApplicationStatusUpdatedNotification($application)
-        );
+        try {
+            $application->user->notify(
+                new ApplicationStatusUpdatedNotification($application)
+            );
+        } catch (\Throwable $e) {
+            Log::warning('Could not send rejection email notification: ' . $e->getMessage());
+        }
 
         return $application->fresh();
     }
