@@ -36,12 +36,25 @@ class Show extends Component
             $this->scholarship = Scholarship::with('requirements')->findOrFail($this->scholarshipId);
         }
 
-        // Pass the model to the view
+        $user = auth()->user();
+
+        // Has this resident already applied to this scholarship?
+        $alreadyApplied = $user
+            ? \App\Models\Application::where('user_id', $user->id)
+            ->where('scholarship_id', $this->scholarship->id)
+            ->exists()
+            : false;
+
+        $deadlinePassed = $this->scholarship->deadline
+            && now()->startOfDay()->gt($this->scholarship->deadline);
+
         $layout = auth()->check() ? 'layouts.app' : 'layouts.public';
 
         return view('pages.scholarships.show', [
             'scholarship' => $this->scholarship,
             'requirements' => $this->scholarship->requirements()->orderBy('order')->get(),
+            'alreadyApplied' => $alreadyApplied,
+            'deadlinePassed' => $deadlinePassed,
         ])->layout($layout, ['title' => $this->scholarship->title]);
     }
 }
