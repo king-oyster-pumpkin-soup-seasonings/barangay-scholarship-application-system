@@ -9,6 +9,9 @@ use App\Models\User;
 
 class SubmitApplicationAnswers
 {
+    /**
+     * @param  array<int, array{requirement_id: int, value: string}>  $answers
+     */
     public function handle(
         User $user,
         Application $application,

@@ -6,6 +6,8 @@ use App\Models\AdminAuditLog;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Livewire\Component;
@@ -150,14 +152,20 @@ class AdminManagement extends Component
 
         $admin->save();
 
-        AdminAuditLog::create([
-            'super_admin_id' => auth()->id(),
-            'super_admin_name' => auth()->user()->name,
-            'action_type' => 'Edited',
-            'target_admin_name' => $admin->name,
-            'target_admin_email' => $admin->email,
-            'ip_address' => request()->ip(),
-        ]);
+        if (Schema::hasTable('admin_audit_logs')) {
+            try {
+                AdminAuditLog::create([
+                    'super_admin_id' => auth()->id(),
+                    'super_admin_name' => auth()->user()->name,
+                    'action_type' => 'Edited',
+                    'target_admin_name' => $admin->name,
+                    'target_admin_email' => $admin->email,
+                    'ip_address' => request()->ip(),
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Audit log failed: ' . $e->getMessage());
+            }
+        }
 
         session()->flash('success', "Admin account for {$admin->name} has been successfully updated.");
 
@@ -216,14 +224,20 @@ class AdminManagement extends Component
 
         $admin = User::findOrFail($this->deleteAdminId);
 
-        AdminAuditLog::create([
-            'super_admin_id' => auth()->id(),
-            'super_admin_name' => auth()->user()->name,
-            'action_type' => 'Deleted',
-            'target_admin_name' => $admin->name,
-            'target_admin_email' => $admin->email,
-            'ip_address' => request()->ip(),
-        ]);
+        if (Schema::hasTable('admin_audit_logs')) {
+            try {
+                AdminAuditLog::create([
+                    'super_admin_id' => auth()->id(),
+                    'super_admin_name' => auth()->user()->name,
+                    'action_type' => 'Deleted',
+                    'target_admin_name' => $admin->name,
+                    'target_admin_email' => $admin->email,
+                    'ip_address' => request()->ip(),
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Audit log failed: ' . $e->getMessage());
+            }
+        }
 
         $adminName = $admin->name;
         $admin->delete();
