@@ -338,15 +338,35 @@
                             </button>
                             @endif
                             @else
-                            <a href="{{ route('login') }}"
-                                class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
-                                style="background-color: #1D74E3;">
-                                Sign In to Apply
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                                </svg>
-                            </a>
-                            @endauth
+                            @if($scholarship->slots <= 0 || $scholarship->status === 'full')
+                                <button disabled
+                                    class="w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl cursor-not-allowed"
+                                    style="background-color: #F0EDE8; color: #AA9A98; border: 1px solid #E5E8EF;">
+                                    No Slots Available
+                                </button>
+                                @elseif($deadlinePassed)
+                                <button disabled
+                                    class="w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl cursor-not-allowed"
+                                    style="background-color: #F0EDE8; color: #AA9A98; border: 1px solid #E5E8EF;">
+                                    Deadline Passed
+                                </button>
+                                @elseif($scholarship->status !== 'available')
+                                <button disabled
+                                    class="w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl cursor-not-allowed"
+                                    style="background-color: #F0EDE8; color: #AA9A98; border: 1px solid #E5E8EF;">
+                                    Applications Closed
+                                </button>
+                                @else
+                                <a href="{{ route('login') }}"
+                                    class="flex items-center justify-center gap-2 w-full text-center text-sm font-semibold py-3.5 px-4 rounded-xl text-white transition hover:opacity-90 shadow-md"
+                                    style="background-color: #1D74E3;">
+                                    Sign In to Apply
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                                    </svg>
+                                </a>
+                                @endif
+                                @endauth
                         </div>
                     </div>
 
