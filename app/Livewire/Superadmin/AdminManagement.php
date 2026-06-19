@@ -77,20 +77,36 @@ class AdminManagement extends Component
     public function createAdmin(): void
     {
         $this->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'name'     => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', Password::defaults(), 'confirmed'],
         ]);
 
         $admin = User::create([
-            'name' => $this->name,
-            'email' => $this->email,
-            'password' => Hash::make($this->password),
-            'role' => 'admin',
+            'name'                => $this->name,
+            'email'               => $this->email,
+            'password'            => Hash::make($this->password),
+            'role'                => 'admin',
             'verification_status' => 'verified',
-            'verified_by' => auth()->id(),
-            'verified_at' => now(),
+            'verified_by'         => auth()->id(),
+            'verified_at'         => now(),
         ]);
+
+        // ✅ Audit log for Create
+        if (Schema::hasTable('admin_audit_logs')) {
+            try {
+                AdminAuditLog::create([
+                    'super_admin_id'    => auth()->id(),
+                    'super_admin_name'  => auth()->user()->name,
+                    'action_type'       => 'Created',
+                    'target_admin_name' => $admin->name,
+                    'target_admin_email'=> $admin->email,
+                    'ip_address'        => request()->ip(),
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Audit log failed: ' . $e->getMessage());
+            }
+        }
 
         session()->flash('success', "Admin account for {$admin->name} has been successfully created.");
 
@@ -104,9 +120,9 @@ class AdminManagement extends Component
     {
         $admin = User::findOrFail($adminId);
         $this->editAdminId = $admin->id;
-        $this->editName = $admin->name;
-        $this->editEmail = $admin->email;
-        $this->editPhone = $admin->phone ?? '';
+        $this->editName    = $admin->name;
+        $this->editEmail   = $admin->email;
+        $this->editPhone   = $admin->phone ?? '';
 
         $this->reset(['editResetPassword', 'editPassword', 'editPasswordConfirmation']);
         $this->resetValidation();
@@ -129,7 +145,7 @@ class AdminManagement extends Component
     public function updateAdmin(): void
     {
         $rules = [
-            'editName' => ['required', 'string', 'max:255'],
+            'editName'  => ['required', 'string', 'max:255'],
             'editEmail' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->editAdminId)],
             'editPhone' => ['nullable', 'string', 'max:255'],
         ];
@@ -142,7 +158,7 @@ class AdminManagement extends Component
 
         $admin = User::findOrFail($this->editAdminId);
 
-        $admin->name = $this->editName;
+        $admin->name  = $this->editName;
         $admin->email = $this->editEmail;
         $admin->phone = $this->editPhone;
 
@@ -152,15 +168,16 @@ class AdminManagement extends Component
 
         $admin->save();
 
+        // ✅ Audit log for Edit
         if (Schema::hasTable('admin_audit_logs')) {
             try {
                 AdminAuditLog::create([
-                    'super_admin_id' => auth()->id(),
-                    'super_admin_name' => auth()->user()->name,
-                    'action_type' => 'Edited',
-                    'target_admin_name' => $admin->name,
+                    'super_admin_id'     => auth()->id(),
+                    'super_admin_name'   => auth()->user()->name,
+                    'action_type'        => 'Edited',
+                    'target_admin_name'  => $admin->name,
                     'target_admin_email' => $admin->email,
-                    'ip_address' => request()->ip(),
+                    'ip_address'         => request()->ip(),
                 ]);
             } catch (\Exception $e) {
                 Log::error('Audit log failed: ' . $e->getMessage());
@@ -224,15 +241,16 @@ class AdminManagement extends Component
 
         $admin = User::findOrFail($this->deleteAdminId);
 
+        // ✅ Audit log for Delete (logged BEFORE deletion so name/email are still available)
         if (Schema::hasTable('admin_audit_logs')) {
             try {
                 AdminAuditLog::create([
-                    'super_admin_id' => auth()->id(),
-                    'super_admin_name' => auth()->user()->name,
-                    'action_type' => 'Deleted',
-                    'target_admin_name' => $admin->name,
+                    'super_admin_id'     => auth()->id(),
+                    'super_admin_name'   => auth()->user()->name,
+                    'action_type'        => 'Deleted',
+                    'target_admin_name'  => $admin->name,
                     'target_admin_email' => $admin->email,
-                    'ip_address' => request()->ip(),
+                    'ip_address'         => request()->ip(),
                 ]);
             } catch (\Exception $e) {
                 Log::error('Audit log failed: ' . $e->getMessage());
@@ -249,7 +267,6 @@ class AdminManagement extends Component
 
     public function render(): View
     {
-        // Fetch all users with 'admin' role to list on the superadmin management view
         $admins = User::where('role', 'admin')
             ->orderBy('created_at', 'desc')
             ->get();

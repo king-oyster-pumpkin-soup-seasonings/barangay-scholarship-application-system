@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AdminAuditLog extends Model
 {
@@ -16,7 +15,7 @@ class AdminAuditLog extends Model
         'ip_address',
     ];
 
-    public function superAdmin(): BelongsTo
+    public function superAdmin()
     {
         return $this->belongsTo(User::class, 'super_admin_id');
     }
