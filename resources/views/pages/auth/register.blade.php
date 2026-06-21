@@ -17,9 +17,17 @@
                 event.preventDefault();
                 event.returnValue = '';
             });
+
+            if (this.birthdate && !this.age) {
+                this.calculateAge();
+            }
         },
         calculateAge() {
-            if (!this.birthdate) return;
+            if (!this.birthdate) {
+                this.age = '';
+
+                return;
+            }
 
             const today = new Date();
             const dateOfBirth = new Date(this.birthdate + 'T00:00:00');
@@ -30,14 +38,53 @@
                 calculatedAge--;
             }
 
-            this.age = calculatedAge > 0 ? calculatedAge.toString() : '';
+            this.age = calculatedAge >= 0 ? calculatedAge.toString() : '';
+        },
+        updateBirthdateFromAge() {
+            this.age = this.age.replace(/[^0-9]/g, '').slice(0, 3);
+
+            if (!this.birthdate || !this.age) {
+                return;
+            }
+
+            const desiredAge = parseInt(this.age, 10);
+
+            if (Number.isNaN(desiredAge)) {
+                return;
+            }
+
+            const today = new Date();
+            const currentBirthdate = new Date(this.birthdate + 'T00:00:00');
+            const birthMonth = currentBirthdate.getMonth();
+            const birthDay = currentBirthdate.getDate();
+            const birthdayHasPassedThisYear = birthMonth < today.getMonth()
+                || (birthMonth === today.getMonth() && birthDay <= today.getDate());
+
+            let birthYear = today.getFullYear() - desiredAge;
+
+            if (!birthdayHasPassedThisYear) {
+                birthYear--;
+            }
+
+            const daysInTargetMonth = new Date(birthYear, birthMonth + 1, 0).getDate();
+            const safeBirthDay = Math.min(birthDay, daysInTargetMonth);
+            const adjustedBirthdate = new Date(birthYear, birthMonth, safeBirthDay);
+
+            this.birthdate = this.formatDate(adjustedBirthdate);
+        },
+        formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+
+            return `${year}-${month}-${day}`;
         },
     }">
 
         {{-- Nav Link - Home --}}
         <div>
             <a href="{{ route('home') }}"
-               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-zinc-500 hover:text-[#1D74E3] hover:bg-[#EBF3FF] transition-all self-start">
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-zinc-500 hover:text-[#1D74E3] hover:bg-[#EBF3FF] transition-all self-start">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                 </svg>
@@ -77,10 +124,9 @@
                         title="{{ __('Only letters, spaces, hyphens, and apostrophes are allowed') }}"
                         required
                         placeholder="Dela Cruz"
-                        class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition"
-                    />
+                        class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition" />
                     @error('name')
-                        <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
+                    <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -95,8 +141,7 @@
                         title="{{ __('Only letters, spaces, hyphens, and apostrophes are allowed') }}"
                         required
                         placeholder="Juan"
-                        class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition"
-                    />
+                        class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition" />
                 </div>
             </div>
 
@@ -111,8 +156,7 @@
                     @input="middleName = $event.target.value.replace(/[^a-zA-ZÀ-ÿñÑ\s\-']/g, '')"
                     title="{{ __('Only letters, spaces, hyphens, and apostrophes are allowed') }}"
                     placeholder="Santos (optional)"
-                    class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition"
-                />
+                    class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition" />
             </div>
 
             <!-- Email Address & Phone Number Grid -->
@@ -131,10 +175,9 @@
                         required
                         autocomplete="email"
                         placeholder="juan@gmail.com"
-                        class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition"
-                    />
+                        class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition" />
                     @error('email')
-                        <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
+                    <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -152,10 +195,9 @@
                         title="{{ __('Please enter a valid 11-digit Philippine mobile number starting with 09 (e.g., 09171234567)') }}"
                         required
                         placeholder="09171234567"
-                        class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition"
-                    />
+                        class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition" />
                     @error('phone')
-                        <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
+                    <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
@@ -174,10 +216,9 @@
                         required
                         max="{{ date('Y-m-d') }}"
                         onclick="this.showPicker()"
-                        class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition cursor-pointer"
-                    />
+                        class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition cursor-pointer" />
                     @error('birthdate')
-                        <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
+                    <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -188,18 +229,20 @@
                     <input
                         name="age"
                         x-model="age"
-                        @input="age = age.replace(/[^0-9]/g, '')"
+                        @input="age = $event.target.value.replace(/[^0-9]/g, '').slice(0, 3); updateBirthdateFromAge()"
                         type="text"
                         inputmode="numeric"
                         pattern="[0-9]+"
                         min="18"
                         max="120"
+                        maxlength="3"
                         required
-                        placeholder="18"
-                        class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition"
-                    />
+                        x-bind:disabled="!birthdate"
+                        x-bind:placeholder="birthdate ? '18' : '{{ __('Select birthdate first') }}'"
+                        title="{{ __('Select your date of birth first. Changing age will adjust the birth year automatically.') }}"
+                        class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition disabled:bg-zinc-100 disabled:text-zinc-500 disabled:cursor-not-allowed disabled:opacity-80" />
                     @error('age')
-                        <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
+                    <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -210,8 +253,7 @@
                     <select
                         name="gender"
                         required
-                        class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition"
-                    >
+                        class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition">
                         <option value="" disabled {{ old('gender') ? '' : 'selected' }}>{{ __('Select Gender') }}</option>
                         <option value="male" {{ old('gender') === 'male' ? 'selected' : '' }}>{{ __('Male') }}</option>
                         <option value="female" {{ old('gender') === 'female' ? 'selected' : '' }}>{{ __('Female') }}</option>
@@ -219,7 +261,7 @@
                         <option value="prefer_not_to_say" {{ old('gender') === 'prefer_not_to_say' ? 'selected' : '' }}>{{ __('Prefer not to say') }}</option>
                     </select>
                     @error('gender')
-                        <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
+                    <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -230,8 +272,7 @@
                     <select
                         name="pronouns"
                         required
-                        class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition"
-                    >
+                        class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition">
                         <option value="" disabled {{ old('pronouns') ? '' : 'selected' }}>{{ __('Select Pronouns') }}</option>
                         <option value="he_him" {{ old('pronouns') === 'he_him' ? 'selected' : '' }}>{{ __('He/Him') }}</option>
                         <option value="she_her" {{ old('pronouns') === 'she_her' ? 'selected' : '' }}>{{ __('She/Her') }}</option>
@@ -239,63 +280,7 @@
                         <option value="prefer_not_to_say" {{ old('pronouns') === 'prefer_not_to_say' ? 'selected' : '' }}>{{ __('Prefer not to say') }}</option>
                     </select>
                     @error('pronouns')
-                        <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
-                    @enderror
-                </div>
-            </div>
-
-            <!-- Address -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div class="sm:col-span-2 flex flex-col gap-1.5">
-                    <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider">
-                        {{ __('Street Address') }} <span class="text-[#F54A00]">*</span>
-                    </label>
-                    <input name="address_street" value="{{ old('address_street') }}" type="text" required placeholder="House No., Street, Barangay" class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition" />
-                    @error('address_street')
-                        <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider">
-                        {{ __('City') }} <span class="text-[#F54A00]">*</span>
-                    </label>
-                    <input name="address_city" value="{{ old('address_city') }}" type="text" required placeholder="Quezon City" class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition" />
-                    @error('address_city')
-                        <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider">
-                        {{ __('Province/State') }} <span class="text-[#F54A00]">*</span>
-                    </label>
-                    <input name="address_province_state" value="{{ old('address_province_state') }}" type="text" required placeholder="Metro Manila" class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition" />
-                    @error('address_province_state')
-                        <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider">
-                        {{ __('Country') }} <span class="text-[#F54A00]">*</span>
-                    </label>
-                    <select name="address_country" required class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition">
-                        <option value="PH" {{ old('address_country', 'PH') === 'PH' ? 'selected' : '' }}>{{ __('Philippines') }}</option>
-                        <option value="US" {{ old('address_country') === 'US' ? 'selected' : '' }}>{{ __('United States') }}</option>
-                    </select>
-                    @error('address_country')
-                        <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider">
-                        {{ __('Postal Code') }} <span class="text-[#F54A00]">*</span>
-                    </label>
-                    <input name="address_postal_code" value="{{ old('address_postal_code') }}" type="text" inputmode="numeric" required placeholder="1100" class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition" />
-                    @error('address_postal_code')
-                        <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
+                    <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
@@ -399,7 +384,7 @@
                     </ul>
 
                     @error('password')
-                        <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
+                    <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -430,7 +415,7 @@
                         </button>
                     </div>
                     @error('password_confirmation')
-                        <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
+                    <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -443,8 +428,7 @@
                     name="terms"
                     id="terms"
                     required
-                    class="mt-1 h-4 w-4 rounded border-zinc-300 text-[#1D74E3] focus:ring-[#1D74E3]"
-                />
+                    class="mt-1 h-4 w-4 rounded border-zinc-300 text-[#1D74E3] focus:ring-[#1D74E3]" />
                 <label for="terms" class="text-xs text-zinc-600 select-none">
                     {{ __('I agree to the Terms of Service and Privacy Policy of the Barangay San Isidro Scholarship Program') }}
                 </label>

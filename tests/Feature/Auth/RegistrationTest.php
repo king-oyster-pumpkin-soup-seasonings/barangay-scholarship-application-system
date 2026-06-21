@@ -16,11 +16,6 @@ function validRegistrationPayload(array $overrides = []): array
         'age' => 20,
         'gender' => 'male',
         'pronouns' => 'he_him',
-        'address_street' => '123 Barangay St.',
-        'address_city' => 'Quezon City',
-        'address_province_state' => 'Metro Manila',
-        'address_country' => 'PH',
-        'address_postal_code' => '1100',
         'password' => 'password',
         'password_confirmation' => 'password',
         ...$overrides,
@@ -31,6 +26,15 @@ test('registration screen can be rendered', function () {
     $response = $this->get(route('register'));
 
     $response->assertOk();
+});
+
+test('registration age input is controlled by the birthdate field', function () {
+    $response = $this->get(route('register'));
+
+    $response->assertOk()
+        ->assertSee('updateBirthdateFromAge()', false)
+        ->assertSee('x-bind:disabled="!birthdate"', false)
+        ->assertSee('Select birthdate first', false);
 });
 
 test('new users can register', function () {
@@ -46,7 +50,8 @@ test('new users can register', function () {
     expect($user->age)->toBe(20);
     expect($user->gender)->toBe('male');
     expect($user->pronouns)->toBe('he_him');
-    expect($user->address_city)->toBe('Quezon City');
+    expect($user->address)->toBeNull();
+    expect($user->address_street)->toBeNull();
     expect($user->hasVerifiedEmail())->toBeFalse();
 });
 
@@ -64,15 +69,6 @@ test('registration rejects passwords containing personal information', function 
         'password' => 'John12345!',
         'password_confirmation' => 'John12345!',
     ]))->assertSessionHasErrors('password');
-
-    $this->assertGuest();
-});
-
-test('registration validates postal code for selected country', function () {
-    $this->post(route('register.store'), validRegistrationPayload([
-        'address_country' => 'PH',
-        'address_postal_code' => '90210',
-    ]))->assertSessionHasErrors('address_postal_code');
 
     $this->assertGuest();
 });
