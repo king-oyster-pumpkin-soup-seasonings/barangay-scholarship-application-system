@@ -184,9 +184,7 @@
     @endif
 
     @auth
-    @if (in_array(auth()->user()->role, ['admin', 'superadmin'], true))
     <x-session-timeout-notice />
-    @endif
     @endauth
 
     <x-accessibility-widget />

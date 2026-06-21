@@ -51,7 +51,7 @@ $sessionLifetimeMinutes = max(1, (int) config('session.lifetime', 20));
         window.__sessionTimeoutNoticeInitialized = true;
 
         const sessionLifetimeMs = Number(@json($sessionLifetimeMinutes * 60 * 1000));
-        const warningDurationMs = Math.min(60_000, Math.max(10_000, Math.floor(sessionLifetimeMs / 10)));
+        const warningDurationMs = Math.min(120_000, Math.max(60_000, Math.floor(sessionLifetimeMs / 3)));
         const warningDelayMs = Math.max(sessionLifetimeMs - warningDurationMs, 0);
         const keepAliveIntervalMs = Math.min(300_000, Math.max(60_000, Math.floor(sessionLifetimeMs / 3)));
         const loginUrl = @json(route('login'));
@@ -61,7 +61,6 @@ $sessionLifetimeMinutes = max(1, (int) config('session.lifetime', 20));
 
         let warningTimer = null;
         let expiredTimer = null;
-        let redirectTimer = null;
         let lastResetAt = 0;
         let lastKeepAliveAt = Date.now();
         let hasExpired = false;
@@ -96,7 +95,6 @@ $sessionLifetimeMinutes = max(1, (int) config('session.lifetime', 20));
         const clearTimers = () => {
             clearTimeout(warningTimer);
             clearTimeout(expiredTimer);
-            clearTimeout(redirectTimer);
         };
 
         const showWarning = () => {
@@ -136,10 +134,6 @@ $sessionLifetimeMinutes = max(1, (int) config('session.lifetime', 20));
             }
 
             showModal();
-
-            redirectTimer = setTimeout(() => {
-                window.location.href = loginUrl;
-            }, 10_000);
         };
 
         const resetInactivityTimers = () => {

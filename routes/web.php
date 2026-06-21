@@ -46,7 +46,6 @@ Route::middleware(['auth', 'verified', 'role:admin,superadmin', 'approved.admin'
     Route::get('/applications', Applications::class)->name('admin.applications');
     Route::get('/scholarships', Scholarships::class)->name('admin.scholarships');
     Route::get('/announcements', Announcements::class)->name('admin.announcements');
-    Route::post('/session/keep-alive', fn() => response()->noContent())->name('session.keep-alive');
 });
 
 // Superadmin-only routes
