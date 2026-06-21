@@ -289,6 +289,7 @@
 
                 {{-- Next or Submit --}}
                 @if ($step < $totalSteps)
+                    {{-- Next button --}}
                     <button
                         type="button"
                         wire:click="nextStep"
@@ -305,6 +306,7 @@
                         <span wire:loading wire:target="nextStep">Saving...</span>
                     </button>
                 @else
+                    {{-- Submit button --}}
                     <button
                         type="button"
                         wire:click="submit"
@@ -313,6 +315,10 @@
                         x-bind:disabled="Object.keys($wire.answers).some((id) => hasExceededLimit(id, textLimit) || hasExceededLimit(id, textareaLimit))"
                         class="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-lg bg-[#1D74E3] text-white text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                     >
+                        <svg wire:loading wire:target="submit" class="w-4 h-4 animate-spin shrink-0" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                        </svg>
                         <span wire:loading.remove wire:target="submit">Submit Application</span>
                         <span wire:loading wire:target="submit">Submitting...</span>
                     </button>
