@@ -83,6 +83,76 @@
         </table>
     </div>
 
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-8">
+        <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-md overflow-hidden">
+            <div class="p-4 border-b border-gray-100 dark:border-zinc-700">
+                <h2 class="text-lg font-bold text-[#33333B] dark:text-white">Admin Application Audit</h2>
+                <p class="text-xs text-[#AA9A98] dark:text-zinc-400 mt-1">Recent approve and reject actions by standard Admins.</p>
+            </div>
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-[#33333B] text-white">
+                        <th class="p-3 text-xs font-semibold uppercase">Admin</th>
+                        <th class="p-3 text-xs font-semibold uppercase">Action</th>
+                        <th class="p-3 text-xs font-semibold uppercase">Application</th>
+                        <th class="p-3 text-xs font-semibold uppercase">Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($applicationLogs as $log)
+                        <tr class="border-b border-gray-100 dark:border-zinc-700">
+                            <td class="p-3 text-sm text-[#1B1A1C] dark:text-white">{{ $log->changedBy?->name ?? 'Unknown Admin' }}</td>
+                            <td class="p-3 text-sm text-gray-600 dark:text-zinc-300">{{ ucfirst($log->old_status ?? 'new') }} to {{ ucfirst($log->new_status) }}</td>
+                            <td class="p-3 text-xs text-[#AA9A98] dark:text-zinc-400">
+                                {{ $log->application?->user?->name ?? 'Deleted applicant' }}
+                                <span class="block">{{ $log->application?->scholarship?->title ?? 'Deleted scholarship' }}</span>
+                            </td>
+                            <td class="p-3 text-xs text-[#AA9A98] dark:text-zinc-400">{{ $log->created_at?->format('M d, Y h:i A') }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="p-6 text-center text-sm text-gray-500 dark:text-zinc-400">No admin application actions have been logged yet.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-md overflow-hidden">
+            <div class="p-4 border-b border-gray-100 dark:border-zinc-700">
+                <h2 class="text-lg font-bold text-[#33333B] dark:text-white">Super Admin Account Audit</h2>
+                <p class="text-xs text-[#AA9A98] dark:text-zinc-400 mt-1">Recent account-management actions.</p>
+            </div>
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-[#33333B] text-white">
+                        <th class="p-3 text-xs font-semibold uppercase">Super Admin</th>
+                        <th class="p-3 text-xs font-semibold uppercase">Action</th>
+                        <th class="p-3 text-xs font-semibold uppercase">Target</th>
+                        <th class="p-3 text-xs font-semibold uppercase">Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($adminAuditLogs as $log)
+                        <tr class="border-b border-gray-100 dark:border-zinc-700">
+                            <td class="p-3 text-sm text-[#1B1A1C] dark:text-white">{{ $log->super_admin_name }}</td>
+                            <td class="p-3 text-sm text-gray-600 dark:text-zinc-300">{{ $log->action_type }}</td>
+                            <td class="p-3 text-xs text-[#AA9A98] dark:text-zinc-400">
+                                {{ $log->target_admin_name }}
+                                <span class="block">{{ $log->target_admin_email }}</span>
+                            </td>
+                            <td class="p-3 text-xs text-[#AA9A98] dark:text-zinc-400">{{ $log->created_at?->format('M d, Y h:i A') }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="p-6 text-center text-sm text-gray-500 dark:text-zinc-400">No account-management actions have been logged yet.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <!-- Create Admin Modal -->
     <flux:modal wire:model="showCreateModal" class="max-w-md">
         <div class="space-y-6">

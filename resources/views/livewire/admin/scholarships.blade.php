@@ -76,7 +76,7 @@
                                 <button wire:click="openEditModal({{ $scholarship->id }})" class="text-[#1D74E3] hover:underline transition">
                                     Edit
                                 </button>
-                                <button wire:click="delete({{ $scholarship->id }})" wire:confirm="Are you sure you want to delete this scholarship? This will cascade and delete all submitted applications and requirement records." class="text-red-500 hover:text-red-700 transition">
+                                <button wire:click="openDeleteModal({{ $scholarship->id }})" class="text-red-500 hover:text-red-700 transition">
                                     Delete
                                 </button>
                             </td>
@@ -269,6 +269,33 @@
                             </button>
                         </div>
                     </form>
+                </div>
+            </div>
+        @endif
+
+        @if ($showDeleteModal && $scholarshipToDelete)
+            <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-xl max-w-md w-full">
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-red-600 dark:text-red-400 mb-2">Confirm Delete</h3>
+                        <p class="text-sm text-[#33333B] dark:text-zinc-200">
+                            Delete the scholarship <strong>{{ $scholarshipToDelete->title }}</strong>?
+                        </p>
+                        <div class="text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-3 mt-4">
+                            This will also remove its requirements and any submitted applications connected to it.
+                        </div>
+
+                        <div class="flex justify-end gap-2 border-t dark:border-zinc-700 mt-6 pt-4">
+                            <button type="button" wire:click="closeDeleteModal"
+                                class="px-4 py-2 text-sm font-semibold text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-white transition">
+                                Cancel
+                            </button>
+                            <button type="button" wire:click="delete"
+                                class="px-4 py-2 text-sm font-semibold bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-sm transition">
+                                Confirm Delete
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         @endif

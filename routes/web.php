@@ -24,6 +24,7 @@ Route::get('/faqs', Faqs::class)->name('faqs');
 Route::get('/contact', Contact::class)->name('contact');
 Route::get('/scholarships/{scholarship}', Show::class)->name('scholarships.show');
 Route::get('/scholarships', Index::class)->name('scholarships.index');
+Route::get('/403', fn () => response()->view('errors.403', [], 403))->name('errors.403');
 
 // Authenticated resident pages
 Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
@@ -47,6 +48,10 @@ Route::middleware(['auth', 'verified', 'role:admin,superadmin', 'approved.admin'
 // Superadmin-only routes
 Route::middleware(['auth', 'verified', 'role:superadmin'])->prefix('superadmin')->group(function () {
     Route::get('/admins', AdminManagement::class)->name('superadmin.admins');
+});
+
+Route::middleware(['auth', 'verified', 'role:superadmin'])->prefix('super-admin')->group(function () {
+    Route::get('/admins', AdminManagement::class)->name('superadmin.admins.hyphenated');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

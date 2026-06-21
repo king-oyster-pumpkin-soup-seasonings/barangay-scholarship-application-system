@@ -7,9 +7,11 @@ use App\Livewire\Admin\Scholarships;
 use App\Livewire\Admin\Verifications;
 use App\Livewire\Pages\Applications\Create as CreateApplicationPage;
 use App\Livewire\Superadmin\AdminManagement;
+use App\Models\AdminAuditLog;
 use App\Models\Announcement;
 use App\Models\Application;
 use App\Models\ApplicationAnswer;
+use App\Models\ApplicationLog;
 use App\Models\ResidenceVerification;
 use App\Models\Scholarship;
 use App\Models\User;
@@ -61,9 +63,19 @@ test('admin dashboard renders and calculates statistics correctly', function () 
         'submitted_at' => now(),
     ]);
 
+    $approvedScholarship = Scholarship::create([
+        'title' => 'Approved Scholarship',
+        'description' => 'Test Description',
+        'allowance' => 5000.00,
+        'slots' => 5,
+        'deadline' => now()->addDays(30),
+        'status' => 'available',
+        'created_by' => $admin->id,
+    ]);
+
     Application::create([
         'user_id' => $user->id,
-        'scholarship_id' => $scholarship->id,
+        'scholarship_id' => $approvedScholarship->id,
         'status' => 'approved',
         'submitted_at' => now(),
     ]);
@@ -188,11 +200,18 @@ test('admin can approve scholarship application', function () {
     $this->actingAs($admin);
 
     Livewire::test(Applications::class)
-        ->call('approve', $application->id)
+        ->call('openApprovalModal', $application->id)
+        ->call('confirmApprove')
         ->assertHasNoErrors();
 
     expect($application->refresh()->status)->toBe('approved');
+    expect($application->reviewed_by)->toBe($admin->id);
+    expect($application->reviewed_at)->not->toBeNull();
     expect($scholarship->refresh()->slots)->toBe(4);
+    expect(ApplicationLog::where('application_id', $application->id)
+        ->where('changed_by', $admin->id)
+        ->where('new_status', 'approved')
+        ->exists())->toBeTrue();
 
     Notification::assertSentTo(
         $user,
@@ -240,7 +259,8 @@ test('scholarship status transitions to full when slots reach zero upon applicat
     $this->actingAs($admin);
 
     Livewire::test(Applications::class)
-        ->call('approve', $application->id)
+        ->call('openApprovalModal', $application->id)
+        ->call('confirmApprove')
         ->assertHasNoErrors();
 
     expect($application->refresh()->status)->toBe('approved');
@@ -292,7 +312,13 @@ test('admin can reject scholarship application with remarks', function () {
         ->assertHasNoErrors();
 
     expect($application->refresh()->status)->toBe('rejected');
+    expect($application->reviewed_by)->toBe($admin->id);
+    expect($application->reviewed_at)->not->toBeNull();
     expect($application->remarks)->toBe('GPA requirement not met');
+    expect(ApplicationLog::where('application_id', $application->id)
+        ->where('changed_by', $admin->id)
+        ->where('new_status', 'rejected')
+        ->exists())->toBeTrue();
 
     Notification::assertSentTo(
         $user,
@@ -337,7 +363,9 @@ test('admin can manage announcements', function () {
 
     // Delete
     Livewire::test(Announcements::class)
-        ->call('delete', $announcement->id)
+        ->call('openDeleteModal', $announcement->id)
+        ->assertSet('showDeleteModal', true)
+        ->call('delete')
         ->assertHasNoErrors();
 
     expect(Announcement::count())->toBe(0);
@@ -369,6 +397,177 @@ test('superadmin can create a new admin directly', function () {
     expect($newAdmin->verification_status)->toBe('verified');
     expect($newAdmin->verified_by)->toBe($superadmin->id);
     expect($newAdmin->verified_at)->not->toBeNull();
+});
+
+test('admin and superadmin routes redirect unauthorized roles to forbidden page', function () {
+    $resident = User::create([
+        'name' => 'Resident User',
+        'email' => 'resident-route@example.com',
+        'email_verified_at' => now(),
+        'password' => bcrypt('password123'),
+        'role' => 'user',
+        'verification_status' => 'verified',
+    ]);
+
+    $admin = User::create([
+        'name' => 'Admin User',
+        'email' => 'admin-route@example.com',
+        'email_verified_at' => now(),
+        'password' => bcrypt('password123'),
+        'role' => 'admin',
+        'verification_status' => 'verified',
+    ]);
+
+    $resident->forceFill(['email_verified_at' => now()])->save();
+    $admin->forceFill(['email_verified_at' => now()])->save();
+
+    $this->actingAs($resident)
+        ->get('/admin/dashboard')
+        ->assertRedirect(route('errors.403'));
+
+    $this->actingAs($admin)
+        ->get('/superadmin/admins')
+        ->assertRedirect(route('errors.403'));
+
+    $this->actingAs($admin)
+        ->get('/super-admin/admins')
+        ->assertRedirect(route('errors.403'));
+});
+
+test('session lifetime is configured for inactivity logout', function () {
+    expect(config('session.lifetime'))->toBe(30);
+});
+
+test('approved applications cannot be approved or rejected again', function () {
+    Notification::fake();
+
+    $admin = User::create([
+        'name' => 'Admin User',
+        'email' => 'admin-state@example.com',
+        'password' => bcrypt('password123'),
+        'role' => 'admin',
+    ]);
+
+    $user = User::create([
+        'name' => 'Resident User',
+        'email' => 'resident-state@example.com',
+        'password' => bcrypt('password123'),
+        'role' => 'user',
+        'verification_status' => 'verified',
+    ]);
+
+    $scholarship = Scholarship::create([
+        'title' => 'State Scholarship',
+        'description' => 'State transition test scholarship.',
+        'allowance' => 5000.00,
+        'slots' => 5,
+        'deadline' => now()->addDays(30),
+        'status' => 'available',
+        'created_by' => $admin->id,
+    ]);
+
+    $application = Application::create([
+        'user_id' => $user->id,
+        'scholarship_id' => $scholarship->id,
+        'status' => 'approved',
+        'submitted_at' => now(),
+    ]);
+
+    $this->actingAs($admin);
+
+    Livewire::test(Applications::class)
+        ->call('openApprovalModal', $application->id)
+        ->call('confirmApprove')
+        ->assertHasNoErrors()
+        ->assertSet('infoMessage', 'Only pending applications can be approved.');
+
+    Livewire::test(Applications::class)
+        ->call('openRejectionModal', $application->id)
+        ->set('rejectionRemarks', 'Trying to reject an already approved record')
+        ->call('reject')
+        ->assertHasNoErrors()
+        ->assertSet('infoMessage', 'Only pending applications can be rejected.');
+
+    expect($application->refresh()->status)->toBe('approved');
+    expect($scholarship->refresh()->slots)->toBe(5);
+    expect(ApplicationLog::where('application_id', $application->id)->count())->toBe(0);
+});
+
+test('superadmin can view admin audit logs', function () {
+    $superadmin = User::create([
+        'name' => 'Superadmin User',
+        'email' => 'superadmin-audit@example.com',
+        'password' => bcrypt('password123'),
+        'role' => 'superadmin',
+    ]);
+
+    $admin = User::create([
+        'name' => 'Admin User',
+        'email' => 'admin-audit@example.com',
+        'password' => bcrypt('password123'),
+        'role' => 'admin',
+        'verification_status' => 'verified',
+    ]);
+
+    AdminAuditLog::create([
+        'super_admin_id' => $superadmin->id,
+        'super_admin_name' => $superadmin->name,
+        'action_type' => 'Created',
+        'target_admin_name' => $admin->name,
+        'target_admin_email' => $admin->email,
+        'ip_address' => '127.0.0.1',
+    ]);
+
+    $this->actingAs($superadmin);
+
+    Livewire::test(AdminManagement::class)
+        ->assertViewHas('adminAuditLogs')
+        ->assertSee('Super Admin Account Audit')
+        ->assertSee($admin->email);
+});
+
+test('superadmin cannot delete the last admin account', function () {
+    $superadmin = User::create([
+        'name' => 'Superadmin User',
+        'email' => 'superadmin-lock@example.com',
+        'password' => bcrypt('password123'),
+        'role' => 'superadmin',
+    ]);
+
+    $admin = User::create([
+        'name' => 'Only Admin',
+        'email' => 'only-admin@example.com',
+        'password' => bcrypt('password123'),
+        'role' => 'admin',
+        'verification_status' => 'verified',
+    ]);
+
+    $this->actingAs($superadmin);
+
+    Livewire::test(AdminManagement::class)
+        ->set('deleteAdminId', $admin->id)
+        ->set('superAdminPassword', 'password123')
+        ->call('deleteAdmin')
+        ->assertHasNoErrors();
+
+    expect(User::where('role', 'admin')->count())->toBe(1);
+    expect(User::whereKey($admin->id)->exists())->toBeTrue();
+});
+
+test('standard admin cannot call superadmin account management actions', function () {
+    $admin = User::create([
+        'name' => 'Admin User',
+        'email' => 'not-superadmin@example.com',
+        'password' => bcrypt('password123'),
+        'role' => 'admin',
+        'verification_status' => 'verified',
+    ]);
+
+    $this->actingAs($admin);
+
+    Livewire::test(AdminManagement::class)
+        ->call('openCreateModal')
+        ->assertForbidden();
 });
 
 test('admin can manage scholarships', function () {
@@ -455,7 +654,9 @@ test('admin can manage scholarships', function () {
 
     // Delete
     Livewire::test(Scholarships::class)
-        ->call('delete', $scholarship->id)
+        ->call('openDeleteModal', $scholarship->id)
+        ->assertSet('showDeleteModal', true)
+        ->call('delete')
         ->assertHasNoErrors();
 
     expect(Scholarship::count())->toBe(0);
@@ -516,7 +717,7 @@ test('resident can submit custom additional scholarship requirements', function 
 
     Livewire::test(CreateApplicationPage::class, ['scholarship' => $scholarship])
         ->assertSee('Current GPA')
-        ->set("answers.{$gpaRequirement->id}", '93')
+        ->set("answers.{$gpaRequirement->id}", '4.0')
         ->call('nextStep')
         ->assertHasNoErrors()
         ->assertSee('Preferred interview date')

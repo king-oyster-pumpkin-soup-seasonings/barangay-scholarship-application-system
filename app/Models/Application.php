@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Application extends Model
 {
+    public const STATUS_PENDING = 'pending';
+
+    public const STATUS_APPROVED = 'approved';
+
+    public const STATUS_REJECTED = 'rejected';
+
     protected $fillable = [
         'user_id',
         'scholarship_id',
@@ -59,5 +65,11 @@ class Application extends Model
     public function logs(): HasMany
     {
         return $this->hasMany(ApplicationLog::class);
+    }
+
+    public function canTransitionTo(string $status): bool
+    {
+        return $this->status === self::STATUS_PENDING
+            && in_array($status, [self::STATUS_APPROVED, self::STATUS_REJECTED], true);
     }
 }

@@ -12,11 +12,14 @@ class Applications extends Component
 {
     // --- Modal visibility flags ---
     public bool $showDetailsModal = false;
+
     public bool $showApprovalModal = false;
+
     public bool $showRejectionModal = false;
 
     // --- IDs for tracking which application is being acted on ---
     public ?int $selectedApplicationId = null;   // used by details modal
+
     public ?int $pendingApprovalId = null;        // used by approval confirmation modal
     // (rejection reuses selectedApplicationId)
 
@@ -25,6 +28,7 @@ class Applications extends Component
 
     // --- Alert messages (use public properties, NOT session()->flash()) ---
     public string $successMessage = '';
+
     public string $infoMessage = '';
 
     // =========================================================
@@ -85,11 +89,13 @@ class Applications extends Component
     {
         $application = Application::findOrFail($this->pendingApprovalId);
 
-        if ($application->status === 'pending') {
+        if ($application->canTransitionTo(Application::STATUS_APPROVED)) {
             app(ApproveApplication::class)
                 ->handle($application, auth()->user(), 'Application approved.');
 
             $this->successMessage = 'Application approved successfully.';
+        } else {
+            $this->infoMessage = 'Only pending applications can be approved.';
         }
 
         // Reset ALL modal state cleanly in one place
@@ -141,11 +147,13 @@ class Applications extends Component
 
         $application = Application::findOrFail($this->selectedApplicationId);
 
-        if ($application->status === 'pending') {
+        if ($application->canTransitionTo(Application::STATUS_REJECTED)) {
             app(RejectApplication::class)
                 ->handle($application, auth()->user(), $this->rejectionRemarks);
 
             $this->infoMessage = 'Application has been rejected.';
+        } else {
+            $this->infoMessage = 'Only pending applications can be rejected.';
         }
 
         $this->closeRejectionModal();
@@ -184,8 +192,8 @@ class Applications extends Component
         }
 
         return view('livewire.admin.applications', [
-            'pendingApplications'       => $pendingApplications,
-            'selectedApplication'       => $selectedApplication,
+            'pendingApplications' => $pendingApplications,
+            'selectedApplication' => $selectedApplication,
             'pendingApprovalApplication' => $pendingApprovalApplication,
         ]);
     }

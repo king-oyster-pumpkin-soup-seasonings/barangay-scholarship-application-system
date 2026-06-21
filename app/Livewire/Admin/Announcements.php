@@ -14,6 +14,12 @@ class Announcements extends Component
 
     public ?int $selectedAnnouncementId = null;
 
+    public bool $showDeleteModal = false;
+
+    public ?int $deleteAnnouncementId = null;
+
+    public ?Announcement $announcementToDelete = null;
+
     public string $title = '';
 
     public string $body = '';
@@ -61,6 +67,19 @@ class Announcements extends Component
         $this->reset(['title', 'body', 'selectedAnnouncementId', 'isEditing']);
     }
 
+    public function openDeleteModal(int $id): void
+    {
+        $this->announcementToDelete = Announcement::findOrFail($id);
+        $this->deleteAnnouncementId = $id;
+        $this->showDeleteModal = true;
+    }
+
+    public function closeDeleteModal(): void
+    {
+        $this->showDeleteModal = false;
+        $this->reset(['deleteAnnouncementId', 'announcementToDelete']);
+    }
+
     /**
      * Save the announcement (create or update)
      */
@@ -90,12 +109,13 @@ class Announcements extends Component
     /**
      * Delete an announcement
      */
-    public function delete(int $id): void
+    public function delete(): void
     {
-        $announcement = Announcement::findOrFail($id);
+        $announcement = Announcement::findOrFail($this->deleteAnnouncementId);
         $announcement->delete();
 
         session()->flash('info', 'Announcement has been deleted.');
+        $this->closeDeleteModal();
     }
 
     public function render(): View
