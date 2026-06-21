@@ -1,6 +1,18 @@
 <x-layouts::auth.split :title="__('Log in')">
     <div class="flex flex-col gap-5 px-1 sm:px-0 w-full max-w-sm mx-auto">
 
+        <!-- Home Link -->
+        <div>
+            <a
+                href="{{ route('home') }}"
+                class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-zinc-500 transition-all hover:bg-[#EBF3FF] hover:text-[#1D74E3]">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                </svg>
+                {{ __('Back to Home') }}
+            </a>
+        </div>
+
         <!-- Title and Description -->
         <div class="space-y-1.5 text-center lg:text-left">
             <h1 class="text-2xl sm:text-3xl font-bold font-serif text-[#0F172B] leading-tight">
@@ -15,9 +27,9 @@
         <x-auth-session-status class="text-center" :status="session('status')" />
 
         @if (session('error'))
-            <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
-                {{ session('error') }}
-            </div>
+        <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+            {{ session('error') }}
+        </div>
         @endif
 
         <form method="POST" action="{{ route('login.store') }}" class="flex flex-col gap-5">
@@ -36,8 +48,7 @@
                     autofocus
                     autocomplete="email"
                     placeholder="you@example.com"
-                    class="bg-white border-zinc-300 text-zinc-900 focus:border-[#1D74E3] text-base min-h-[44px]"
-                />
+                    class="bg-white border-zinc-300 text-zinc-900 focus:border-[#1D74E3] text-base min-h-[44px]" />
                 <flux:error name="email" />
             </flux:field>
 
@@ -55,19 +66,17 @@
                     autocomplete="current-password"
                     placeholder="Enter your password"
                     class="bg-white border-zinc-300 text-zinc-900 focus:border-[#1D74E3] text-base min-h-[44px]"
-                    viewable
-                />
+                    viewable />
                 <flux:error name="password" />
                 @if (Route::has('password.request'))
-                    <div class="flex justify-end mt-2">
-                        <flux:link
-                            class="text-xs text-[#1D74E3] hover:underline py-1 -my-1"
-                            :href="route('password.request')"
-                            wire:navigate
-                        >
-                            {{ __('Forgot password?') }}
-                        </flux:link>
-                    </div>
+                <div class="flex justify-end mt-2">
+                    <flux:link
+                        class="text-xs text-[#1D74E3] hover:underline py-1 -my-1"
+                        :href="route('password.request')"
+                        wire:navigate>
+                        {{ __('Forgot password?') }}
+                    </flux:link>
+                </div>
                 @endif
             </flux:field>
 
@@ -80,12 +89,10 @@
                     class="h-5 w-5 rounded border border-[#E5E7EB] bg-white shadow-sm text-[#1D74E3]
                            focus:ring-2 focus:ring-[#1D74E3] focus:border-[#1D74E3] cursor-pointer
                            flex-shrink-0"
-                    {{ old('remember') ? 'checked' : '' }}
-                >
+                    {{ old('remember') ? 'checked' : '' }}>
                 <label
                     for="remember"
-                    class="text-sm font-medium text-[#0F172B] cursor-pointer select-none leading-snug"
-                >
+                    class="text-sm font-medium text-[#0F172B] cursor-pointer select-none leading-snug">
                     {{ __('Remember me') }}
                 </label>
             </div>
@@ -98,8 +105,7 @@
                        bg-[#12325E] hover:bg-[#12325E]/90 active:bg-[#12325E]/80
                        text-white font-medium py-3 min-h-[48px] rounded-lg shadow-sm
                        transition-colors duration-150"
-                data-test="login-button"
-            >
+                data-test="login-button">
                 {{ __('Sign In') }}
             </flux:button>
         </form>
@@ -110,8 +116,7 @@
             <flux:link
                 :href="route('register')"
                 class="text-[#1D74E3] font-semibold hover:underline ml-1"
-                wire:navigate
-            >
+                wire:navigate>
                 {{ __('Create one here') }}
             </flux:link>
         </div>

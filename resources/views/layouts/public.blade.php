@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +14,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
+
 <body class="min-h-screen" style="background-color: #E5E8EF; color: #1B1A1C; font-family: 'Inter', sans-serif;">
 
     {{-- NAVBAR --}}
@@ -23,7 +25,7 @@
                 {{-- Logo --}}
                 <a href="{{ route('home') }}" class="flex items-center gap-3 flex-shrink-0">
                     <div class="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm"
-                         style="background-color: #1D74E3;">
+                        style="background-color: #1D74E3;">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-white">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
                         </svg>
@@ -33,7 +35,7 @@
                             BRGY 587 Iskolar iApply
                         </div>
                         <div class="text-xs leading-tight" style="color: #AA9A98;">
-                            Brgy. Scholarship System
+                            Barangay Scholarship System
                         </div>
                     </div>
                 </a>
@@ -41,33 +43,33 @@
                 {{-- Nav Links - Center --}}
                 <div class="hidden md:flex items-center gap-1">
                     <a href="{{ route('home') }}"
-                       class="px-4 py-2 rounded-lg text-sm font-medium transition-all
+                        class="px-4 py-2 rounded-lg text-sm font-medium transition-all
                        {{ request()->routeIs('home') ? 'font-semibold' : 'hover:bg-gray-50' }}"
-                       style="{{ request()->routeIs('home') ? 'color: #1D74E3; background-color: #EBF3FF;' : 'color: #33333B;' }}">
+                        style="{{ request()->routeIs('home') ? 'color: #1D74E3; background-color: #EBF3FF;' : 'color: #33333B;' }}">
                         Home
                     </a>
                     <a href="{{ route('scholarships.index') }}"
-                       class="px-4 py-2 rounded-lg text-sm font-medium transition-all
+                        class="px-4 py-2 rounded-lg text-sm font-medium transition-all
                        {{ request()->routeIs('scholarships.*') ? 'font-semibold' : 'hover:bg-gray-50' }}"
-                       style="{{ request()->routeIs('scholarships.*') ? 'color: #1D74E3; background-color: #EBF3FF;' : 'color: #33333B;' }}">
+                        style="{{ request()->routeIs('scholarships.*') ? 'color: #1D74E3; background-color: #EBF3FF;' : 'color: #33333B;' }}">
                         Scholarships
                     </a>
                     <a href="{{ route('about') }}"
-                       class="px-4 py-2 rounded-lg text-sm font-medium transition-all
+                        class="px-4 py-2 rounded-lg text-sm font-medium transition-all
                        {{ request()->routeIs('about') ? 'font-semibold' : 'hover:bg-gray-50' }}"
-                       style="{{ request()->routeIs('about') ? 'color: #1D74E3; background-color: #EBF3FF;' : 'color: #33333B;' }}">
+                        style="{{ request()->routeIs('about') ? 'color: #1D74E3; background-color: #EBF3FF;' : 'color: #33333B;' }}">
                         About
                     </a>
                     <a href="{{ route('faqs') }}"
-                       class="px-4 py-2 rounded-lg text-sm font-medium transition-all
+                        class="px-4 py-2 rounded-lg text-sm font-medium transition-all
                        {{ request()->routeIs('faqs') ? 'font-semibold' : 'hover:bg-gray-50' }}"
-                       style="{{ request()->routeIs('faqs') ? 'color: #1D74E3; background-color: #EBF3FF;' : 'color: #33333B;' }}">
+                        style="{{ request()->routeIs('faqs') ? 'color: #1D74E3; background-color: #EBF3FF;' : 'color: #33333B;' }}">
                         FAQ
                     </a>
                     <a href="{{ route('contact') }}"
-                       class="px-4 py-2 rounded-lg text-sm font-medium transition-all
+                        class="px-4 py-2 rounded-lg text-sm font-medium transition-all
                        {{ request()->routeIs('contact') ? 'font-semibold' : 'hover:bg-gray-50' }}"
-                       style="{{ request()->routeIs('contact') ? 'color: #1D74E3; background-color: #EBF3FF;' : 'color: #33333B;' }}">
+                        style="{{ request()->routeIs('contact') ? 'color: #1D74E3; background-color: #EBF3FF;' : 'color: #33333B;' }}">
                         Contact
                     </a>
                 </div>
@@ -75,39 +77,39 @@
                 {{-- Auth Buttons --}}
                 <div class="flex items-center gap-3">
                     @auth
-                        @php
-                            $dashboardRoute = in_array(auth()->user()->role, ['admin', 'superadmin'], true)
-                                ? route('admin.dashboard')
-                                : route('dashboard');
-                        @endphp
+                    @php
+                    $dashboardRoute = in_array(auth()->user()->role, ['admin', 'superadmin'], true)
+                    ? route('admin.dashboard')
+                    : route('dashboard');
+                    @endphp
 
-                        <a href="{{ $dashboardRoute }}"
-                           class="hidden md:flex items-center gap-1.5 text-sm font-medium hover:opacity-70 transition-opacity"
-                           style="color: #33333B;">
-                            Dashboard
-                        </a>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit"
-                                    class="flex items-center gap-1.5 text-sm font-semibold px-4 py-2.5 rounded-lg text-white transition hover:opacity-90 shadow-sm"
-                                    style="background-color: #1D74E3;">
-                                Log out
-                            </button>
-                        </form>
+                    <a href="{{ $dashboardRoute }}"
+                        class="hidden md:flex items-center gap-1.5 text-sm font-medium hover:opacity-70 transition-opacity"
+                        style="color: #33333B;">
+                        Dashboard
+                    </a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit"
+                            class="flex items-center gap-1.5 text-sm font-semibold px-4 py-2.5 rounded-lg text-white transition hover:opacity-90 shadow-sm"
+                            style="background-color: #1D74E3;">
+                            Log out
+                        </button>
+                    </form>
                     @else
-                        <a href="{{ route('login') }}"
-                           class="hidden md:flex items-center gap-1.5 text-sm font-medium hover:opacity-70 transition-opacity"
-                           style="color: #33333B;">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25" />
-                            </svg>
-                            Sign In
-                        </a>
-                        <a href="{{ route('register') }}"
-                           class="flex items-center gap-1.5 text-sm font-semibold px-4 py-2.5 rounded-lg text-white transition hover:opacity-90 shadow-sm"
-                           style="background-color: #1D74E3;">
-                            Register
-                        </a>
+                    <a href="{{ route('login') }}"
+                        class="hidden md:flex items-center gap-1.5 text-sm font-medium hover:opacity-70 transition-opacity"
+                        style="color: #33333B;">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25" />
+                        </svg>
+                        Sign In
+                    </a>
+                    <a href="{{ route('register') }}"
+                        class="flex items-center gap-1.5 text-sm font-semibold px-4 py-2.5 rounded-lg text-white transition hover:opacity-90 shadow-sm"
+                        style="background-color: #1D74E3;">
+                        Register
+                    </a>
                     @endauth
                 </div>
 
@@ -132,7 +134,7 @@
                 <div>
                     <div class="flex items-center gap-3 mb-5">
                         <div class="w-10 h-10 rounded-xl flex items-center justify-center"
-                             style="background-color: rgba(255,255,255,0.15);">
+                            style="background-color: rgba(255,255,255,0.15);">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-white">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
                             </svg>
@@ -163,8 +165,8 @@
                     <ul class="space-y-3">
                         <li>
                             <a href="{{ route('home') }}"
-                               class="text-sm flex items-center gap-2 transition-opacity hover:opacity-100"
-                               style="color: rgba(255,255,255,0.75);">
+                                class="text-sm flex items-center gap-2 transition-opacity hover:opacity-100"
+                                style="color: rgba(255,255,255,0.75);">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3.5 h-3.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                                 </svg>
@@ -173,8 +175,8 @@
                         </li>
                         <li>
                             <a href="{{ route('scholarships.index') }}"
-                               class="text-sm flex items-center gap-2 transition-opacity hover:opacity-100"
-                               style="color: rgba(255,255,255,0.75);">
+                                class="text-sm flex items-center gap-2 transition-opacity hover:opacity-100"
+                                style="color: rgba(255,255,255,0.75);">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3.5 h-3.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                                 </svg>
@@ -183,8 +185,8 @@
                         </li>
                         <li>
                             <a href="{{ route('about') }}"
-                               class="text-sm flex items-center gap-2 transition-opacity hover:opacity-100"
-                               style="color: rgba(255,255,255,0.75);">
+                                class="text-sm flex items-center gap-2 transition-opacity hover:opacity-100"
+                                style="color: rgba(255,255,255,0.75);">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3.5 h-3.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                                 </svg>
@@ -193,8 +195,8 @@
                         </li>
                         <li>
                             <a href="{{ route('faqs') }}"
-                               class="text-sm flex items-center gap-2 transition-opacity hover:opacity-100"
-                               style="color: rgba(255,255,255,0.75);">
+                                class="text-sm flex items-center gap-2 transition-opacity hover:opacity-100"
+                                style="color: rgba(255,255,255,0.75);">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3.5 h-3.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                                 </svg>
@@ -203,8 +205,8 @@
                         </li>
                         <li>
                             <a href="{{ route('contact') }}"
-                               class="text-sm flex items-center gap-2 transition-opacity hover:opacity-100"
-                               style="color: rgba(255,255,255,0.75);">
+                                class="text-sm flex items-center gap-2 transition-opacity hover:opacity-100"
+                                style="color: rgba(255,255,255,0.75);">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3.5 h-3.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                                 </svg>
@@ -272,18 +274,18 @@
                     </p>
                     <div class="flex items-center gap-4">
                         <a href="{{ route('faqs') }}"
-                           class="text-xs hover:opacity-100 transition-opacity"
-                           style="color: rgba(255,255,255,0.5);">
+                            class="text-xs hover:opacity-100 transition-opacity"
+                            style="color: rgba(255,255,255,0.5);">
                             FAQ
                         </a>
                         <a href="{{ route('contact') }}"
-                           class="text-xs hover:opacity-100 transition-opacity"
-                           style="color: rgba(255,255,255,0.5);">
+                            class="text-xs hover:opacity-100 transition-opacity"
+                            style="color: rgba(255,255,255,0.5);">
                             Contact
                         </a>
                         <a href="{{ route('about') }}"
-                           class="text-xs hover:opacity-100 transition-opacity"
-                           style="color: rgba(255,255,255,0.5);">
+                            class="text-xs hover:opacity-100 transition-opacity"
+                            style="color: rgba(255,255,255,0.5);">
                             About
                         </a>
                     </div>
@@ -297,4 +299,5 @@
 
     @livewireScripts
 </body>
+
 </html>
