@@ -1,4 +1,29 @@
-<div class="min-h-screen bg-[#E5E8EF] py-10 px-4">
+<div
+    class="min-h-screen bg-[#E5E8EF] py-10 px-4"
+    x-data="{
+        isDirty: false,
+        textLimit: 255,
+        textareaLimit: 5000,
+        init() {
+            window.addEventListener('beforeunload', (event) => {
+                if (!this.isDirty) return;
+
+                event.preventDefault();
+                event.returnValue = '';
+            });
+        },
+        answerLength(id) {
+            const value = $wire.answers[id] ?? '';
+
+            return Array.isArray(value) ? value.join(',').length : value.toString().length;
+        },
+        hasExceededLimit(id, limit) {
+            return this.answerLength(id) > limit;
+        },
+    }"
+    @input="isDirty = true"
+    @change="isDirty = true"
+>
     <div class="max-w-2xl mx-auto">
 
         {{-- Page Header --}}
@@ -85,16 +110,24 @@
                             @case('text')
                                 <input
                                     type="text"
-                                    wire:model="answers.{{ $req['id'] }}"
+                                    wire:model.live="answers.{{ $req['id'] }}"
+                                    maxlength="255"
                                     class="w-full rounded-lg border border-[#D1D5DB] px-3.5 py-2.5 text-sm text-[#1B1A1C] placeholder-[#AA9A98] focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition"
                                     placeholder="Type your answer here"
                                 />
+                                <p class="mt-1.5 text-right text-xs" :class="hasExceededLimit({{ $req['id'] }}, textLimit) ? 'text-red-500' : 'text-[#AA9A98]'">
+                                    <span x-text="answerLength({{ $req['id'] }})"></span>/255
+                                </p>
                                 @break
 
                             @case('number')
                                 <input
                                     type="number"
-                                    wire:model="answers.{{ $req['id'] }}"
+                                    wire:model.live="answers.{{ $req['id'] }}"
+                                    x-on:input="$event.target.value = $event.target.value.replace(/[^0-9.]/g, '')"
+                                    min="1"
+                                    max="5"
+                                    step="0.01"
                                     class="w-full rounded-lg border border-[#D1D5DB] px-3.5 py-2.5 text-sm text-[#1B1A1C] placeholder-[#AA9A98] focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition"
                                     placeholder="0"
                                 />
@@ -102,11 +135,15 @@
 
                             @case('textarea')
                                 <textarea
-                                    wire:model="answers.{{ $req['id'] }}"
+                                    wire:model.live="answers.{{ $req['id'] }}"
                                     rows="4"
+                                    maxlength="5000"
                                     class="w-full rounded-lg border border-[#D1D5DB] px-3.5 py-2.5 text-sm text-[#1B1A1C] placeholder-[#AA9A98] focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition resize-none"
                                     placeholder="Type your answer here"
                                 ></textarea>
+                                <p class="mt-1.5 text-right text-xs" :class="hasExceededLimit({{ $req['id'] }}, textareaLimit) ? 'text-red-500' : 'text-[#AA9A98]'">
+                                    <span x-text="answerLength({{ $req['id'] }})"></span>/5000
+                                </p>
                                 @break
 
                             @case('date')
@@ -238,6 +275,7 @@
                     <button
                         type="button"
                         wire:click="previousStep"
+                        wire:loading.attr="disabled"
                         class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg border border-[#D1D5DB] text-sm font-medium text-[#1B1A1C] hover:bg-[#E5E8EF] transition-colors"
                     >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -255,7 +293,8 @@
                         type="button"
                         wire:click="nextStep"
                         wire:loading.attr="disabled"
-                        class="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-lg bg-[#1D74E3] text-white text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-60"
+                        x-bind:disabled="Object.keys($wire.answers).some((id) => hasExceededLimit(id, textLimit) || hasExceededLimit(id, textareaLimit))"
+                        class="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-lg bg-[#1D74E3] text-white text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                         <span wire:loading.remove wire:target="nextStep">
                             Next
@@ -269,8 +308,10 @@
                     <button
                         type="button"
                         wire:click="submit"
+                        @click="isDirty = false"
                         wire:loading.attr="disabled"
-                        class="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-lg bg-[#1D74E3] text-white text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-60"
+                        x-bind:disabled="Object.keys($wire.answers).some((id) => hasExceededLimit(id, textLimit) || hasExceededLimit(id, textareaLimit))"
+                        class="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-lg bg-[#1D74E3] text-white text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                         <span wire:loading.remove wire:target="submit">Submit Application</span>
                         <span wire:loading wire:target="submit">Submitting...</span>

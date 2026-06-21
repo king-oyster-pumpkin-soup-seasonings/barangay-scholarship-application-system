@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\User;
+use App\Notifications\NewDeviceLoginNotification;
+use Illuminate\Support\Facades\Notification;
 use Laravel\Fortify\Features;
 
 test('login screen can be rendered', function () {
@@ -22,6 +24,19 @@ test('users can authenticate using the login screen', function () {
         ->assertRedirect(route('dashboard', absolute: false));
 
     $this->assertAuthenticated();
+});
+
+test('users are notified when logging in from a new device', function () {
+    Notification::fake();
+
+    $user = User::factory()->create();
+
+    $this->post(route('login.store'), [
+        'email' => $user->email,
+        'password' => 'password',
+    ])->assertSessionHasNoErrors();
+
+    Notification::assertSentTo($user, NewDeviceLoginNotification::class);
 });
 
 test('users can not authenticate with invalid password', function () {

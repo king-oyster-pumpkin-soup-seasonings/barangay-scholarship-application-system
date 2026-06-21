@@ -6,6 +6,7 @@ use App\Models\Application;
 use App\Models\ApplicationAnswer;
 use App\Models\Scholarship;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -67,16 +68,19 @@ class Create extends Component
 
         if ($alreadyApplied) {
             $this->redirectWithToast($scholarship, 'You already applied to this scholarship.');
+
             return;
         }
 
         if ($scholarship->status !== 'available') {
             $this->redirectWithToast($scholarship, 'This scholarship is not currently open for applications.');
+
             return;
         }
 
         if ($scholarship->deadline && now()->startOfDay()->gt($scholarship->deadline)) {
             $this->redirectWithToast($scholarship, 'The application deadline for this scholarship has passed.');
+
             return;
         }
 
@@ -185,7 +189,7 @@ class Create extends Component
 
     public function removeFile(int $requirementId): void
     {
-    unset($this->files[$requirementId]);
+        unset($this->files[$requirementId]);
     }
 
     /**
@@ -223,6 +227,10 @@ class Create extends Component
             }
         }
 
+        if ($rules === []) {
+            return;
+        }
+
         // Pass rules, an empty messages array, and our custom field labels
         $this->validate($rules, [], $customAttributes);
     }
@@ -236,13 +244,18 @@ class Create extends Component
         $this->validateCurrentStep();
         $this->ensureApplicationCanBeSubmitted();
 
-        // Create the Application record
-        $application = Application::create([
-            'user_id' => Auth::id(),
-            'scholarship_id' => $this->scholarship->id,
-            'status' => 'pending',
-            'submitted_at' => now(),
-        ]);
+        try {
+            $application = Application::create([
+                'user_id' => Auth::id(),
+                'scholarship_id' => $this->scholarship->id,
+                'status' => 'pending',
+                'submitted_at' => now(),
+            ]);
+        } catch (QueryException) {
+            throw ValidationException::withMessages([
+                'scholarship' => 'You already applied to this scholarship.',
+            ]);
+        }
 
         // Save all non-file answers
         foreach ($this->answers as $requirementId => $value) {
@@ -353,6 +366,7 @@ class Create extends Component
         }
 
         $decoded = json_decode($options ?? '[]', true);
+
         return is_array($decoded) ? $decoded : [];
     }
 }

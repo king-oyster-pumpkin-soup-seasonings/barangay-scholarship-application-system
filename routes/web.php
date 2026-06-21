@@ -26,17 +26,17 @@ Route::get('/scholarships/{scholarship}', Show::class)->name('scholarships.show'
 Route::get('/scholarships', Index::class)->name('scholarships.index');
 
 // Authenticated resident pages
-Route::middleware(['auth', 'role:user'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
     Route::get('dashboard', Dashboard::class)->name('dashboard');
 });
 
 // Resident-only routes (must be logged in, role=user, AND residency verified)
-Route::middleware(['auth', 'role:user', 'verified.resident'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:user', 'verified.resident'])->group(function () {
     Route::get('/scholarships/{scholarship}/apply', Create::class)->name('applications.create');
 });
 
 // Admin panel routes (must be logged in, role=admin or superadmin, AND admin approved)
-Route::middleware(['auth', 'role:admin,superadmin', 'approved.admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin,superadmin', 'approved.admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', AdminDashboard::class)->name('admin.dashboard');
     Route::get('/verifications', Verifications::class)->name('admin.verifications');
     Route::get('/applications', Applications::class)->name('admin.applications');
@@ -45,11 +45,11 @@ Route::middleware(['auth', 'role:admin,superadmin', 'approved.admin'])->prefix('
 });
 
 // Superadmin-only routes
-Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->group(function () {
+Route::middleware(['auth', 'verified', 'role:superadmin'])->prefix('superadmin')->group(function () {
     Route::get('/admins', AdminManagement::class)->name('superadmin.admins');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/verification', Verification::class)->name('verification');
 });
 

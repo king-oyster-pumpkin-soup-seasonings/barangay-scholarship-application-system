@@ -1,5 +1,38 @@
 <x-layouts::auth.card :title="__('Register')">
-    <div class="flex flex-col gap-6" x-data="{ firstName: '', middleName: '', lastName: '', email: '{{ old('email', '') }}', showPassword: false, showConfirmPassword: false }">
+    <div class="flex flex-col gap-6" x-data="{
+        firstName: '',
+        middleName: '',
+        lastName: '',
+        email: @js(old('email', '')),
+        birthdate: @js(old('birthdate', '')),
+        age: @js(old('age', '')),
+        showPassword: false,
+        showConfirmPassword: false,
+        isDirty: false,
+        isSubmitting: false,
+        init() {
+            window.addEventListener('beforeunload', (event) => {
+                if (!this.isDirty) return;
+
+                event.preventDefault();
+                event.returnValue = '';
+            });
+        },
+        calculateAge() {
+            if (!this.birthdate) return;
+
+            const today = new Date();
+            const dateOfBirth = new Date(this.birthdate + 'T00:00:00');
+            let calculatedAge = today.getFullYear() - dateOfBirth.getFullYear();
+            const monthDifference = today.getMonth() - dateOfBirth.getMonth();
+
+            if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < dateOfBirth.getDate())) {
+                calculatedAge--;
+            }
+
+            this.age = calculatedAge > 0 ? calculatedAge.toString() : '';
+        },
+    }">
 
         {{-- Nav Link - Home --}}
         <div>
@@ -24,7 +57,7 @@
         <!-- Session Status -->
         <x-auth-session-status class="text-center" :status="session('status')" />
 
-        <form method="POST" action="{{ route('register.store') }}" class="flex flex-col gap-5">
+        <form method="POST" action="{{ route('register.store') }}" class="flex flex-col gap-5" @input="isDirty = true" @change="isDirty = true" @submit="isSubmitting = true; isDirty = false">
             @csrf
 
             <!-- Hidden Combined Full Name Field for Backend compatibility -->
@@ -127,15 +160,16 @@
                 </div>
             </div>
 
-            <!-- Birthdate & Sex Grid -->
+            <!-- Birthdate, Age, Gender & Pronouns Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider">
-                        {{ __('Birthdate') }} <span class="text-[#F54A00]">*</span>
+                        {{ __('Date of Birth') }} <span class="text-[#F54A00]">*</span>
                     </label>
                     <input
                         name="birthdate"
-                        value="{{ old('birthdate') }}"
+                        x-model="birthdate"
+                        @change="calculateAge()"
                         type="date"
                         required
                         max="{{ date('Y-m-d') }}"
@@ -149,39 +183,121 @@
 
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider">
-                        {{ __('Sex') }} <span class="text-[#F54A00]">*</span>
+                        {{ __('Age') }} <span class="text-[#F54A00]">*</span>
+                    </label>
+                    <input
+                        name="age"
+                        x-model="age"
+                        @input="age = age.replace(/[^0-9]/g, '')"
+                        type="text"
+                        inputmode="numeric"
+                        pattern="[0-9]+"
+                        min="18"
+                        max="120"
+                        required
+                        placeholder="18"
+                        class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition"
+                    />
+                    @error('age')
+                        <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider">
+                        {{ __('Gender') }} <span class="text-[#F54A00]">*</span>
                     </label>
                     <select
-                        name="sex"
+                        name="gender"
                         required
                         class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition"
                     >
-                        <option value="" disabled {{ old('sex') ? '' : 'selected' }}>{{ __('Select Sex') }}</option>
-                        <option value="male" {{ old('sex') === 'male' ? 'selected' : '' }}>{{ __('Male') }}</option>
-                        <option value="female" {{ old('sex') === 'female' ? 'selected' : '' }}>{{ __('Female') }}</option>
+                        <option value="" disabled {{ old('gender') ? '' : 'selected' }}>{{ __('Select Gender') }}</option>
+                        <option value="male" {{ old('gender') === 'male' ? 'selected' : '' }}>{{ __('Male') }}</option>
+                        <option value="female" {{ old('gender') === 'female' ? 'selected' : '' }}>{{ __('Female') }}</option>
+                        <option value="non_binary" {{ old('gender') === 'non_binary' ? 'selected' : '' }}>{{ __('Non-binary') }}</option>
+                        <option value="prefer_not_to_say" {{ old('gender') === 'prefer_not_to_say' ? 'selected' : '' }}>{{ __('Prefer not to say') }}</option>
                     </select>
-                    @error('sex')
+                    @error('gender')
+                        <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider">
+                        {{ __('Pronouns') }} <span class="text-[#F54A00]">*</span>
+                    </label>
+                    <select
+                        name="pronouns"
+                        required
+                        class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition"
+                    >
+                        <option value="" disabled {{ old('pronouns') ? '' : 'selected' }}>{{ __('Select Pronouns') }}</option>
+                        <option value="he_him" {{ old('pronouns') === 'he_him' ? 'selected' : '' }}>{{ __('He/Him') }}</option>
+                        <option value="she_her" {{ old('pronouns') === 'she_her' ? 'selected' : '' }}>{{ __('She/Her') }}</option>
+                        <option value="they_them" {{ old('pronouns') === 'they_them' ? 'selected' : '' }}>{{ __('They/Them') }}</option>
+                        <option value="prefer_not_to_say" {{ old('pronouns') === 'prefer_not_to_say' ? 'selected' : '' }}>{{ __('Prefer not to say') }}</option>
+                    </select>
+                    @error('pronouns')
                         <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
 
             <!-- Address -->
-            <div class="flex flex-col gap-1.5">
-                <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider">
-                    {{ __('Address') }} <span class="text-[#F54A00]">*</span>
-                </label>
-                <input
-                    name="address"
-                    value="{{ old('address') }}"
-                    type="text"
-                    required
-                    placeholder="House No., Street, Barangay, Quezon City"
-                    class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition"
-                />
-                @error('address')
-                    <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
-                @enderror
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="sm:col-span-2 flex flex-col gap-1.5">
+                    <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider">
+                        {{ __('Street Address') }} <span class="text-[#F54A00]">*</span>
+                    </label>
+                    <input name="address_street" value="{{ old('address_street') }}" type="text" required placeholder="House No., Street, Barangay" class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition" />
+                    @error('address_street')
+                        <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider">
+                        {{ __('City') }} <span class="text-[#F54A00]">*</span>
+                    </label>
+                    <input name="address_city" value="{{ old('address_city') }}" type="text" required placeholder="Quezon City" class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition" />
+                    @error('address_city')
+                        <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider">
+                        {{ __('Province/State') }} <span class="text-[#F54A00]">*</span>
+                    </label>
+                    <input name="address_province_state" value="{{ old('address_province_state') }}" type="text" required placeholder="Metro Manila" class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition" />
+                    @error('address_province_state')
+                        <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider">
+                        {{ __('Country') }} <span class="text-[#F54A00]">*</span>
+                    </label>
+                    <select name="address_country" required class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition">
+                        <option value="PH" {{ old('address_country', 'PH') === 'PH' ? 'selected' : '' }}>{{ __('Philippines') }}</option>
+                        <option value="US" {{ old('address_country') === 'US' ? 'selected' : '' }}>{{ __('United States') }}</option>
+                    </select>
+                    @error('address_country')
+                        <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-semibold text-[#33333B] uppercase tracking-wider">
+                        {{ __('Postal Code') }} <span class="text-[#F54A00]">*</span>
+                    </label>
+                    <input name="address_postal_code" value="{{ old('address_postal_code') }}" type="text" inputmode="numeric" required placeholder="1100" class="w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#1D74E3] focus:border-transparent transition" />
+                    @error('address_postal_code')
+                        <p class="mt-1 text-xs text-red-600 font-semibold">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
 
             {{-- Password & Confirm Password Grid --}}
@@ -194,7 +310,16 @@
                 get hasNumber() { return /[0-9]/.test(this.password) },
                 get hasSpecial() { return /[^A-Za-z0-9]/.test(this.password) },
                 get hasLength() { return this.password.length >= 8 },
-                get score() { return [this.hasUpper, this.hasLower, this.hasNumber, this.hasSpecial, this.hasLength].filter(Boolean).length },
+                get avoidsPersonalInfo() {
+                    const password = this.password.toLowerCase();
+                    const restricted = [firstName, middleName, lastName, email, email.split('@')[0]]
+                        .filter(Boolean)
+                        .flatMap(value => value.toLowerCase().split(/\s+/))
+                        .filter(value => value.length >= 3);
+
+                    return !restricted.some(value => password.includes(value));
+                },
+                get score() { return [this.hasUpper, this.hasLower, this.hasNumber, this.hasSpecial, this.hasLength, this.avoidsPersonalInfo].filter(Boolean).length },
                 get barColor() {
                     if (this.score <= 2) return '#ef4444';
                     if (this.score === 3) return '#f97316';
@@ -256,7 +381,8 @@
                 [hasLower,  'Lowercase letter'],
                 [hasNumber, 'Number'],
                 [hasSpecial,'Special character (!@#$...)'],
-                [hasLength, 'At least 8 characters']
+                [hasLength, 'At least 8 characters'],
+                [avoidsPersonalInfo, 'Does not include your name or email']
             ]">
                             <li class="flex items-center gap-1.5 text-xs transition-colors duration-200"
                                 :class="met ? 'text-green-600' : 'text-zinc-400'">
@@ -325,11 +451,15 @@
             </div>
 
             <!-- Create Account Button -->
-            <button type="submit" class="w-full flex flex-row items-center justify-center gap-2 bg-[#1D74E3] hover:bg-[#1D74E3]/90 text-white font-medium py-2.5 rounded-lg shadow-sm mt-3 transition cursor-pointer" data-test="register-user-button">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+            <button type="submit" x-bind:disabled="isSubmitting" class="w-full flex flex-row items-center justify-center gap-2 bg-[#1D74E3] hover:bg-[#1D74E3]/90 text-white font-medium py-2.5 rounded-lg shadow-sm mt-3 transition cursor-pointer disabled:cursor-not-allowed disabled:opacity-70" data-test="register-user-button">
+                <svg x-show="!isSubmitting" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
                 </svg>
-                {{ __('Create my account') }}
+                <svg x-show="isSubmitting" x-cloak class="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                </svg>
+                <span x-text="isSubmitting ? '{{ __('Creating account...') }}' : '{{ __('Create my account') }}'"></span>
             </button>
         </form>
 
