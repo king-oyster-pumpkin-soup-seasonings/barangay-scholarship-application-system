@@ -2,38 +2,38 @@
     <div class="max-w-7xl mx-auto p-8">
         <!-- Enhanced Page Header & Interactive Breadcrumbs -->
         <div class="mb-10">
-        <div class="text-sm font-medium mb-2 flex items-center space-x-1.5">
-            <a href="{{ route('admin.dashboard') }}" class="text-[#1D74E3] hover:underline font-semibold transition duration-150">Dashboard</a>
-            <span class="text-[#AA9A98]">&rarr;</span>
-            <span class="text-[#AA9A98]">Verifications</span>
+            <div class="text-sm font-medium mb-2 flex items-center space-x-1.5">
+                <a href="{{ route('admin.dashboard') }}" class="text-[#1D74E3] hover:underline font-semibold transition duration-150">Dashboard</a>
+                <span class="text-[#AA9A98]">&rarr;</span>
+                <span class="text-[#AA9A98]">Verifications</span>
+            </div>
+            <h1 class="text-3xl font-extrabold text-[#33333B] dark:text-white tracking-tight">Residence Verifications</h1>
+            <p class="text-[#AA9A98] dark:text-zinc-400 text-sm mt-1.5 font-medium">Review student residency verification submissions and identity documents.</p>
         </div>
-        <h1 class="text-3xl font-extrabold text-[#33333B] dark:text-white tracking-tight">Residence Verifications</h1>
-        <p class="text-[#AA9A98] dark:text-zinc-400 text-sm mt-1.5 font-medium">Review student residency verification submissions and identity documents.</p>
-    </div>
 
-    @if (session()->has('success'))
+        @if (session()->has('success'))
         <div class="mb-6 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-r shadow-sm">
             {{ session('success') }}
         </div>
-    @endif
-    @if (session()->has('info'))
+        @endif
+        @if (session()->has('info'))
         <div class="mb-6 bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded-r shadow-sm">
             {{ session('info') }}
         </div>
-    @endif
+        @endif
 
-    <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-md overflow-hidden">
-        <table class="w-full text-left border-collapse">
-            <thead>
-                <tr class="bg-[#33333B] text-white">
-                    <th class="p-4 font-semibold text-sm uppercase tracking-wider">Student Name</th>
-                    <th class="p-4 font-semibold text-sm uppercase tracking-wider">Email</th>
-                    <th class="p-4 font-semibold text-sm uppercase tracking-wider">Documents</th>
-                    <th class="p-4 font-semibold text-sm uppercase tracking-wider text-right">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($pendingVerifications as $verification)
+        <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-md overflow-hidden">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-[#33333B] text-white">
+                        <th class="p-4 font-semibold text-sm uppercase tracking-wider">Student Name</th>
+                        <th class="p-4 font-semibold text-sm uppercase tracking-wider">Email</th>
+                        <th class="p-4 font-semibold text-sm uppercase tracking-wider">Documents</th>
+                        <th class="p-4 font-semibold text-sm uppercase tracking-wider text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($pendingVerifications as $verification)
                     <tr class="border-b border-gray-100 dark:border-zinc-700 hover:bg-[#E5E8EF]/50 dark:hover:bg-zinc-700/50 transition duration-150">
                         <td class="p-4 font-semibold text-[#1B1A1C] dark:text-white">
                             {{ $verification->user->name }}
@@ -55,27 +55,88 @@
                             </div>
                         </td>
                         <td class="p-4 text-right whitespace-nowrap space-x-2">
-                            <button wire:click="approve({{ $verification->id }})" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium text-sm transition">
+                            <button
+                                type="button"
+                                wire:click="openApprovalModal({{ $verification->id }})"
+                                wire:loading.attr="disabled"
+                                class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium text-sm transition disabled:opacity-60 disabled:cursor-not-allowed">
                                 Approve
                             </button>
-                            <button wire:click="openRejectionModal({{ $verification->id }})" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium text-sm transition">
+                            <button
+                                type="button"
+                                wire:click="openRejectionModal({{ $verification->id }})"
+                                wire:loading.attr="disabled"
+                                class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium text-sm transition disabled:opacity-60 disabled:cursor-not-allowed">
                                 Reject
                             </button>
                         </td>
                     </tr>
-                @empty
+                    @empty
                     <tr>
                         <td colspan="4" class="p-8 text-center text-gray-500 dark:text-zinc-400">
                             <p class="text-lg font-medium text-[#33333B] dark:text-white">No pending verifications right now!</p>
                             <p class="text-sm mt-1">All registered residents have been processed.</p>
                         </td>
                     </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
 
-    @if ($showRejectionModal)
+        @if ($showApprovalModal)
+        <div class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-xl max-w-md w-full">
+                <div class="p-6">
+                    <div class="flex items-start gap-3 mb-4">
+                        <div class="h-10 w-10 rounded-full bg-green-100 text-green-700 flex items-center justify-center shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-[#33333B] dark:text-white">Approve Residence Verification?</h3>
+                            <p class="text-xs text-[#AA9A98] dark:text-zinc-400 mt-1">
+                                Confirm that the resident's submitted documents prove barangay residency.
+                            </p>
+                        </div>
+                    </div>
+
+                    @if ($pendingApprovalVerification)
+                    <div class="mb-4 rounded-lg border border-green-100 dark:border-zinc-700 bg-green-50/80 dark:bg-zinc-900 p-4">
+                        <p class="text-sm font-semibold text-[#33333B] dark:text-white">{{ $pendingApprovalVerification->user->name }}</p>
+                        <p class="text-xs text-[#AA9A98] dark:text-zinc-400">{{ $pendingApprovalVerification->user->email }}</p>
+                    </div>
+                    @endif
+
+                    <p class="text-sm text-zinc-600 dark:text-zinc-300 mb-5">
+                        This will mark the residence verification as verified and allow the resident to apply for scholarships.
+                    </p>
+
+                    <div class="flex justify-end gap-2 border-t dark:border-zinc-700 pt-4">
+                        <button
+                            type="button"
+                            wire:click="closeApprovalModal"
+                            wire:loading.attr="disabled"
+                            wire:target="confirmApprove"
+                            class="px-4 py-2 text-xs font-semibold text-[#AA9A98] hover:text-[#33333B] dark:text-zinc-400 dark:hover:text-white transition disabled:opacity-60 disabled:cursor-not-allowed">
+                            Cancel
+                        </button>
+                        <button
+                            type="button"
+                            wire:click="confirmApprove"
+                            wire:loading.attr="disabled"
+                            wire:target="confirmApprove"
+                            class="px-4 py-2 text-xs font-semibold bg-green-600 hover:bg-green-700 text-white rounded shadow-sm transition disabled:opacity-60 disabled:cursor-not-allowed">
+                            <span wire:loading.remove wire:target="confirmApprove">Confirm Approve</span>
+                            <span wire:loading wire:target="confirmApprove">Processing...</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        @if ($showRejectionModal)
         <div class="fixed inset-0 bg-black/55 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-xl max-w-md w-full">
                 <div class="p-6">
@@ -87,21 +148,31 @@
                             <label class="block text-xs font-semibold text-[#33333B] dark:text-zinc-300 mb-2 uppercase tracking-wider">Rejection Reason</label>
                             <textarea wire:model="rejectionReason" rows="4" class="w-full border border-gray-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white rounded p-3 text-sm focus:ring-[#1D74E3] focus:border-[#1D74E3] focus:outline-none" placeholder="e.g., The submitted ID is blurry and unreadable."></textarea>
                             @error('rejectionReason')
-                                <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                            <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="flex justify-end gap-2 border-t dark:border-zinc-700 pt-4">
-                            <button type="button" wire:click="closeRejectionModal" class="px-4 py-2 text-xs font-semibold text-[#AA9A98] hover:text-[#33333B] dark:text-zinc-400 dark:hover:text-white transition">
+                            <button
+                                type="button"
+                                wire:click="closeRejectionModal"
+                                wire:loading.attr="disabled"
+                                wire:target="reject"
+                                class="px-4 py-2 text-xs font-semibold text-[#AA9A98] hover:text-[#33333B] dark:text-zinc-400 dark:hover:text-white transition disabled:opacity-60 disabled:cursor-not-allowed">
                                 Cancel
                             </button>
-                            <button type="submit" class="px-4 py-2 text-xs font-semibold bg-red-600 hover:bg-red-700 text-white rounded shadow-sm transition">
-                                Confirm Reject
+                            <button
+                                type="submit"
+                                wire:loading.attr="disabled"
+                                wire:target="reject"
+                                class="px-4 py-2 text-xs font-semibold bg-red-600 hover:bg-red-700 text-white rounded shadow-sm transition disabled:opacity-60 disabled:cursor-not-allowed">
+                                <span wire:loading.remove wire:target="reject">Confirm Reject</span>
+                                <span wire:loading wire:target="reject">Processing...</span>
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-    @endif
+        @endif
     </div>
 </div>

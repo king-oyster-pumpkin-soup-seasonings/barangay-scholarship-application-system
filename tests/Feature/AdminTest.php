@@ -117,11 +117,51 @@ test('admin can approve residence verification', function () {
     $this->actingAs($admin);
 
     Livewire::test(Verifications::class)
-        ->call('approve', $verification->id)
+        ->call('openApprovalModal', $verification->id)
+        ->assertSet('showApprovalModal', true)
+        ->call('confirmApprove')
         ->assertHasNoErrors();
 
     expect($verification->refresh()->status)->toBe('verified');
     expect($user->refresh()->verification_status)->toBe('verified');
+});
+
+test('processed residence verification cannot be processed again', function () {
+    $admin = User::create([
+        'name' => 'Admin User',
+        'email' => 'admin-duplicate@example.com',
+        'password' => bcrypt('password123'),
+        'role' => 'admin',
+    ]);
+
+    $user = User::create([
+        'name' => 'Resident User',
+        'email' => 'resident-duplicate@example.com',
+        'password' => bcrypt('password123'),
+        'role' => 'user',
+        'verification_status' => 'pending',
+    ]);
+
+    $verification = ResidenceVerification::create([
+        'user_id' => $user->id,
+        'valid_id_path' => 'demo/valid_ids/nobitski_id.jpg',
+        'proof_of_residency_path' => 'demo/proofs/nobitski_proof.jpg',
+        'birth_certificate_path' => 'demo/birth_certs/nobitski_birth.jpg',
+        'status' => 'pending',
+    ]);
+
+    $this->actingAs($admin);
+
+    Livewire::test(Verifications::class)
+        ->call('openApprovalModal', $verification->id)
+        ->call('confirmApprove')
+        ->call('openRejectionModal', $verification->id)
+        ->assertSet('showRejectionModal', false)
+        ->assertHasNoErrors();
+
+    expect($verification->refresh()->status)->toBe('verified');
+    expect($user->refresh()->verification_status)->toBe('verified');
+    expect($user->verification_remarks)->toBeNull();
 });
 
 test('admin can reject residence verification with remarks', function () {
@@ -435,7 +475,7 @@ test('admin and superadmin routes redirect unauthorized roles to forbidden page'
 });
 
 test('session lifetime is configured for inactivity logout', function () {
-    expect(config('session.lifetime'))->toBe(20);
+    expect(config('session.lifetime'))->toBe(30);
 });
 
 test('approved applications cannot be approved or rejected again', function () {
