@@ -13,7 +13,7 @@ class EnsureAdminIsApproved
         $user = $request->user();
 
         if ($user && $user->role === 'admin' && $user->verification_status !== 'verified') {
-            abort(403, 'Your admin account is awaiting Superadmin approval.');
+            return redirect()->route('errors.403');
         }
 
         return $next($request);

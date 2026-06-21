@@ -73,3 +73,21 @@ test('correct password must be provided to delete account', function () {
 
     expect($user->fresh())->not->toBeNull();
 });
+
+test('superadmin cannot delete their own account from profile settings', function () {
+    $superadmin = User::factory()->create([
+        'role' => 'superadmin',
+        'password' => 'password',
+    ]);
+
+    $this->actingAs($superadmin);
+
+    $response = Livewire::test('pages::settings.delete-user-modal')
+        ->set('password', 'password')
+        ->call('deleteUser');
+
+    $response->assertHasErrors(['password']);
+
+    expect($superadmin->fresh())->not->toBeNull();
+    expect(auth()->check())->toBeTrue();
+});

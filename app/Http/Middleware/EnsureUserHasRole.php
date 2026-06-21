@@ -14,13 +14,8 @@ class EnsureUserHasRole
             return redirect()->route('login');
         }
 
-        if (! in_array($request->user()->role, $roles)) {
-            $role = $request->user()->role;
-            if ($role === 'admin' || $role === 'superadmin') {
-                return redirect()->route('admin.dashboard');
-            }
-
-            return redirect()->route('dashboard');
+        if (! in_array($request->user()->role, $roles, true)) {
+            return redirect()->route('errors.403');
         }
 
         return $next($request);

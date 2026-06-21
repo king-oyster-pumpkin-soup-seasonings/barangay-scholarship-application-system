@@ -28,6 +28,12 @@ class Scholarships extends Component
 
     public string $status = 'available';
 
+    public bool $showDeleteModal = false;
+
+    public ?int $deleteScholarshipId = null;
+
+    public ?Scholarship $scholarshipToDelete = null;
+
     /** @var list<array{id: int|null, category: string, field_type: string, label: string, optionsText: string, is_required: bool}> */
     public array $requirements = [];
 
@@ -120,6 +126,19 @@ class Scholarships extends Component
         $this->showFormModal = false;
         $this->reset(['title', 'description', 'allowance', 'slotsCount', 'deadline', 'selectedScholarshipId', 'isEditing', 'requirements']);
         $this->status = 'available';
+    }
+
+    public function openDeleteModal(int $id): void
+    {
+        $this->scholarshipToDelete = Scholarship::withCount('applications')->findOrFail($id);
+        $this->deleteScholarshipId = $id;
+        $this->showDeleteModal = true;
+    }
+
+    public function closeDeleteModal(): void
+    {
+        $this->showDeleteModal = false;
+        $this->reset(['deleteScholarshipId', 'scholarshipToDelete']);
     }
 
     public function addRequirement(): void
@@ -341,12 +360,13 @@ class Scholarships extends Component
     /**
      * Delete a scholarship program.
      */
-    public function delete(int $id): void
+    public function delete(): void
     {
-        $scholarship = Scholarship::findOrFail($id);
+        $scholarship = Scholarship::findOrFail($this->deleteScholarshipId);
         $scholarship->delete();
 
         session()->flash('info', 'Scholarship program has been deleted.');
+        $this->closeDeleteModal();
     }
 
     /**

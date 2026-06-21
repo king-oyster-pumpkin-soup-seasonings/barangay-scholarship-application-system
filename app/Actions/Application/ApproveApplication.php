@@ -7,6 +7,7 @@ use App\Models\ApplicationLog;
 use App\Models\User;
 use App\Notifications\ApplicationStatusUpdatedNotification;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class ApproveApplication
 {
@@ -15,10 +16,16 @@ class ApproveApplication
         User $admin,
         ?string $notes = null,
     ): Application {
+        if (! $application->canTransitionTo(Application::STATUS_APPROVED)) {
+            throw ValidationException::withMessages([
+                'application' => 'Only pending applications can be approved.',
+            ]);
+        }
+
         $oldStatus = $application->status;
 
         $application->update([
-            'status' => 'approved',
+            'status' => Application::STATUS_APPROVED,
             'reviewed_by' => $admin->id,
             'reviewed_at' => now(),
             'remarks' => $notes,
@@ -33,7 +40,7 @@ class ApproveApplication
         ApplicationLog::create([
             'application_id' => $application->id,
             'old_status' => $oldStatus,
-            'new_status' => 'approved',
+            'new_status' => Application::STATUS_APPROVED,
             'changed_by' => $admin->id,
             'notes' => $notes,
         ]);
@@ -44,7 +51,7 @@ class ApproveApplication
             );
         } catch (\Throwable $e) {
             // Log the error so you can check it later, but don't crash.
-            Log::warning('Could not send approval email notification: ' . $e->getMessage());
+            Log::warning('Could not send approval email notification: '.$e->getMessage());
         }
 
         return $application->fresh();

@@ -62,7 +62,7 @@
                             <button wire:click="openEditModal({{ $announcement->id }})" class="text-[#1D74E3] hover:underline transition">
                                 Edit
                             </button>
-                            <button wire:click="delete({{ $announcement->id }})" wire:confirm="Are you sure you want to delete this announcement?" class="text-red-500 hover:text-red-700 transition">
+                            <button wire:click="openDeleteModal({{ $announcement->id }})" class="text-red-500 hover:text-red-700 transition">
                                 Delete
                             </button>
                         </td>
@@ -120,6 +120,31 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    @endif
+
+    @if ($showDeleteModal && $announcementToDelete)
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-xl max-w-md w-full">
+                <div class="p-6">
+                    <h3 class="text-lg font-bold text-red-600 dark:text-red-400 mb-2">Confirm Delete</h3>
+                    <p class="text-sm text-[#33333B] dark:text-zinc-200">
+                        Delete the announcement <strong>{{ $announcementToDelete->title }}</strong>?
+                    </p>
+                    <p class="text-xs text-[#AA9A98] dark:text-zinc-400 mt-2">This action cannot be undone.</p>
+
+                    <div class="flex justify-end gap-2 border-t dark:border-zinc-700 mt-6 pt-4">
+                        <button type="button" wire:click="closeDeleteModal"
+                            class="px-4 py-2 text-sm font-semibold text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-white transition">
+                            Cancel
+                        </button>
+                        <button type="button" wire:click="delete"
+                            class="px-4 py-2 text-sm font-semibold bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-sm transition">
+                            Confirm Delete
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     @endif

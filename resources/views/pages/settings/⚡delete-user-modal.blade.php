@@ -5,7 +5,8 @@ use App\Livewire\Actions\Logout;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
-new class extends Component {
+new class extends Component
+{
     use PasswordValidationRules;
 
     public string $password = '';
@@ -15,6 +16,12 @@ new class extends Component {
      */
     public function deleteUser(Logout $logout): void
     {
+        if (Auth::user()?->role === 'superadmin') {
+            $this->addError('password', __('Super Admin accounts cannot be deleted from Profile settings.'));
+
+            return;
+        }
+
         $this->validate([
             'password' => $this->currentPasswordRules(),
         ]);
