@@ -24,7 +24,10 @@ Route::get('/faqs', Faqs::class)->name('faqs');
 Route::get('/contact', Contact::class)->name('contact');
 Route::get('/scholarships/{scholarship}', Show::class)->name('scholarships.show');
 Route::get('/scholarships', Index::class)->name('scholarships.index');
-Route::get('/403', fn () => response()->view('errors.403', [], 403))->name('errors.403');
+Route::get('/403', fn() => response()->view('errors.403', [], 403))->name('errors.403');
+
+Route::middleware(['auth'])->post('/session/keep-alive', fn() => response()->noContent())
+    ->name('session.keep-alive');
 
 // Authenticated resident pages
 Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
@@ -43,6 +46,7 @@ Route::middleware(['auth', 'verified', 'role:admin,superadmin', 'approved.admin'
     Route::get('/applications', Applications::class)->name('admin.applications');
     Route::get('/scholarships', Scholarships::class)->name('admin.scholarships');
     Route::get('/announcements', Announcements::class)->name('admin.announcements');
+    Route::post('/session/keep-alive', fn() => response()->noContent())->name('session.keep-alive');
 });
 
 // Superadmin-only routes
@@ -59,7 +63,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 // Practice routes (demo UI only)
-require __DIR__.'/settings.php';
+require __DIR__ . '/settings.php';
 
 Route::get('/practice/home', function () {
     $announcements = [
@@ -80,8 +84,8 @@ Route::get('/practice/home', function () {
         'scholarships' => [],
     ]);
 });
-Route::get('/practice/about', fn () => view('practice.about'));
-Route::get('/practice/faqs', fn () => view('practice.faqs'));
+Route::get('/practice/about', fn() => view('practice.about'));
+Route::get('/practice/faqs', fn() => view('practice.faqs'));
 Route::get('/practice/contact', function () {
     return view('practice.contact', ['submitted' => false]);
 });

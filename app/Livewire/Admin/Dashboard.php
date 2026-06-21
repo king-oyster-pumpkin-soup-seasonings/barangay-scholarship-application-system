@@ -7,12 +7,9 @@ use App\Models\ResidenceVerification;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
-use Livewire\Attributes\Poll;
 
 class Dashboard extends Component
 {
-    // without needing to manually reload the page
-    #[Poll(5000)]
     public function render(): View
     {
         $pendingVerifications = ResidenceVerification::where('status', 'pending')->count();
