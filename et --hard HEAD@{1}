@@ -1,0 +1,74 @@
+[33md4802d5[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{0}: reset: moving to origin/main
+[33me2f3aec[m HEAD@{1}: pull origin main: updating HEAD
+[33me2f3aec[m HEAD@{2}: checkout: moving from main to main
+[33me2f3aec[m HEAD@{3}: pull origin main: updating HEAD
+[33me2f3aec[m HEAD@{4}: checkout: moving from main to main
+[33me2f3aec[m HEAD@{5}: checkout: moving from feat/superadmin-panel to main
+[33m0cecafb[m[33m ([m[1;31morigin/feat/superadmin-panel[m[33m, [m[1;32mfeat/superadmin-panel[m[33m)[m HEAD@{6}: checkout: moving from main to feat/superadmin-panel
+[33me2f3aec[m HEAD@{7}: commit: feat: added session timeout
+[33mef0fb81[m HEAD@{8}: checkout: moving from feat/superadmin-panel to main
+[33m0cecafb[m[33m ([m[1;31morigin/feat/superadmin-panel[m[33m, [m[1;32mfeat/superadmin-panel[m[33m)[m HEAD@{9}: checkout: moving from main to feat/superadmin-panel
+[33mef0fb81[m HEAD@{10}: commit: feat: added audit logs for superadmin and superadmin cant delete itself
+[33m7003cf3[m HEAD@{11}: pull origin main: Fast-forward
+[33mfed96b3[m HEAD@{12}: checkout: moving from main to main
+[33mfed96b3[m HEAD@{13}: reset: moving to HEAD
+[33mfed96b3[m HEAD@{14}: pull origin main: Fast-forward
+[33m76b804d[m HEAD@{15}: checkout: moving from main to main
+[33m76b804d[m HEAD@{16}: pull origin main: Fast-forward
+[33m941ec46[m HEAD@{17}: pull origin main: Fast-forward
+[33m0942c26[m HEAD@{18}: pull origin main: Fast-forward
+[33mf5c35af[m HEAD@{19}: pull origin main: Fast-forward
+[33m0f4fa42[m HEAD@{20}: checkout: moving from feat/superadmin-panel to main
+[33m0cecafb[m[33m ([m[1;31morigin/feat/superadmin-panel[m[33m, [m[1;32mfeat/superadmin-panel[m[33m)[m HEAD@{21}: pull origin main: Fast-forward
+[33m0a5fcfd[m HEAD@{22}: commit: feat: add admin_audit_logs table and model, wrap audit logs in try-catch
+[33mebd9632[m HEAD@{23}: checkout: moving from feat/superadmin-panel to feat/superadmin-panel
+[33mebd9632[m HEAD@{24}: commit: feat: added parameter type
+[33m1e5cbaf[m HEAD@{25}: checkout: moving from feat/superadmin-panel to feat/superadmin-panel
+[33m1e5cbaf[m HEAD@{26}: commit: feat: fixed errors
+[33m6552a5d[m HEAD@{27}: checkout: moving from main to feat/superadmin-panel
+[33m0f4fa42[m HEAD@{28}: pull origin main: Fast-forward
+[33m6216f71[m[33m ([m[1;32mfeat/admin-panel[m[33m)[m HEAD@{29}: checkout: moving from feat/superadmin-panel to main
+[33m6552a5d[m HEAD@{30}: checkout: moving from feat/superadmin-panel to feat/superadmin-panel
+[33m6552a5d[m HEAD@{31}: commit: feat: added edit and delete functions for admin account management
+[33m6216f71[m[33m ([m[1;32mfeat/admin-panel[m[33m)[m HEAD@{32}: checkout: moving from main to feat/superadmin-panel
+[33m6216f71[m[33m ([m[1;32mfeat/admin-panel[m[33m)[m HEAD@{33}: checkout: moving from feat/admin-panel to main
+[33m6216f71[m[33m ([m[1;32mfeat/admin-panel[m[33m)[m HEAD@{34}: checkout: moving from main to feat/admin-panel
+[33m6216f71[m[33m ([m[1;32mfeat/admin-panel[m[33m)[m HEAD@{35}: pull origin main: Fast-forward
+[33mf2e9c7e[m HEAD@{36}: checkout: moving from feat/admin-panel to main
+[33m6216f71[m[33m ([m[1;32mfeat/admin-panel[m[33m)[m HEAD@{37}: pull origin main: Fast-forward
+[33mf784f80[m HEAD@{38}: checkout: moving from feat/admin-panel to feat/admin-panel
+[33mf784f80[m HEAD@{39}: commit: feat: fixed the ui of admin panel
+[33m2748a3b[m HEAD@{40}: checkout: moving from feat/admin-panel to feat/admin-panel
+[33m2748a3b[m HEAD@{41}: merge main: Merge made by the 'ort' strategy.
+[33m0626c1d[m HEAD@{42}: commit: fix: resolved scholarship index issue
+[33mea0f746[m HEAD@{43}: checkout: moving from main to feat/admin-panel
+[33mf2e9c7e[m HEAD@{44}: pull origin main: Fast-forward
+[33mf9ea275[m HEAD@{45}: pull origin main: Fast-forward
+[33me19fe6f[m HEAD@{46}: reset: moving to origin/main
+[33md0ad4c9[m HEAD@{47}: checkout: moving from main to main
+[33md0ad4c9[m HEAD@{48}: checkout: moving from main to main
+[33md0ad4c9[m HEAD@{49}: pull origin main: Fast-forward
+[33mbdc34df[m HEAD@{50}: pull origin main: Fast-forward
+[33mf33222f[m HEAD@{51}: checkout: moving from 70b15134df21c40dc81a150894a6afc21cd7e5da to main
+[33m70b1513[m HEAD@{52}: commit: changed admin dashboard
+[33m5a7852a[m HEAD@{53}: pull origin main --rebase (start): checkout 5a7852a8247af5fd814bbd8ce20f091035636e78
+[33mea0f746[m HEAD@{54}: checkout: moving from feat/admin-panel to feat/admin-panel
+[33mea0f746[m HEAD@{55}: commit (merge): feat: changed admin dashboard
+[33m8e12b97[m HEAD@{56}: checkout: moving from feat/admin-panel to feat/admin-panel
+[33m8e12b97[m HEAD@{57}: commit (merge): feat: changed admin dashboard
+[33m2385a0b[m HEAD@{58}: checkout: moving from feat/admin-panel to feat/admin-panel
+[33m2385a0b[m HEAD@{59}: commit (merge): feat: added make an admin account for superadmin
+[33mb7e69e0[m HEAD@{60}: commit (merge): Merge branch 'develop' of https://github.com/king-oyster-pumpkin-soup-seasonings/barangay-scholarship-application-system into feat/admin-panel
+[33m4110d5c[m HEAD@{61}: checkout: moving from feat/admin-panel to feat/admin-panel
+[33m4110d5c[m HEAD@{62}: commit: feat: final admin applications
+[33me5a4442[m HEAD@{63}: reset: moving to HEAD@{2}
+[33me6bba87[m HEAD@{64}: reset: moving to HEAD~2
+[33m6fef5d7[m HEAD@{65}: commit: style: dynamic sidebar navigation for admin and superadmin roles
+[33me5a4442[m HEAD@{66}: commit: feat: implement superadmin admin applications verification management workflow and tests
+[33me6bba87[m HEAD@{67}: commit: feat: add active announcements metric card and manage announcements section with table view
+[33m1a2dd61[m HEAD@{68}: commit: style: refine page headers layout, style interactive breadcrumbs, and add explicit review buttons
+[33mb1c6268[m HEAD@{69}: commit: style: enhance admin dashboard metrics hierarchy, icons, and link hover animations
+[33m640e331[m HEAD@{70}: commit: feat: implement admin panel verifications, applications, dashboard stats, announcements, and tests
+[33me21c8d0[m HEAD@{71}: checkout: moving from develop to feat/admin-panel
+[33mf1d349b[m[33m ([m[1;32mdevelop[m[33m)[m HEAD@{72}: checkout: moving from main to develop
+[33mf33222f[m HEAD@{73}: clone: from https://github.com/king-oyster-pumpkin-soup-seasonings/barangay-scholarship-application-system.git

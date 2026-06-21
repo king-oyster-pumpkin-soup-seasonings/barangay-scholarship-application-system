@@ -1,0 +1,207 @@
+[33mcommit 70b15134df21c40dc81a150894a6afc21cd7e5da[m
+Author: dein11 <amarriahdayneemerenciana@gmail.com>
+Date:   Thu Jun 18 18:24:09 2026 +0800
+
+    changed admin dashboard
+
+[1mdiff --git a/app/Actions/Admin/ApproveAdmin.php b/app/Actions/Admin/ApproveAdmin.php[m
+[1mindex 5a13b7f..fca04f4 100644[m
+[1m--- a/app/Actions/Admin/ApproveAdmin.php[m
+[1m+++ b/app/Actions/Admin/ApproveAdmin.php[m
+[36m@@ -7,7 +7,6 @@[m
+ [m
+ class ApproveAdmin[m
+ {[m
+[31m-[m
+     public function handle([m
+         User $admin,[m
+         User $superadmin,[m
+[1mdiff --git a/app/Actions/Application/SubmitApplicationAnswers.php b/app/Actions/Application/SubmitApplicationAnswers.php[m
+[1mindex adb085d..34135e3 100644[m
+[1m--- a/app/Actions/Application/SubmitApplicationAnswers.php[m
+[1m+++ b/app/Actions/Application/SubmitApplicationAnswers.php[m
+[36m@@ -27,14 +27,14 @@[m [mpublic function handle([m
+         foreach ($answers as $answer) {[m
+ [m
+             // 3. Validate structure[m
+[31m-            if (!isset($answer['requirement_id'], $answer['value'])) {[m
+[32m+[m[32m            if (! isset($answer['requirement_id'], $answer['value'])) {[m
+                 throw new \Exception('Invalid answer format.');[m
+             }[m
+ [m
+             // 4. Ensure requirement exists[m
+             $requirement = ScholarshipRequirement::find($answer['requirement_id']);[m
+ [m
+[31m-            if (!$requirement) {[m
+[32m+[m[32m            if (! $requirement) {[m
+                 throw new \Exception('Requirement not found.');[m
+             }[m
+ [m
+[1mdiff --git a/app/Actions/ResidenceVerification/ApproveResidenceVerification.php b/app/Actions/ResidenceVerification/ApproveResidenceVerification.php[m
+[1mindex 343a6b6..2c2d033 100644[m
+[1m--- a/app/Actions/ResidenceVerification/ApproveResidenceVerification.php[m
+[1m+++ b/app/Actions/ResidenceVerification/ApproveResidenceVerification.php[m
+[36m@@ -19,7 +19,7 @@[m [mpublic function handle([m
+             'rejection_reason' => null,[m
+         ]);[m
+         $verification->user->notify([m
+[31m-            new ResidenceVerificationApprovedNotification()[m
+[32m+[m[32m            new ResidenceVerificationApprovedNotification[m
+         );[m
+ [m
+         $verification->user->update([[m
+[1mdiff --git a/app/Livewire/Admin/AdminApplications.php b/app/Livewire/Admin/AdminApplications.php[m
+[1mdeleted file mode 100644[m
+[1mindex d130768..0000000[m
+[1m--- a/app/Livewire/Admin/AdminApplications.php[m
+[1m+++ /dev/null[m
+[36m@@ -1,94 +0,0 @@[m
+[31m-<?php[m
+[31m-[m
+[31m-namespace App\Livewire\Admin;[m
+[31m-[m
+[31m-use App\Models\User;[m
+[31m-use Illuminate\Contracts\View\View;[m
+[31m-use Livewire\Component;[m
+[31m-[m
+[31m-class AdminApplications extends Component[m
+[31m-{[m
+[31m-    public bool $showRejectionModal = false;[m
+[31m-[m
+[31m-    public string $rejectionRemarks = '';[m
+[31m-[m
+[31m-    public ?int $selectedAdminId = null;[m
+[31m-[m
+[31m-    /**[m
+[31m-     * Approve a pending admin application[m
+[31m-     */[m
+[31m-    public function approve(int $id): void[m
+[31m-    {[m
+[31m-        $user = User::findOrFail($id);[m
+[31m-[m
+[31m-        if ($user->role === 'admin') {[m
+[31m-            $user->update([[m
+[31m-                'verification_status' => 'verified',[m
+[31m-                'verified_by' => auth()->id(),[m
+[31m-                'verified_at' => now(),[m
+[31m-            ]);[m
+[31m-[m
+[31m-            session()->flash('success', "Admin application for {$user->name} has been approved.");[m
+[31m-        }[m
+[31m-    }[m
+[31m-[m
+[31m-    /**[m
+[31m-     * Open the rejection modal for a specific admin application[m
+[31m-     */[m
+[31m-    public function openRejectionModal(int $id): void[m
+[31m-    {[m
+[31m-        $this->selectedAdminId = $id;[m
+[31m-        $this->rejectionRemarks = '';[m
+[31m-        $this->showRejectionModal = true;[m
+[31m-    }[m
+[31m-[m
+[31m-    /**[m
+[31m-     * Close the rejection modal[m
+[31m-     */[m
+[31m-    public function closeRejectionModal(): void[m
+[31m-    {[m
+[31m-        $this->showRejectionModal = false;[m
+[31m-        $this->rejectionRemarks = '';[m
+[31m-        $this->selectedAdminId = null;[m
+[31m-    }[m
+[31m-[m
+[31m-    /**[m
+[31m-     * Reject a pending admin application with remarks[m
+[31m-     */[m
+[31m-    public function reject(): void[m
+[31m-    {[m
+[31m-        $this->validate([[m
+[31m-            'rejectionRemarks' => 'required|string|min:5|max:500',[m
+[31m-        ], [[m
+[31m-            'rejectionRemarks.required' => 'Please enter rejection remarks.',[m
+[31m-            'rejectionRemarks.min' => 'Rejection remarks must be at least 5 characters.',[m
+[31m-        ]);[m
+[31m-[m
+[31m-        $user = User::findOrFail($this->selectedAdminId);[m
+[31m-[m
+[31m-        if ($user->role === 'admin') {[m
+[31m-            $user->update([[m
+[31m-                'verification_status' => 'rejected',[m
+[31m-                'verification_remarks' => $this->rejectionRemarks,[m
+[31m-                'verified_by' => auth()->id(),[m
+[31m-                'verified_at' => now(),[m
+[31m-            ]);[m
+[31m-[m
+[31m-            session()->flash('info', "Admin application for {$user->name} has been rejected.");[m
+[31m-        }[m
+[31m-[m
+[31m-        $this->closeRejectionModal();[m
+[31m-    }[m
+[31m-[m
+[31m-    public function render(): View[m
+[31m-    {[m
+[31m-        // Fetch all users with 'admin' role to list on the superadmin management view[m
+[31m-        $adminApplications = User::where('role', 'admin')[m
+[31m-            ->orderBy('created_at', 'desc')[m
+[31m-            ->get();[m
+[31m-[m
+[31m-        return view('livewire.admin.admin-applications', [[m
+[31m-            'adminApplications' => $adminApplications,[m
+[31m-        ]);[m
+[31m-    }[m
+[31m-}[m
+[1mdiff --git a/app/Livewire/Admin/Applications.php b/app/Livewire/Admin/Applications.php[m
+[1mindex f4acec6..f03f158 100644[m
+[1m--- a/app/Livewire/Admin/Applications.php[m
+[1m+++ b/app/Livewire/Admin/Applications.php[m
+[36m@@ -2,8 +2,9 @@[m
+ [m
+ namespace App\Livewire\Admin;[m
+ [m
+[32m+[m[32muse App\Actions\Application\ApproveApplication;[m
+[32m+[m[32muse App\Actions\Application\RejectApplication;[m
+ use App\Models\Application;[m
+[31m-use App\Models\ApplicationLog;[m
+ use Illuminate\Contracts\View\View;[m
+ use Livewire\Component;[m
+ [m
+[36m@@ -51,7 +52,7 @@[m [mpublic function approve(int $id): void[m
+ [m
+         if ($application->status === 'pending') {[m
+ [m
+[31m-            app(\App\Actions\Application\ApproveApplication::class)[m
+[32m+[m[32m            app(ApproveApplication::class)[m
+                 ->handle($application, auth()->user(), 'Application approved.');[m
+ [m
+             session()->flash('success', 'Application approved successfully.');[m
+[36m@@ -99,7 +100,7 @@[m [mpublic function reject(): void[m
+ [m
+         if ($application->status === 'pending') {[m
+ [m
+[31m-            app(\App\Actions\Application\RejectApplication::class)[m
+[32m+[m[32m            app(RejectApplication::class)[m
+                 ->handle($application, auth()->user(), $this->rejectionRemarks);[m
+ [m
+             session()->flash('info', 'Application has been rejected.');[m
+[1mdiff --git a/app/Livewire/Pages/Applications/Create.php b/app/Livewire/Pages/Applications/Create.php[m
+[1mindex 38848ae..cb115c3 100644[m
+[1m--- a/app/Livewire/Pages/Applications/Create.php[m
+[1m+++ b/app/Livewire/Pages/Applications/Create.php[m
+[36m@@ -10,7 +10,6 @@[m
+ use Livewire\Component;[m
+ use Livewire\WithFileUploads;[m
+ [m
+[31m-[m
+ class Create extends Component[m
+ {[m
+     use WithFileUploads;[m
+[36m@@ -29,7 +28,9 @@[m [mclass Create extends Component[m
+ [m
+     // Requirements grouped by category, loaded once in mount()[m
+     public array $eligibilityRequirements = [];[m
+[32m+[m
+     public array $generalRequirements = [];[m
+[32m+[m
+     public array $specificRequirements = [];[m
+ [m
+     // Total number of st
