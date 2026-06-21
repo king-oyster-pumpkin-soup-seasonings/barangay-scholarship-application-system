@@ -435,7 +435,7 @@ test('admin and superadmin routes redirect unauthorized roles to forbidden page'
 });
 
 test('session lifetime is configured for inactivity logout', function () {
-    expect(config('session.lifetime'))->toBe(30);
+    expect(config('session.lifetime'))->toBe(20);
 });
 
 test('approved applications cannot be approved or rejected again', function () {

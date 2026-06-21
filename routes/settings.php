@@ -16,4 +16,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'password.confirm',
         ])
         ->name('security.edit');
+
+    Route::livewire('settings/session-timeout', 'pages::settings.session-timeout')
+        ->middleware(['role:superadmin'])
+        ->name('session-timeout.edit');
 });

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\CheckInactivity;
+use App\Http\Middleware\ConfigureSessionTimeout;
 use App\Http\Middleware\EnsureAdminIsApproved;
 use App\Http\Middleware\EnsureResidentIsVerified;
 use App\Http\Middleware\EnsureUserHasRole;
@@ -16,11 +18,20 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->trustProxies(at: '*');
+        $middleware->web(
+            prepend: [
+                ConfigureSessionTimeout::class,
+            ],
+            append: [
+                CheckInactivity::class,
+            ],
+        );
 
         $middleware->alias([
             'role' => EnsureUserHasRole::class,
             'verified.resident' => EnsureResidentIsVerified::class,
             'approved.admin' => EnsureAdminIsApproved::class,
+            'inactivity' => CheckInactivity::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\SystemSetting;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Livewire;
@@ -72,4 +73,57 @@ test('correct password must be provided to update password', function () {
         ->call('updatePassword');
 
     $response->assertHasErrors(['current_password']);
+});
+
+test('inactive users are logged out and see a session expired message', function () {
+    SystemSetting::setSessionTimeoutMinutes(20);
+
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->withSession(['last_activity' => now()->subMinutes(21)])
+        ->get(route('dashboard'))
+        ->assertRedirect(route('login'))
+        ->assertSessionHas('error', 'Your session expired after 20 minutes of inactivity. Please sign in again.');
+
+    expect(auth()->check())->toBeFalse();
+});
+
+test('active users remain signed in before the session timeout', function () {
+    SystemSetting::setSessionTimeoutMinutes(20);
+
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->withSession(['last_activity' => now()->subMinutes(19)])
+        ->get(route('dashboard'))
+        ->assertOk();
+});
+
+test('superadmin can configure session timeout in settings', function () {
+    $superadmin = User::factory()->create([
+        'role' => 'superadmin',
+    ]);
+
+    $this->actingAs($superadmin);
+
+    $this->get(route('session-timeout.edit'))
+        ->assertOk()
+        ->assertSee('Session timeout');
+
+    Livewire::test('pages::settings.session-timeout')
+        ->set('timeoutAmount', 2)
+        ->set('timeoutUnit', 'hours')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(SystemSetting::sessionTimeoutMinutes())->toBe(120);
+});
+
+test('standard users cannot configure session timeout settings', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->get(route('session-timeout.edit'))
+        ->assertRedirect(route('errors.403'));
 });
