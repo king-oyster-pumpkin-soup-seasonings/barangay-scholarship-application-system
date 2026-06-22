@@ -81,16 +81,7 @@
         },
     }">
 
-        {{-- Nav Link - Home --}}
-        <div>
-            <a href="{{ route('home') }}"
-                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-zinc-500 hover:text-[#1D74E3] hover:bg-[#EBF3FF] transition-all self-start">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-                </svg>
-                {{ __('Back to Home') }}
-            </a>
-        </div>
+        <x-auth-home-link />
 
         <div class="space-y-1">
             <h1 class="text-3xl font-bold font-serif text-[#33333B]">

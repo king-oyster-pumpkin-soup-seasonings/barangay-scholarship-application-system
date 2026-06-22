@@ -1,5 +1,7 @@
 <x-layouts::auth.card :title="__('Forgot password')">
     <div class="flex flex-col gap-6">
+        <x-auth-home-link />
+
         <!-- Lock Open Icon & Header -->
         <div class="space-y-4">
             <div class="h-12 w-12 rounded-xl bg-[#1D74E3]/10 flex items-center justify-center border border-[#1D74E3]/25 shadow-sm">
@@ -32,8 +34,7 @@
                     required
                     autofocus
                     placeholder="you@example.com"
-                    class="bg-white border-zinc-300 text-zinc-900 focus:border-[#1D74E3]"
-                />
+                    class="bg-white border-zinc-300 text-zinc-900 focus:border-[#1D74E3]" />
                 <flux:error name="email" />
             </flux:field>
 

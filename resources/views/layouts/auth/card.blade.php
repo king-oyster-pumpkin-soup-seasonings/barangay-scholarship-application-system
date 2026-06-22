@@ -13,7 +13,7 @@
                 <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 backdrop-blur-md border border-white/20">
                     <x-app-logo-icon class="h-6 w-6 text-white" />
                 </span>
-                <span class="text-xl font-bold tracking-tight text-white font-serif">Iskolar iApply</span>
+                <span class="text-xl font-bold tracking-tight text-white font-serif">BRGY 587: Iskolar iApply</span>
             </a>
 
             <!-- Card Content -->

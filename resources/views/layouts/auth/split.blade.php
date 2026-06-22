@@ -97,7 +97,7 @@
                     <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-[#1D74E3] shadow-md">
                         <x-app-logo-icon class="h-8 w-8 text-white" />
                     </span>
-                    <span class="text-2xl font-bold tracking-tight text-[#0F172B] font-serif">Iskolar iApply</span>
+                    <span class="text-2xl font-bold tracking-tight text-[#0F172B] font-serif">BRGY 587: Iskolar iApply</span>
                 </div>
 
                 {{ $slot }}
